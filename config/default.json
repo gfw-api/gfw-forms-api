@@ -1,0 +1,19 @@
+{
+    "logger": {
+        "name": "gfw-contribution-data-DEV",
+        "level": "debug",
+        "toFile": false,
+        "dirLogFile": null
+    },
+    "service": {
+        "id": "gfw-contribution-data_1.0.0",
+        "name": "GFW Contribution Data"
+    },
+    "wriMail": {
+        "template": "data-contribution"
+    },
+    "userMail": {
+        "template": "data-contribution-confirmation"
+    }
+
+}

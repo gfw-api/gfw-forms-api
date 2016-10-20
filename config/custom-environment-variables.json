@@ -1,0 +1,11 @@
+{
+    "apiGateway": {
+        "uri": "API_GATEWAY_URI",
+        "queueUrl": "QUEUE_URL",
+        "queueProvider": "QUEUE_PROVIDER",
+        "queueName": "QUEUE_NAME"
+    },
+    "wriMail":{
+        "recipients" : "WRI_MAIL_RECIPIENTS"
+    }
+}

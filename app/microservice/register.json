@@ -1,0 +1,14 @@
+{
+    "id": "#(service.id)",
+    "name": "#(service.name)",
+    "tags": ["gfw"],
+    "urls": [{
+        "url": "/contribution-data",
+        "method": "POST",
+        "endpoints": [{
+            "method": "POST",
+            "path": "/api/v1/contribution-data",
+            "data": ["loggedUser"]
+        }]
+    }]
+}

@@ -1,0 +1,8 @@
+{
+    "logger": {
+        "name": "gfw-contribution-data",
+        "level": "info",
+        "toFile": false,
+        "dirLogFile": null
+    }
+}

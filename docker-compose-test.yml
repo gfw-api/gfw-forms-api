@@ -1,0 +1,10 @@
+test:
+  extends:
+    file: base.yml
+    service: base
+  ports:
+    - "4400"
+  container_name: gfw-contribution-data-test
+  environment:
+    NODE_ENV: test
+  command: test

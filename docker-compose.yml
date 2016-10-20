@@ -1,0 +1,12 @@
+prod:
+  image: vizzuality/gfw-contribution-data:1.1.1${STAGING}
+  ports:
+    - "4400"
+  env_file:
+    - prod.env
+  command: start
+  dns: ${DNS_SERVER}
+  restart: always
+  log_driver: "gelf"
+  log_opt:
+    gelf-address: ${GELF_ADDRESS}
