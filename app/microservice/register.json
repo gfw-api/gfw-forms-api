@@ -3,12 +3,21 @@
     "name": "#(service.name)",
     "tags": ["gfw"],
     "urls": [{
-        "url": "/contribution-data",
+        "url": "/form/contribution-data",
         "method": "POST",
         "endpoints": [{
             "method": "POST",
-            "path": "/api/v1/contribution-data",
+            "path": "/api/v1/form/contribution-data",
             "data": ["loggedUser"]
         }]
-    }]
+    },{
+        "url": "/form/contact-us",
+        "method": "POST",
+        "endpoints": [{
+            "method": "POST",
+            "path": "/api/v1/form/contact-us",
+            "data": ["loggedUser"]
+        }]
+    }
+  ]
 }

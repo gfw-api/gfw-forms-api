@@ -3,21 +3,15 @@
 var Router = require('koa-router');
 var logger = require('logger');
 var mailService = require('services/mailService');
+var userService = require('services/userService');
 var config = require('config');
 var JSONAPIDeserializer = require('jsonapi-serializer').Deserializer;
 var router = new Router({
     prefix: '/form'
 });
 
-var deserializer = function(obj) {
-    return function(callback) {
-        new JSONAPIDeserializer({keyForAttribute: 'camelCase'}).deserialize(obj, callback);
-    };
-};
-
-
 class FormRouter {
-    static * createStory() {
+    static * addContribution() {
         logger.info('Sending mail');
         logger.debug('Data', this.request.body);
 
@@ -31,26 +25,9 @@ class FormRouter {
         mailService.sendMail(config.get('wriMail.template'), this.request.body, wriRecipients);
 
         // send mail to USER
-        let language = 'en';
-        if (this.request.body.loggedUser) {
-            logger.info('Obtaining user', '/user/' + this.request.body.loggedUser.id);
-            let result = yield require('vizz.microservice-client').requestToMicroservice({
-                uri: '/user/' + this.request.body.loggedUser.id,
-                method: 'GET',
-                json: true
-            });
-            if(result.statusCode === 200){
-                let user = yield deserializer(result.body);
-                if (user.language) {
-                    logger.info('Setting user language to send email');
-                    language = user.language.toLowerCase().replace(/_/g, '-');
-                }
-            } else {
-                logger.error('error obtaining user', result.body);
-
-            }
-
-        }
+        logger.debug('Getting user language...');
+        const language = yield userService.getUserLanguage(this.request.body.loggedUser);
+        logger.debug('Sending mail to user...');
         let template = `${config.get('userMail.template')}-${language}`;
         mailService.sendMail(template, this.request.body, [{
             address: this.request.body.data_email
@@ -60,8 +37,46 @@ class FormRouter {
         this.body = '';
     }
 
+    static * addFeedback() {
+        logger.info('Sending mail');
+        logger.debug('Data', this.request.body);
+        const {topic} = this.request.body;
+        const mailParams = config.get('contactEmail');
+        const mailData = {
+          user_email: this.request.body.email,
+          message: this.request.body.message,
+          topic: mailParams.topics[topic].name,
+          opt_in: this.request.body.signup
+        };
+        logger.debug('Mail data', mailData);
+
+        let wriRecipients = mailParams.topics[topic].emailTo.split(',');
+        wriRecipients = wriRecipients.map(function(mail) {
+            return {
+                address: mail
+            };
+        });
+
+        // send mail to recipient
+        logger.debug('Sending mail...');
+        mailService.sendMail(mailParams.template, mailData, wriRecipients);
+
+        // send mail to user
+        logger.debug('Getting user language...');
+        const language = yield userService.getUserLanguage(this.request.body.loggedUser);
+        logger.debug('Sending mail to user...');
+        const template = `${mailParams.templateConfirm}-${language}`;
+        mailService.sendMail(template, mailData, [{
+            address: this.request.body.email
+        }]);
+
+        this.body = '';
+    }
+
+
 }
 
-router.post('/contribution-data', FormRouter.createStory);
+router.post('/contribution-data', FormRouter.addContribution);
+router.post('/contact-us', FormRouter.addFeedback);
 
 module.exports = router;
