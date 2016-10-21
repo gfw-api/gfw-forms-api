@@ -4,7 +4,7 @@ test:
     service: base
   ports:
     - "4400"
-  container_name: gfw-contribution-data-test
+  container_name: gfw-forms-test
   environment:
     NODE_ENV: test
   command: test

@@ -1,13 +1,13 @@
 {
     "logger": {
-        "name": "gfw-contribution-data-DEV",
+        "name": "gfw-forms-DEV",
         "level": "debug",
         "toFile": false,
         "dirLogFile": null
     },
     "service": {
-        "id": "gfw-contribution-data_1.0.0",
-        "name": "GFW Contribution Data"
+        "id": "gfw-forms-1.0.0",
+        "name": "GFW Forms"
     },
     "wriMail": {
         "template": "data-contribution"

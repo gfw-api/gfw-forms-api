@@ -5,4 +5,4 @@ base:
   environment:
     PORT: 4400
     NODE_PATH: app/src
-  container_name: gfw-contribution-data
+  container_name: gfw-forms-api

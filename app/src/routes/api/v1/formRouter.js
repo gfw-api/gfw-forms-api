@@ -6,7 +6,7 @@ var mailService = require('services/mailService');
 var config = require('config');
 var JSONAPIDeserializer = require('jsonapi-serializer').Deserializer;
 var router = new Router({
-    prefix: '/contribution-data'
+    prefix: '/form'
 });
 
 var deserializer = function(obj) {
@@ -16,7 +16,7 @@ var deserializer = function(obj) {
 };
 
 
-class ContributionRouter {
+class FormRouter {
     static * createStory() {
         logger.info('Sending mail');
         logger.debug('Data', this.request.body);
@@ -60,9 +60,8 @@ class ContributionRouter {
         this.body = '';
     }
 
-
 }
 
-router.post('/', ContributionRouter.createStory);
+router.post('/contribution-data', FormRouter.createStory);
 
 module.exports = router;
