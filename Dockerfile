@@ -1,7 +1,7 @@
 FROM mhart/alpine-node:6.2
 MAINTAINER raul.requero@vizzuality.com
 
-ENV NAME gfw-contribution-data
+ENV NAME gfw-forms-api
 ENV USER microservice
 
 RUN apk update && apk upgrade && \

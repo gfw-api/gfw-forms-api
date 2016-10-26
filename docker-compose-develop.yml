@@ -4,7 +4,7 @@ develop:
     service: base
   ports:
     - "35736:35729"
-  container_name: gfw-contribution-data-develop
+  container_name: gfw-forms-develop
   environment:
     NODE_ENV: dev
     QUEUE_URL: redis://mymachine:6379
@@ -14,4 +14,4 @@ develop:
     WRI_MAIL_RECIPIENTS: <mails>
   command: develop
   volumes:
-    - ./app:/opt/gfw-contribution-data/app
+    - ./app:/opt/gfw-forms-api/app

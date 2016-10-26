@@ -1,6 +1,6 @@
 {
     "logger": {
-        "name": "gfw-contribution-data-TEST",
+        "name": "gfw-forms-TEST",
         "level": "debug",
         "toFile": false,
         "dirLogFile": null

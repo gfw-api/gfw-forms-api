@@ -1,19 +1,60 @@
 {
     "logger": {
-        "name": "gfw-contribution-data-DEV",
+        "name": "gfw-forms-DEV",
         "level": "debug",
         "toFile": false,
         "dirLogFile": null
     },
     "service": {
-        "id": "gfw-contribution-data_1.0.0",
-        "name": "GFW Contribution Data"
+        "id": "gfw-forms-1.0.0",
+        "name": "GFW Forms"
     },
     "wriMail": {
         "template": "data-contribution"
     },
     "userMail": {
         "template": "data-contribution-confirmation"
+    },
+    "contactEmail": {
+        "template": "contact-form",
+        "templateConfirm": "contact-form-confirmation",
+        "topics": {
+            "report-a-bug-or-error-on-gfw": {
+                "name": "Report a bug or error on GFW",
+                "emailTo": "gfw@wri.org"
+            },
+            "provide-feedback": {
+                "name": "Provide feedback",
+                "emailTo": "gfw@wri.org"
+            },
+            "media-request": {
+                "name": "Media request",
+                "emailTo": "gfwmedia@wri.org"
+            },
+            "data-related-inquiry": {
+                "name": "Data related inquiry",
+                "emailTo": "gfwdata@wri.org"
+            },
+            "gfw-commodities-inquiry": {
+                "name": "GFW Commodities inquiry",
+                "emailTo": "gfwcommodities@wri.org"
+            },
+            "gfw-fires-inquiry": {
+                "name": "GFW Fires inquiry",
+                "emailTo": "gfwfires@wri.org"
+            },
+            "gfw-climate-inquiry": {
+                "name": "GFW Climate inquiry",
+                "emailTo": "gfwclimate@wri.org"
+            },
+            "gfw-water-inquiry": {
+                "name": "GFW Water inquiry",
+                "emailTo": "GFWwater@wri.org"
+            },
+            "general-inquiry": {
+                "name": "General inquiry",
+                "emailTo": "gfw@wri.org"
+            }
+        }
     }
-
 }

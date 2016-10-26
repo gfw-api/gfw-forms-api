@@ -1,6 +1,6 @@
 {
     "logger": {
-        "name": "gfw-contribution-data",
+        "name": "gfw-forms-data",
         "level": "info",
         "toFile": false,
         "dirLogFile": null

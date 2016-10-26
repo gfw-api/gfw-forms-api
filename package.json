@@ -1,7 +1,7 @@
 {
-  "name": "gfw-story-api",
+  "name": "gfw-forms-api",
   "version": "1.1.1",
-  "description": "Global forest watch - Story API",
+  "description": "Global forest watch - Forms API",
   "main": "index.js",
   "scripts": {
     "test-e2e": "NODE_PATH=app/src grunt --gruntfile app/Gruntfile.js e2eTest",
@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gfw-api/gfw-story-api.git"
+    "url": "git+https://github.com/gfw-api/gfw-forms-api.git"
   },
   "keywords": [
     "gfw",
@@ -24,9 +24,9 @@
   "author": "rrequero",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/gfw-api/gfw-user-api/issues"
+    "url": "https://github.com/gfw-api/gfw-forms-api/issues"
   },
-  "homepage": "https://github.com/gfw-api/gfw-user-api#readme",
+  "homepage": "https://github.com/gfw-api/gfw-forms-api#readme",
   "dependencies": {
     "bunyan": "1.7.1",
     "cartodb": "0.4.0",

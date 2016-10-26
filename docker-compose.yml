@@ -1,5 +1,5 @@
 prod:
-  image: vizzuality/gfw-contribution-data:1.1.1${STAGING}
+  image: vizzuality/gfw-forms-api:1.0.0${STAGING}
   ports:
     - "4400"
   env_file:
