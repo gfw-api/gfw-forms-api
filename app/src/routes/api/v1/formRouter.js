@@ -55,10 +55,8 @@ class FormRouter {
             const row = yield GoogleSpreadsheetService.getRow(this.request.body.email);
             try {
                 yield googleSheetsService.updateSheet(this.request.body.email);
-                this.body = {message:'Done!'};
             } catch (err) {
                 logger.debug(err);
-                this.body = {message:'You are a looser!'};
             }
         }
 
