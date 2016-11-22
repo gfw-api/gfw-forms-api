@@ -52,7 +52,6 @@ class FormRouter {
         logger.debug('Mail data', mailData);
 
         if ( this.request.body.signup ) {
-            const row = yield GoogleSpreadsheetService.getRow(this.request.body.email);
             try {
                 yield googleSheetsService.updateSheet(this.request.body.email);
             } catch (err) {
