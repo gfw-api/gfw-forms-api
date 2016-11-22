@@ -15,10 +15,6 @@
     "userMail": {
         "template": "data-contribution-confirmation"
     },
-    "googleSheets":{
-        "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDAdthayI98Opcq\nn+q3Q2F4G1OHdUOgSoo6hu7DiheudAIrH/UW/1raPj8RwSKs8DYVHlyyzuUfiZxj\n7ZQinvN0+Auq0LUljY/z6cK2sdimcVghIYDi3gZ6mWc7EHYMfNMxFfHBb65gVjyu\nBBh5hwdqsa6garifAbfd2cb1iK9/Qt5M8qpJt5ZnzGWoHtDuHVPgqoDgK00XOBh2\nfenR9r5DeeHeU7XoiTatBhkE6SRaHUOs/iDUJs18DMLNJtWUDwmWFWEu/FKSVmiT\nL2/cRbm/IplPxWkVkZ+Pog0U6DxMedC5+PUBIyU0FxAZ6Z/CK8hBuXkr7Q1xbbco\nXvp5SPnhAgMBAAECggEAblm14xdrbYcKdV4LbdgsYnkIg3owtA8JAlWrQGJFAbly\nJNfF5tGyfb+C2eMqxo1T9PfbnooRxOtZx9HIRbFtVXuC9QWFV2q7RtaY1bdSyNvj\n89sJ0woKHPEnxy3BAZfwXwx9+LLYAFRxpjSi88r/7aTCwydtg32wtnrPIKimNwhY\n0e3/Lz4dzg5OjVtCoN8xqpF0K+zb6ueP/8v6l5WxBWPI71YQclvnRno06WTo37PP\nYhYhJWSIqFmjKpyFaZIxf9tXsvMt6lYc77dx7auixc0F68thxPfxl/4B6mpQ0EPB\nfQCY+PvVsJLz3Uc8Ip53MTuqJioWulkWQJgAvfUTIQKBgQDuIy31f20TRCqjRkGV\nAXG/NSoZfxxiC+nCNAr3ni/7Wh843MkEWHyf+APVp9CpAA5XmmxCxUC8uGuGuPCM\nmH6diKH5NqG+04NLqL/jrLcHwgxcmkKy4gRkdvK1qWRFkEwYfTzhh5yPZV6pWIDb\nUAz8GERkt7CpfcIitmNlmDyYFwKBgQDO5qD/zhH1WUoIZL2RaU5PHLy/QXCIqwe8\nZv5LLmDyJQCGGljvF/Mf7dhhwHEkf05smsoXpMwiqY/TBeFCrF/I22JZidtcjQk9\nQDGDGns8FtBI24ty40/Q3uojGCbZ1LpvJMsv6hiNjCr9ni3lBp93aXqPyBZCdPPK\nxe3Wdb9AxwKBgBrdCxUzn7lZqjmq9kD53bwFIk+oACqrT15iAo62YJFJNFZ0yZRc\n6wocr0oN2UMHR5boS6gomknvv+l9uV0S4s2gmS0E1bAyKhCB48uqMyeD42Ma38VQ\nK9Ctfmmxxyb1xS/KCPEkHCws8kXGPxr+Z8iUcDqwYhRspFbIHmRajRNXAoGABY2d\nHqCKTNqDqSwDBoccCfWMf1mjSpfEkmL1SlFJWtZxaCgG4Qv0g5Pfref7YW5lTXbu\nG6pZrEh+yrwqqp5zx7FTt3GCyL4kVFeHvKwWSKuYFYyG9qNxPfrtr9lzGX+jLV6A\ncZ3H4Oy1Lq9zLeV6nDrhhkBpkIkRDg037/yjEHsCgYEAnWzjCXbPYjToAX6wo37K\nIffzMvGdEkgTs/YCZXnLebVvAZQL73eZ3fm/L818DELgWyAYWwzTCL0X25uhwGNK\nAY3nuVmj+5NpAi0RTtHxvCKVrOp4tmywYElBWDyo5K8CcJeDMs2PCfUnLIZEmUpE\n4U6IiNsyHqd95VLNyK/pUmw=\n-----END PRIVATE KEY-----\n",
-        "client_email": "gfw-tester-sheet@gfw-api-test.iam.gserviceaccount.com"
-    },
     "contactEmail": {
         "template": "contact-form",
         "templateConfirm": "contact-form-confirmation",
