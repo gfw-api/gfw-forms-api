@@ -1,5 +1,5 @@
 prod:
-  image: vizzuality/gfw-forms-api:1.0.0${STAGING}
+  image: vizzuality/gfw-forms-api:1.1.2${STAGING}
   ports:
     - "4400"
   env_file:
@@ -7,6 +7,7 @@ prod:
   command: start
   dns: ${DNS_SERVER}
   restart: always
-  log_driver: "gelf"
+  log_driver: "syslog"
   log_opt:
-    gelf-address: ${GELF_ADDRESS}
+    syslog-address: ${SYSLOG_ADDRESS}
+    tag: gfw-forms-api${STAGING}
