@@ -58,29 +58,20 @@ Example:
     "id": "#(service.id)",
     "name": "#(service.name)",
     "urls": [{
-        "url": "/story",
+        "url": "/form/contribution-data",
         "method": "POST",
         "endpoints": [{
             "method": "POST",
             "baseUrl": "#(service.uri)",
-            "path": "/api/v1/story",
-            "data": ["loggedUser"]
+            "path": "/api/v1/form/contribution-data"
         }]
     }, {
-        "url": "/story/:id",
-        "method": "GET",
+        "url": "/form/contact-us",
+        "method": "POST",
         "endpoints": [{
-            "method": "GET",
+            "method": "POST",
             "baseUrl": "#(service.uri)",
-            "path": "/api/v1/story/:id"
-        }]
-    }, {
-        "url": "/user",
-        "method": "GET",
-        "endpoints": [{
-            "method": "GET",
-            "baseUrl": "#(service.uri)",
-            "path": "/api/v1/story"
+            "path": "/api/v1/form/contact-us"
         }]
     }]
 }

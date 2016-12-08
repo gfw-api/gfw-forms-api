@@ -12,6 +12,7 @@ develop:
     QUEUE_NAME: mail
     API_GATEWAY_URL: http://mymachine:8000
     WRI_MAIL_RECIPIENTS: <mails>
+    GATEWAY_TOKEN: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Im1pY3Jvc2VydmljZSIsImNyZWF0ZWRBdCI6IjIwMTYtMDktMTQifQ.eUmM_C8WNPBk8EJS3rHo2Zc4wCmYkzyRpRyK8ZzDV2U
   command: develop
   volumes:
     - ./app:/opt/gfw-forms-api/app

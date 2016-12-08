@@ -7,16 +7,14 @@
         "method": "POST",
         "endpoints": [{
             "method": "POST",
-            "path": "/api/v1/form/contribution-data",
-            "data": ["loggedUser"]
+            "path": "/api/v1/form/contribution-data"
         }]
     },{
         "url": "/form/contact-us",
         "method": "POST",
         "endpoints": [{
             "method": "POST",
-            "path": "/api/v1/form/contact-us",
-            "data": ["loggedUser"]
+            "path": "/api/v1/form/contact-us"
         }]
     }
   ]
