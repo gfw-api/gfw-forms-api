@@ -26,7 +26,7 @@ class FormRouter {
 
         // send mail to USER
         logger.debug('Getting user language...');
-        const language = yield userService.getUserLanguage(this.request.query.loggedUser);
+        const language = yield userService.getUserLanguage(this.request.body.loggedUser);
         logger.debug('Sending mail to user...');
         let template = `${config.get('userMail.template')}-${language}`;
         mailService.sendMail(template, this.request.body, [{
@@ -63,7 +63,8 @@ class FormRouter {
 
         // send mail to user
         logger.debug('Getting user language...');
-        const language = yield userService.getUserLanguage(this.request.query.loggedUser);
+        logger.debug(this.request.body);
+        const language = yield userService.getUserLanguage(this.request.body.loggedUser);
         logger.debug('Sending mail to user...');
         const template = `${mailParams.templateConfirm}-${language}`;
         mailService.sendMail(template, mailData, [{
