@@ -13,7 +13,7 @@ develop:
     CT_URL: http://mymachine:9000
     LOCAL_URL: http://mymachine:4400
     WRI_MAIL_RECIPIENTS: <mails>
-    CT_TOKEN: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Im1pY3Jvc2VydmljZSIsImNyZWF0ZWRBdCI6IjIwMTYtMDktMTQifQ.IRCIRm1nfIQTfda_Wb6Pg-341zhV8soAgzw7dd5HxxQ
+    CT_TOKEN: token
   command: develop
   volumes:
     - ./app:/opt/gfw-forms-api/app

@@ -63,7 +63,6 @@ class FormRouter {
 
         // send mail to user
         logger.debug('Getting user language...');
-        logger.debug(this.request.body);
         const language = yield userService.getUserLanguage(this.request.body.loggedUser);
         logger.debug('Sending mail to user...');
         const template = `${mailParams.templateConfirm}-${language}`;
