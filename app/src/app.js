@@ -3,14 +3,15 @@
 if (process.env.NODE_ENV === 'prod') {
     require('newrelic');
 }
-var config = require('config');
-var logger = require('logger');
-var path = require('path');
-var koa = require('koa');
-var bodyParser = require('koa-bodyparser');
-var koaLogger = require('koa-logger');
-var loader = require('loader');
-var ErrorSerializer = require('serializers/errorSerializer');
+const config = require('config');
+const logger = require('logger');
+const path = require('path');
+const koa = require('koa');
+const bodyParser = require('koa-bodyparser');
+const koaLogger = require('koa-logger');
+const loader = require('loader');
+const ErrorSerializer = require('serializers/errorSerializer');
+const ctRegisterMicroservice = require('ct-register-microservice-node');
 
 
 // instance of koa
@@ -51,15 +52,19 @@ var server = require('http').Server(app.callback());
 var port = process.env.PORT || config.get('service.port');
 
 server.listen(port, function() {
-    var p = require('vizz.microservice-client').register({
-        id: config.get('service.id'),
+    ctRegisterMicroservice.register({
+        info: require('../microservice/register.json'),
+        swagger: require('../microservice/public-swagger.json'),
+        mode: process.env.NODE_ENV === 'dev' ? ctRegisterMicroservice.MODE_AUTOREGISTER : ctRegisterMicroservice.MODE_NORMAL,
+        framework: ctRegisterMicroservice.KOA1,
+        app,
+        logger,
         name: config.get('service.name'),
-        dirConfig: path.join(__dirname, '../microservice'),
-        dirPackage: path.join(__dirname, '../../'),
-        logger: logger,
-        app: app
-    });
-    p.then(function() {}, function(err) {
+        ctUrl: process.env.CT_URL,
+        url: process.env.LOCAL_URL,
+        active: true,
+        token: process.env.CT_TOKEN
+    }).then(() => {}, (err) => {
         logger.error(err);
         process.exit(1);
     });

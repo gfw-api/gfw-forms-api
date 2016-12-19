@@ -10,8 +10,10 @@ develop:
     QUEUE_URL: redis://mymachine:6379
     QUEUE_PROVIDER: redis
     QUEUE_NAME: mail
-    API_GATEWAY_URL: http://mymachine:8000
+    CT_URL: http://mymachine:9000
+    LOCAL_URL: http://mymachine:4400
     WRI_MAIL_RECIPIENTS: <mails>
+    CT_TOKEN: token
   command: develop
   volumes:
     - ./app:/opt/gfw-forms-api/app

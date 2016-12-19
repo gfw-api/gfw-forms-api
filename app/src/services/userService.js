@@ -2,6 +2,7 @@
 
 var logger = require('logger');
 var JSONAPIDeserializer = require('jsonapi-serializer').Deserializer;
+const ctRegisterMicroservice = require('ct-register-microservice-node');
 
 var deserializer = function(obj) {
     return function(callback) {
@@ -14,21 +15,22 @@ class UserService {
     * getUserLanguage(loggedUser){
         if (loggedUser) {
             logger.info('Obtaining user', '/user/' + loggedUser.id);
-            let result = yield require('vizz.microservice-client').requestToMicroservice({
-                uri: '/user/' + loggedUser.id,
-                method: 'GET',
-                json: true
-            });
-            if(result.statusCode === 200){
-                let user = yield deserializer(result.body);
-                if (user.language) {
+            try {
+                let result = yield ctRegisterMicroservice.requestToMicroservice({
+                    uri: '/user/' + loggedUser.id,
+                    method: 'GET',
+                    json: true
+                });
+                let user = yield deserializer(result);
+                if (user && user.language) {
                     const language =  user.language.toLowerCase().replace(/_/g, '-');
                     logger.info('Setting user language to send email', language);
                     return language;
                 }
-            } else {
-                logger.error('error obtaining user, default lang en', result.body);
+            } catch (e) {
+                logger.error('error obtaining user, default lang en', e);
                 return 'en';
+
             }
         }
         logger.info('User not logged, default lang en');
