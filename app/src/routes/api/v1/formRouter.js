@@ -4,6 +4,7 @@ var Router = require('koa-router');
 var logger = require('logger');
 var mailService = require('services/mailService');
 var userService = require('services/userService');
+var googleSheetsService = require('services/googleSheetsService');
 var config = require('config');
 var JSONAPIDeserializer = require('jsonapi-serializer').Deserializer;
 var router = new Router({
@@ -50,6 +51,15 @@ class FormRouter {
         };
         logger.debug('Mail data', mailData);
 
+        if ( this.request.body.signup ) {
+            try {
+                yield googleSheetsService.updateSheet(this.request.body.email);
+            } catch (err) {
+                logger.debug(err);
+            }
+        }
+
+        // if new user add to google tester sheet
         let wriRecipients = mailParams.topics[topic].emailTo.split(',');
         wriRecipients = wriRecipients.map(function(mail) {
             return {
