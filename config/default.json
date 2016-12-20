@@ -15,6 +15,11 @@
     "userMail": {
         "template": "data-contribution-confirmation"
     },
+    "googleSheets":{
+      "private_key" : "",
+      "client_email": "",
+      "target_sheet_id": ""
+    },
     "contactEmail": {
         "template": "contact-form",
         "templateConfirm": "contact-form-confirmation",
