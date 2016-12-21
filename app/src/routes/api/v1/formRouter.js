@@ -50,7 +50,7 @@ class FormRouter {
           opt_in: this.request.body.signup
         };
         logger.debug('Mail data', mailData);
-
+        logger.debug(this.request.body);
         if ( this.request.body.signup ) {
             try {
                 yield googleSheetsService.updateSheet(this.request.body.email);
