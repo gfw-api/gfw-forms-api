@@ -11,8 +11,8 @@ class GoogleSheetsService {
     }
 
     * authSheets(creds){
-        return new Promise(function(resolve, reject) {
-            this.doc.useServiceAccountAuth(creds, function(err, result) {
+        return new Promise(function(resolve, reject) {           
+            this.doc.useServiceAccountAuth(this.creds, function(err, result) {
               if (err) {
                 return reject(err);
               }
@@ -27,7 +27,7 @@ class GoogleSheetsService {
             const result = yield this.checkRows();
             result.forEach( function(row){
               if ( row._value === email ) {
-                throw('Matching email alreday in sheet');
+                throw new Error('Matching email alreday in sheet');
               }
             });
             return new Promise(function(resolve, reject) {

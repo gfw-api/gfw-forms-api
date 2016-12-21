@@ -55,7 +55,7 @@ class FormRouter {
             try {
                 yield googleSheetsService.updateSheet(this.request.body.email);
             } catch (err) {
-                logger.debug(err);
+                logger.error(err);
             }
         }
 
@@ -73,9 +73,10 @@ class FormRouter {
 
         // send mail to user
         logger.debug('Getting user language...');
-        const language = yield userService.getUserLanguage(this.request.body.loggedUser);
-        logger.debug('Sending mail to user...');
+        const language = this.request.body.language || 'en';
+        
         const template = `${mailParams.templateConfirm}-${language}`;
+        logger.debug('Sending mail to user with template ', template);
         mailService.sendMail(template, mailData, [{
             address: this.request.body.email
         }]);

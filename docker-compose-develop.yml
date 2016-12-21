@@ -14,6 +14,9 @@ develop:
     LOCAL_URL: http://mymachine:4400
     WRI_MAIL_RECIPIENTS: <mails>
     CT_TOKEN: token
+    GOOGLE_PRIVATE_KEY: <key>
+    GOOGLE_PROJECT_EMAIL: <googleEmail>
+    TARGET_SHEET_ID: <sheetId>
   command: develop
   volumes:
     - ./app:/opt/gfw-forms-api/app
