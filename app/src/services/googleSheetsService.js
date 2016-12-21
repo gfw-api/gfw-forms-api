@@ -41,11 +41,12 @@ class GoogleSheetsService {
                   if (err) {
                     return reject(err);
                   }
+                  logger.info('Added row in spreedsheet');
                   resolve(result);
                 });
             }.bind(this));
         } catch (err) {
-            logger.debug(err);
+            logger.error(err);
         }
     }
 
