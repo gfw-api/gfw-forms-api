@@ -75,7 +75,7 @@ class FormRouter {
         logger.debug('Getting user language...');
         let language = 'en';
         if (this.request.body.language){
-            language = this.request.body.language.toLowerCase();
+            language = this.request.body.language.toLowerCase().replace('_','-');
         }
         
         const template = `${mailParams.templateConfirm}-${language}`;
