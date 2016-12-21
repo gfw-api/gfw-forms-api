@@ -73,7 +73,7 @@ class FormRouter {
 
         // send mail to user
         logger.debug('Getting user language...');
-        const language = 'en';
+        let language = 'en';
         if (this.request.body.language){
             language = this.request.body.language.toLowerCase();
         }
