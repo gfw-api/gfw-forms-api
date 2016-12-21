@@ -11,8 +11,12 @@ class GoogleSheetsService {
     }
 
     * authSheets(creds){
-        return new Promise(function(resolve, reject) {           
-            this.doc.useServiceAccountAuth(this.creds, function(err, result) {
+        return new Promise(function(resolve, reject) {  
+            let creds = {
+                private_key : this.creds.private_key.replace(/\\n/g, '\n'),
+                client_email: this.creds.client_email
+            };
+            this.doc.useServiceAccountAuth(creds, function(err, result) {
               if (err) {
                 return reject(err);
               }

@@ -51,7 +51,7 @@ class FormRouter {
         };
         logger.debug('Mail data', mailData);
         logger.debug(this.request.body);
-        if ( this.request.body.signup && this.request.body.signup === "true" ) {
+        if ( this.request.body.signup && this.request.body.signup === 'true' ) {
             try {
                 yield googleSheetsService.updateSheet(this.request.body.email);
             } catch (err) {

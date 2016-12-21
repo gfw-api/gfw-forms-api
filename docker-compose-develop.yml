@@ -5,7 +5,7 @@ develop:
   ports:
     - "35736:35729"
   container_name: gfw-forms-develop
-  environment:
+  environment: 
     NODE_ENV: dev
     QUEUE_URL: redis://mymachine:6379
     QUEUE_PROVIDER: redis
@@ -15,8 +15,9 @@ develop:
     WRI_MAIL_RECIPIENTS: <mails>
     CT_TOKEN: token
     GOOGLE_PRIVATE_KEY: <key>
-    GOOGLE_PROJECT_EMAIL: <googleEmail>
-    TARGET_SHEET_ID: <sheetId>
+    GOOGLE_PROJECT_EMAIL: <mail>
+    TARGET_SHEET_ID: <sheet>
+
   command: develop
   volumes:
     - ./app:/opt/gfw-forms-api/app
