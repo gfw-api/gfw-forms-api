@@ -11,7 +11,7 @@ class GoogleSheetsService {
     }
 
     * authSheets(creds){
-        return new Promise(function(resolve, reject) {  
+        return new Promise(function(resolve, reject) {
             let creds = {
                 private_key : this.creds.private_key.replace(/\\n/g, '\n'),
                 client_email: this.creds.client_email
@@ -41,7 +41,7 @@ class GoogleSheetsService {
                     'Email': email,
                     'Source': 'GFW Feedback Form'
                 };
-                this.doc.addRow(1, newRow, function(err, result) {
+                this.doc.addRow(3, newRow, function(err, result) {
                   if (err) {
                     return reject(err);
                   }
@@ -58,7 +58,7 @@ class GoogleSheetsService {
         try {
             logger.debug('checking rows....');
             return new Promise(function(resolve, reject) {
-                this.doc.getCells(1, {
+                this.doc.getCells(3, {
                     'min-col': 5,
                     'max-col': 5
                 }, function(err, result) {
