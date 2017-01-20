@@ -41,7 +41,7 @@ class GoogleSheetsService {
                     'Email': email,
                     'Source': 'GFW Feedback Form'
                 };
-                this.doc.addRow(1, newRow, function(err, result) {
+                this.doc.addRow(this.creds.target_sheet_index, newRow, function(err, result) {
                   if (err) {
                     return reject(err);
                   }
@@ -58,7 +58,7 @@ class GoogleSheetsService {
         try {
             logger.debug('checking rows....');
             return new Promise(function(resolve, reject) {
-                this.doc.getCells(1, {
+                this.doc.getCells(this.creds.target_sheet_index, {
                     'min-col': 5,
                     'max-col': 5
                 }, function(err, result) {

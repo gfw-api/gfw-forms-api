@@ -18,7 +18,8 @@
     "googleSheets":{
       "private_key" : "",
       "client_email": "",
-      "target_sheet_id": ""
+      "target_sheet_id": "",
+      "target_sheet_index": null
     },
     "contactEmail": {
         "template": "contact-form",
