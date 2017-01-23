@@ -19,7 +19,7 @@ case "$1" in
         docker-compose -f docker-compose-test.yml run test
         ;;
   *)
-        echo "Usage: geostore.sh {test-e2e|test-unit|start|develop|test}" >&2
+        echo "Usage: forms.sh {test-e2e|test-unit|start|develop|test}" >&2
         exit 1
         ;;
 esac

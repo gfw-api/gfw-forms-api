@@ -4,14 +4,20 @@ develop:
     service: base
   ports:
     - "35736:35729"
-  container_name: gfw-contribution-data-develop
-  environment:
+  container_name: gfw-forms-develop
+  environment: 
     NODE_ENV: dev
     QUEUE_URL: redis://mymachine:6379
     QUEUE_PROVIDER: redis
     QUEUE_NAME: mail
-    API_GATEWAY_URL: http://mymachine:8000
+    CT_URL: http://mymachine:9000
+    LOCAL_URL: http://mymachine:4400
     WRI_MAIL_RECIPIENTS: <mails>
+    CT_TOKEN: token
+    GOOGLE_PRIVATE_KEY: <key>
+    GOOGLE_PROJECT_EMAIL: <mail>
+    TARGET_SHEET_ID: <sheet>
+
   command: develop
   volumes:
-    - ./app:/opt/gfw-contribution-data/app
+    - ./app:/opt/gfw-forms-api/app

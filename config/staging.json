@@ -1,7 +1,7 @@
 {
     "logger": {
-        "name": "gfw-contribution-data-STAGING",
-        "level": "debug",
+        "name": "gfw-forms-STAGING",
+        "level": "info",
         "toFile": false,
         "dirLogFile": null
     }
