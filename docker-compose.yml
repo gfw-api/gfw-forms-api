@@ -10,4 +10,4 @@ prod:
   log_driver: "syslog"
   log_opt:
     syslog-address: ${SYSLOG_ADDRESS}
-    tag: gfw-contribution-data${STAGING}
+    tag: gfw-forms-api${STAGING}
