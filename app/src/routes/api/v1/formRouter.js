@@ -50,13 +50,7 @@ class FormRouter {
           opt_in: this.request.body.signup
         };
         logger.debug('Mail data', mailData);
-        try {
-            yield googleSheetsService.updateSheet(this.request.body);
-        } catch (err) {
-            logger.error(err);
-        }
 
-        // if new user add to google tester sheet
         let wriRecipients = mailParams.topics[topic].emailTo.split(',');
         wriRecipients = wriRecipients.map(function(mail) {
             return {
@@ -80,6 +74,13 @@ class FormRouter {
         mailService.sendMail(template, mailData, [{
             address: this.request.body.email
         }]);
+
+        // Update Google SpreadSheet for beta users
+        try {
+            yield googleSheetsService.updateSheet(this.request.body);
+        } catch (err) {
+            logger.error(err);
+        }
 
         this.body = '';
     }
