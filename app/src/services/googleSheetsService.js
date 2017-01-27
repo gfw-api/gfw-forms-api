@@ -36,7 +36,7 @@ class GoogleSheetsService {
                 return;
               }
             }
-            if ( user.signup === true ) {
+            if ( user.signup === 'true' ) {
                 logger.info('User does not exist. Adding....');
                 return new Promise(function(resolve, reject) {
                     const newRow = {
@@ -72,7 +72,7 @@ class GoogleSheetsService {
                   }
                   logger.info('Found user....');
                   row[0].source = 'GFW Feedback form';
-                  row[0].agreedtotest = user.signup === true ? 'yes' : 'no';
+                  row[0].agreedtotest = user.signup === 'true' ? 'yes' : 'no';
                   row[0].save(function(){
                       logger.info('User updated');
                       resolve(row);
