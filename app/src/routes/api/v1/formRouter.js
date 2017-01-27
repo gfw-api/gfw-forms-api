@@ -50,12 +50,10 @@ class FormRouter {
           opt_in: this.request.body.signup
         };
         logger.debug('Mail data', mailData);
-        if ( this.request.body.signup && this.request.body.signup === 'true' ) {
-            try {
-                yield googleSheetsService.updateSheet(this.request.body.email);
-            } catch (err) {
-                logger.error(err);
-            }
+        try {
+            yield googleSheetsService.updateSheet(this.request.body);
+        } catch (err) {
+            logger.error(err);
         }
 
         // if new user add to google tester sheet
@@ -76,7 +74,7 @@ class FormRouter {
         if (this.request.body.language){
             language = this.request.body.language.toLowerCase().replace('_','-');
         }
-        
+
         const template = `${mailParams.templateConfirm}-${language}`;
         logger.debug('Sending mail to user with template ', template);
         mailService.sendMail(template, mailData, [{
