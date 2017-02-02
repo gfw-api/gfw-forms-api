@@ -13,5 +13,9 @@
         "client_email": "GOOGLE_PROJECT_EMAIL",
         "target_sheet_id": "TARGET_SHEET_ID",
         "target_sheet_index": "TARGET_SHEET_INDEX"
+    },
+    "mongodb": {
+        "host": "MONGO_PORT_27017_TCP_ADDR",
+        "port": "MONGO_PORT_27017_TCP_PORT"
     }
 }

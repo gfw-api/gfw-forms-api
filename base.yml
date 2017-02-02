@@ -6,3 +6,12 @@ base:
     PORT: 4400
     NODE_PATH: app/src
   container_name: gfw-forms-api
+mongo:
+  image: mongo
+  container_name: gfw-forms-mongo
+  command: --smallfiles
+  ports:
+    - "27017"
+  volumes:
+    - $HOME/docker/data/gfw-forms-api:/data/db
+  restart: always

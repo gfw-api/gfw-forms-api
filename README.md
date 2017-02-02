@@ -1,80 +1,182 @@
-# GFW Story API
+# GFW Forms API
 
-Master: [![Build Status](https://travis-ci.org/gfw-api/gfw-story-api.svg?branch=master)](https://travis-ci.org/gfw-api/gfw-story-api) Develop: [![Build Status](https://travis-ci.org/gfw-api/gfw-story-api.svg?branch=develop)](https://travis-ci.org/gfw-api/gfw-story-api)
 
-This repository is the microservice that it implement the story funcionality and exposed the /story endpoint in the api-gateway
+This repository is the microservice that implements the forms and Questionnaire funcionalities
 
-[View the documentation for this
-API](http://gfw-api.github.io/swagger-ui/?url=https://raw.githubusercontent.com/gfw-api/gfw-story-api/master/app/microservice/swagger.yml#/STORY)
+1. [Getting Started](#getting-started)
 
-## First time user
-Perform the following steps:
-* [Install docker](https://docs.docker.com/engine/installation/)
-* Clone this repository: ```git clone git@github.com:Vizzuality/gfw-story-api.git```
-* Enter in the directory (cd gfw-story-api)
-* After, you open a terminal (if you have mac or windows, open a terminal with the 'Docker Quickstart Terminal') and execute the next command:
+## Getting Started
 
-```bash
-    docker-compose -f docker-compose-develop.yml build
+### OS X
+
+**First, make sure that you have the [API gateway running
+locally](https://github.com/control-tower/control-tower).**
+
+We're using Docker which, luckily for you, means that getting the
+application running locally should be fairly painless. First, make sure
+that you have [Docker Compose](https://docs.docker.com/compose/install/)
+installed on your machine.
+
+```
+git clone https://github.com/Vizzuality/gfw-forms-api.git
+cd gfw-forms-api
+./forms.sh develop
+```text
+
+You can now access the microservice through the CT gateway.
 
 ```
 
-## Run in develop mode (Watch mode)
-Remember: In windows and Mac, open the terminal with 'Docker Quickstart Terminal'
+### Configuration
 
-```bash
-docker-compose -f docker-compose-develop.yml build
-//this command up the machine. If you want up in background mode, you add the -d option
-```
+It is necessary to define these environment variables:
 
-
-## Execute test
-Remember: In windows and Mac, open the terminal with 'Docker Quickstart Terminal'
-```
-docker-compose -f docker-compose-test.yml run test
-```
-
-## Install in heroku
-
-Is necessary define the next environment variables:
-* API_GATEWAY_URI => Url the register of the API Gateway. Remember: If the authentication is active in API Gateway, add the username and password in the url
+* CT_URL => Control Tower URL
 * NODE_ENV => Environment (prod, staging, dev)
-* CARTODB_APIKEY => API key to connect to CartoDB
-* CARTODB_USER => User to connect to CartoDB
 
 
+## Quick Overview
 
-# Config
+### Questionnaire Entity
 
-## register.json
-This file contain the configuration about the endpoints that public the microservice. This json will send to the apigateway. it can contain variables:
-* #(service.id) => Id of the service setted in the config file by environment
-* #(service.name) => Name of the service setted in the config file by environment
-* #(service.uri) => Base uri of the service setted in the config file by environment
+```json
 
-Example:
-````
 {
-    "id": "#(service.id)",
-    "name": "#(service.name)",
-    "urls": [{
-        "url": "/form/contribution-data",
-        "method": "POST",
-        "endpoints": [{
-            "method": "POST",
-            "baseUrl": "#(service.uri)",
-            "path": "/api/v1/form/contribution-data"
-        }]
-    }, {
-        "url": "/form/contact-us",
-        "method": "POST",
-        "endpoints": [{
-            "method": "POST",
-            "baseUrl": "#(service.uri)",
-            "path": "/api/v1/form/contact-us"
-        }]
-    }]
+  "data": [
+    {
+      "type": "questionnaire",
+      "id": "5893463dbd106700c9cbef3c",
+      "attributes": {
+        "name": "Ra questionnaire",
+        "questions": [
+          {
+            "type": "text",
+            "label": "Name",
+            "defaultValue": "Insert your name",
+            "_id": "5893463dbd106700c9cbef41",
+            "required": false,
+            "values": []
+          },
+          {
+            "type": "checkbox",
+            "label": "Range age",
+            "_id": "5893463dbd106700c9cbef40",
+            "required": false,
+            "values": [
+              "0-18",
+              "19-50",
+              "+50"
+            ]
+          },
+          {
+            "type": "radio",
+            "label": "Gender",
+            "_id": "5893463dbd106700c9cbef3f",
+            "required": false,
+            "values": [
+              "Male",
+              "Female"
+            ]
+          },
+          {
+            "type": "text",
+            "label": "Photo",
+            "_id": "5893463dbd106700c9cbef3e",
+            "required": true,
+            "values": []
+          },
+          {
+            "type": "select",
+            "label": "Country",
+            "_id": "5893463dbd106700c9cbef3d",
+            "required": false,
+            "values": [
+              "Spain",
+              "EEUU"
+            ]
+          }
+        ],
+        "createdAt": "2017-02-02T14:46:21.862Z"
+      }
+    }
+  ]
 }
 
+```
+
+### CRUD Questionnaire
+
+```
+
+All endpoints are logged.  Check if user is ADMIN or MANAGER in gfw application
+
+GET: /questionnaire -> Return all questionnaires of the user logged
+GET: /questionnaire/:id -> Return questionnaire with the same id. Check if user is ADMIN or MANAGER in gfw application
+POST: /questionnaire -> Create an questionnaire and associate to the user. With body:
+{  
+   "name":"Example",
+   "questions":[  
+      {  
+         "type":"text",
+         "label":"Name",
+         "defaultValue":"Insert your name"
+      },
+      {  
+         "type":"checkbox",
+         "label":"Range age",
+         "values":[  
+            "0-18",
+            "19-50",
+            "+50"
+         ]
+      },
+      {  
+         "type":"radio",
+         "label":"Gender",
+         "values":[  
+            "Male",
+            "Female"
+         ]
+      },
+      {  
+         "type":"blob",
+         "label":"Photo",
+         "required":true
+      },
+      {  
+         "type":"select",
+         "label":"Country",
+         "values":[  
+            "Spain",
+            "EEUU"
+         ]
+      }
+   ]
+}
+
+
+PATCH: /questionnaire/:id -> Update the questionnaire with the same id. 
+DELETE: /questionnaire/:id -> Delete the questionnaire with the same id. 
+
+```
+
+
+### CRUD Questionnaire answers
+
+```
+
+GET: /questionnaire/:idQuestionnaire/answer -> Return all answers of the questionnaires of the user logged
+GET: /questionnaire/:idQuestionnaire/answer/answer/:id -> Return answer with the same id. Check if the answer is owned of the logged user
+POST: /questionnaire/:idQuestionnaire/answer  -> Create an answer of the questionnaire with the id of the param and associate to the user. With body:
+Without Content-type (is possible send files)
+<questionId>:<responseValue>
+5893463dbd106700c9cbef41:Pepe
+5893463dbd106700c9cbef40:0-18,19-50
+5893463dbd106700c9cbef3f:Male
+5893463dbd106700c9cbef3d:Spain
+
+
+PATCH: /questionnaire/:idQuestionnaire/answer/:id -> Update the answer with the same id. Check if the ansers is owned of the logged user
+DELETE: /questionnaire/:idQuestionnaire/answer/:id -> Delete the asnwer with the same id. Check if the answer is owned of the logged user
 
 ```
