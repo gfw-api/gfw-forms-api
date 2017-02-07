@@ -4,7 +4,7 @@ var Schema = mongoose.Schema;
 
 var Question = new Schema({
     type: {type: String, required: true, trim: true},
-    label: {type: Mixed, required: true, trim: true},
+    label: {type: Schema.Types.Mixed, required: true, trim: true},
     defaultValue: {type: String, required: false, trim: true},
     values: [{type: String, required: true, trim: true}],
     required: {type: Boolean, required: true, default: false}
