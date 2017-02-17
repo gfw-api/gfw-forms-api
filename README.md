@@ -119,22 +119,25 @@ POST: /questionnaire -> Create an questionnaire and associate to the user. With 
       {  
          "type":"text",
          "label":"Name",
+         "name": "name",
          "defaultValue":"Insert your name",
          "order": 1,
       },
       {  
          "type":"checkbox",
          "label":"Range age",
+         "name": "age",
          "values":[  
             "0-18",
             "19-50",
             "+50"
          ],
          "order": 2,
-         "conditionalQuestions": [
+         "childQuestions": [
             {
               "type": "text",
               "label": "Specific age",
+              "name": "specific-age",
               "defaultValue": "Insert your age",
               "conditionalValue": "0-18",
               "order": 0,
@@ -146,6 +149,7 @@ POST: /questionnaire -> Create an questionnaire and associate to the user. With 
       {  
          "type":"radio",
          "label":"Gender",
+         "name": "gender",
          "values":[  
             "Male",
             "Female"
@@ -155,12 +159,18 @@ POST: /questionnaire -> Create an questionnaire and associate to the user. With 
       {  
          "type":"blob",
          "label":"Photo",
+         "name": "photo",
          "required":true,
          "order": 4,
       },
       {  
          "type":"select",
          "label":"Country",
+         "name": "country",
+         "conditions": [{
+           "name": "gender",
+           "value": "Female"
+         }],
          "order": 5,
          "values":[  
             "Spain",
