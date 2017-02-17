@@ -7,7 +7,7 @@ var Response = new Schema({
     questionnaire: { type: ObjectId, ref: 'Questionnaire', required: true }, 
     user: {type: ObjectId, required: true},
     responses: [{
-        question: { type: ObjectId, ref: 'Question', required: true },
+        question: {type: String, required: true, trim: true},
         value: {type: String, required: true, trim: true}
     }],
     createdAt: {type: Date, required: true, default: Date.now}

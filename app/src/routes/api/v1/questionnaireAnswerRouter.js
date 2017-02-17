@@ -46,27 +46,27 @@ class AnswerRouter {
             let response = null;
             if (question.conditionalQuestions) {
                 for (let j = 0, lengthSub = question.conditionalQuestions.length; j < lengthSub; j++) {
-                    response = this.request.body.fields[question.conditionalQuestions[j]._id];
+                    response = this.request.body.fields[question.conditionalQuestions[j].name];
                     if (!response && question.conditionalQuestions[j].required) {
-                        this.throw(400, `${question.label} (${question._id}) required`);
+                        this.throw(400, `${question.label} (${question.name}) required`);
                         return;
                     }
                     if (response) {
                         answer.responses.push({
-                            question: question.conditionalQuestions[j]._id,
+                            question: question.conditionalQuestions[j].name,
                             value: JSON.parse(response)
                         });
                     }
                 }
             }
-            response = this.request.body.fields[question._id];
+            response = this.request.body.fields[question.name];
             if (!response && question.required) {
-                this.throw(400, `${question.label} (${question._id}) required`);
+                this.throw(400, `${question.label} (${question.name}) required`);
                 return;
             }
             if (response) {
                 answer.responses.push({
-                    question: question._id,
+                    question: question.name,
                     value: JSON.parse(response)
                 });
             }
