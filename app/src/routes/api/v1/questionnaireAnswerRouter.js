@@ -5,6 +5,7 @@ const ErrorSerializer = require('serializers/errorSerializer');
 const AnswerSerializer = require('serializers/answerSerializer');
 const AnswerModel = require('models/answerModel');
 const QuestionnaireModel = require('models/questionnaireModel');
+const s3Service = require('services/s3Service');
 
 const router = new Router({
     prefix: '/questionnaire/:questionnaireId/answer',
@@ -46,32 +47,40 @@ class AnswerRouter {
             let response = null;
             if (question.conditionalQuestions) {
                 for (let j = 0, lengthSub = question.conditionalQuestions.length; j < lengthSub; j++) {
-                    response = this.request.body.fields[question.conditionalQuestions[j].name];
+                    response = this.request.body.fields[question.conditionalQuestions[j].name] || this.request.body.files[question.conditionalQuestions[j].name];
                     if (!response && question.conditionalQuestions[j].required) {
                         this.throw(400, `${question.label} (${question.name}) required`);
                         return;
                     }
                     if (response) {
+                        if (question.type === 'blob') {
+                            //upload file
+                            response = yield s3Service.uploadFile(response.path, response.name);
+                        }
                         answer.responses.push({
                             question: question.conditionalQuestions[j].name,
-                            value: JSON.parse(response)
+                            value: response
                         });
                     }
                 }
             }
-            response = this.request.body.fields[question.name];
+            response = this.request.body.fields[question.name] || this.request.body.files[question.name];
             if (!response && question.required) {
                 this.throw(400, `${question.label} (${question.name}) required`);
                 return;
             }
             if (response) {
+                if (question.type === 'blob') {
+                    //upload file
+                    response = yield s3Service.uploadFile(response.path, response.name);                    
+                }
                 answer.responses.push({
                     question: question.name,
-                    value: JSON.parse(response)
+                    value: response
                 });
             }
         }
-        
+
         const answerModel = yield new AnswerModel(answer).save();
 
         this.body = AnswerSerializer.serialize(answerModel);

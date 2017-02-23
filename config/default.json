@@ -67,5 +67,10 @@
         "database": "gfw_forms",
         "host": "192.168.1.109",
         "port": 32780
+    },
+    "s3":{
+        "accessKeyId": null,
+        "secretAccessKey": null,
+        "bucket": null
     }
 }
