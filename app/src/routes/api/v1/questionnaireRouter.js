@@ -61,11 +61,11 @@ class QuestionnaireRouter {
         const questionnaire = yield QuestionnaireModel.findById(this.params.id);
         const questions = {};
         if (!questionnaire) {
-            ctx.throw(404, 'Not found');
+            this.throw(404, 'Not found');
             return;
         }
         for (let i = 0, length = questionnaire.questions.length; i < length; i++) {
-            const question = questionnaire.questions[i]
+            const question = questionnaire.questions[i];
             questions[question.name] = null;
             if (question.childQuestions){
                 for (let j = 0, lengthChild =question.childQuestions.length; j < lengthChild; j++ ){
@@ -84,9 +84,10 @@ class QuestionnaireRouter {
             for (let i = 0, length = answers.length; i < length; i++) {
                 const answer = answers[i];
                 const responses = Object.assign({}, questions);
-                answer.responses.map((res) => {
+                for(let j = 0, lengthResponses = answer.responses.length; j < lengthResponses; j++){
+                    const res = answer.responses[j];
                     responses[res.question] = res.value;
-                });
+                }
                 logger.debug('Writting...');
                 data = json2csv({
                     data: responses,
