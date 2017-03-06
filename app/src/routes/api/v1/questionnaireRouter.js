@@ -72,7 +72,8 @@ class QuestionnaireRouter {
                 }) + '\n';
                 this.body.write(data);
             }
-        }        
+        }
+        this.body.end();    
     }
 
 }
