@@ -57,6 +57,22 @@ class QuestionnaireRouter {
         this.set('Content-disposition', `attachment; filename=${this.params.id}.csv`);
         this.set('Content-type', 'text/csv');
         this.body = passThrough();
+
+        const questionnaire = yield QuestionnaireModel.findById(this.params.id);
+        const questions = {};
+        if (!questionnaire) {
+            ctx.throw(404, 'Not found');
+            return;
+        }
+        for (let i = 0, length = questionnaire.questions.length; i < length; i++) {
+            const question = questionnaire.questions[i]
+            questions[question.name] = null;
+            if (question.childQuestions){
+                for (let j = 0, lengthChild =question.childQuestions.length; j < lengthChild; j++ ){
+                    questions[question.childQuestions[j].name] = null;
+                }
+            }
+        } 
         const answers = yield AnswerModel.find({
             questionnaire: this.params.id
         });
@@ -64,10 +80,16 @@ class QuestionnaireRouter {
         if (answers) {
             logger.debug('Data found!');
             let data = null;
+            
             for (let i = 0, length = answers.length; i < length; i++) {
+                const answer = answers[i];
+                const responses = Object.assign({}, questions);
+                answer.responses.map((res) => {
+                    responses[res.question] = res.value;
+                });
                 logger.debug('Writting...');
                 data = json2csv({
-                    data: answers[i].toObject(),
+                    data: responses,
                     hasCSVColumnTitle: i === 0
                 }) + '\n';
                 this.body.write(data);
