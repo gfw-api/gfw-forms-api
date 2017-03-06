@@ -96,6 +96,15 @@
 			"method": "DELETE",
 			"path": "/api/v1/questionnaire/:questionnaireId/answer/:id"
 		}
+	},{
+		"path": "/questionnaire/:id/download-answers",
+		"method": "GET",
+		"authenticated": true,
+		"binary": true,
+		"redirect": {
+			"method": "GET",
+			"path": "/api/v1/questionnaire/:id/download-answers"
+		}
 	}
   ]
 }

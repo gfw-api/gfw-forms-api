@@ -5,12 +5,15 @@ const ErrorSerializer = require('serializers/errorSerializer');
 const QuestionnaireSerializer = require('serializers/questionnaireSerializer');
 const QuestionnaireModel = require('models/questionnaireModel');
 const QuestionnaireValidator = require('validators/questionnaireValidator');
+const AnswerModel = require('models/answerModel');
+const passThrough = require('stream').PassThrough;
+const json2csv = require('json2csv');
 
 const router = new Router({
     prefix: '/questionnaire',
 });
 
-class AreaRouter {
+class QuestionnaireRouter {
 
     static * getAll(){
         logger.info('Obtaining all questionnaires');
@@ -49,6 +52,29 @@ class AreaRouter {
         this.statusCode = 204;
     }
 
+    static * downloadAnswers() {
+        logger.info(`Download answers of questionnaire ${this.params.id}`);
+        this.set('Content-disposition', `attachment; filename=${this.params.id}.csv`);
+        this.set('Content-type', 'text/csv');
+        this.body = passThrough();
+        const answers = yield AnswerModel.find({
+            questionnaire: this.params.id
+        });
+        logger.debug('Obtaining data');
+        if (answers) {
+            logger.debug('Data found!');
+            let data = null;
+            for (let i = 0, length = answers.length; i < length; i++) {
+                logger.debug('Writting...');
+                data = json2csv({
+                    data: answers[i].toObject(),
+                    hasCSVColumnTitle: i === 0
+                }) + '\n';
+                this.body.write(data);
+            }
+        }        
+    }
+
 }
 
 
@@ -74,10 +100,19 @@ function * checkPermission(next) {
     yield next;
 }
 
-router.post('/', loggedUserToState, QuestionnaireValidator.create, AreaRouter.save);
-router.patch('/:id', loggedUserToState, checkPermission, QuestionnaireValidator.update, AreaRouter.update);
-router.get('/', loggedUserToState, AreaRouter.getAll);
-router.get('/:id', loggedUserToState, AreaRouter.get);
-router.delete('/:id', loggedUserToState, checkPermission, AreaRouter.delete);
+function* checkAdmin(next) {
+    if (!this.state.loggedUser || this.state.loggedUser.role !== 'ADMIN') {
+        this.throw(403, 'Not authorized');
+        return;
+    }
+    yield next;
+}
+
+router.post('/', loggedUserToState, QuestionnaireValidator.create, QuestionnaireRouter.save);
+router.patch('/:id', loggedUserToState, checkPermission, QuestionnaireValidator.update, QuestionnaireRouter.update);
+router.get('/', loggedUserToState, QuestionnaireRouter.getAll);
+router.get('/:id', loggedUserToState, QuestionnaireRouter.get);
+router.delete('/:id', loggedUserToState, checkPermission, QuestionnaireRouter.delete);
+router.get('/:id/download-answers', loggedUserToState, checkAdmin, QuestionnaireRouter.downloadAnswers);
 
 module.exports = router;

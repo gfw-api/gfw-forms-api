@@ -72,7 +72,7 @@ class AnswerRouter {
             if (response) {
                 if (question.type === 'blob') {
                     //upload file
-                    response = yield s3Service.uploadFile(response.path, response.name);                    
+                    response = yield s3Service.uploadFile(response.path, response.name);
                 }
                 answer.responses.push({
                     question: question.name,
@@ -106,7 +106,6 @@ class AnswerRouter {
         this.body = '';
         this.statusCode = 204;
     }
-
 }
 
 
@@ -139,12 +138,12 @@ function* checkExistQuestionnaire(next) {
     yield next;
 }
 
-
 router.post('/', loggedUserToState, checkExistQuestionnaire, AnswerRouter.save);
 router.patch('/:id', loggedUserToState, checkExistQuestionnaire, AnswerRouter.update);
 router.get('/', loggedUserToState, checkExistQuestionnaire, AnswerRouter.getAll);
 router.get('/:id', loggedUserToState, checkExistQuestionnaire, AnswerRouter.get);
 router.delete('/:id', loggedUserToState, checkExistQuestionnaire, AnswerRouter.delete);
+
 
 
 module.exports = router;
