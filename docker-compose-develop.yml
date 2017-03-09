@@ -17,7 +17,15 @@ develop:
     GOOGLE_PRIVATE_KEY: <key>
     GOOGLE_PROJECT_EMAIL: <mail>
     TARGET_SHEET_ID: <sheet>
-
+    S3_ACCESS_KEY_ID: <key>
+    S3_SECRET_ACCESS_KEY: <key>
+    S3_BUCKET: <key>
   command: develop
   volumes:
     - ./app:/opt/gfw-forms-api/app
+  links: 
+    - mongo
+mongo:
+  extends:
+    file: base.yml
+    service: mongo
