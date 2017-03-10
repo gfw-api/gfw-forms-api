@@ -3,21 +3,21 @@
     "name": "#(service.name)",
     "tags": ["gfw"],
     "endpoints": [{
-        "path": "/form/contribution-data",
+        "path": "/v1/form/contribution-data",
         "method": "POST",
         "redirect": {
             "method": "POST",
             "path": "/api/v1/form/contribution-data"
         }
     },{
-        "path": "/form/contact-us",
+        "path": "/v1/form/contact-us",
         "method": "POST",
         "redirect": {
             "method": "POST",
             "path": "/api/v1/form/contact-us"
         }
     }, {
-		"path": "/questionnaire",
+		"path": "/v1/questionnaire",
 		"method": "GET",
 		"authenticated": true,
 		"redirect": {
@@ -25,7 +25,7 @@
 			"path": "/api/v1/questionnaire"
 		}
 	},{
-		"path": "/questionnaire/:id",
+		"path": "/v1/questionnaire/:id",
 		"method": "GET",
 		"authenticated": true,
 		"redirect": {
@@ -33,7 +33,7 @@
 			"path": "/api/v1/questionnaire/:id"
 		}
 	},{
-		"path": "/questionnaire",
+		"path": "/v1/questionnaire",
 		"method": "POST",
 		"authenticated": true,
 		"redirect": {
@@ -41,7 +41,7 @@
 			"path": "/api/v1/questionnaire"
 		}
 	},{
-		"path": "/questionnaire/:id",
+		"path": "/v1/questionnaire/:id",
 		"method": "PATCH",
 		"authenticated": true,
 		"redirect": {
@@ -49,7 +49,7 @@
 			"path": "/api/v1/questionnaire/:id"
 		}
 	},{
-		"path": "/questionnaire/:id",
+		"path": "/v1/questionnaire/:id",
 		"method": "DELETE",
 		"authenticated": true,
 		"redirect": {
@@ -57,7 +57,7 @@
 			"path": "/api/v1/questionnaire/:id"
 		}
 	}, {
-		"path": "/questionnaire/:questionnaireId/answer",
+		"path": "/v1/questionnaire/:questionnaireId/answer",
 		"method": "GET",
 		"authenticated": true,
 		"redirect": {
@@ -65,7 +65,7 @@
 			"path": "/api/v1/questionnaire/:questionnaireId/answer"
 		}
 	},{
-		"path": "/questionnaire/:questionnaireId/answer/:id",
+		"path": "/v1/questionnaire/:questionnaireId/answer/:id",
 		"method": "GET",
 		"authenticated": true,
 		"redirect": {
@@ -73,7 +73,7 @@
 			"path": "/api/v1/questionnaire/:questionnaireId/answer/:id"
 		}
 	},{
-		"path": "/questionnaire/:questionnaireId/answer",
+		"path": "/v1/questionnaire/:questionnaireId/answer",
 		"method": "POST",
 		"authenticated": true,
 		"redirect": {
@@ -81,7 +81,7 @@
 			"path": "/api/v1/questionnaire/:questionnaireId/answer"
 		}
 	},{
-		"path": "/questionnaire/:questionnaireId/answer/:id",
+		"path": "/v1/questionnaire/:questionnaireId/answer/:id",
 		"method": "PATCH",
 		"authenticated": true,
 		"redirect": {
@@ -89,7 +89,7 @@
 			"path": "/api/v1/questionnaire/:questionnaireId/answer/:id"
 		}
 	},{
-		"path": "/questionnaire/:questionnaireId/answer/:id",
+		"path": "/v1/questionnaire/:questionnaireId/answer/:id",
 		"method": "DELETE",
 		"authenticated": true,
 		"redirect": {
@@ -97,7 +97,7 @@
 			"path": "/api/v1/questionnaire/:questionnaireId/answer/:id"
 		}
 	},{
-		"path": "/questionnaire/:id/download-answers",
+		"path": "/v1/questionnaire/:id/download-answers",
 		"method": "GET",
 		"authenticated": true,
 		"binary": true,
