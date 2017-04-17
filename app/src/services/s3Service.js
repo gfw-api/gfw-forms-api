@@ -32,7 +32,7 @@ class S3Service {
                 var base64data = new Buffer(data, 'binary');
                 this.s3.upload({
                     Bucket: config.get('s3.bucket'),
-                    Key: `forest-watcher/${uuid}.${ext}`,
+                    Key: `${config.get('s3.folder')}/${uuid}.${ext}`,
                     Body: base64data,
                     ACL: 'public-read'
                 }, function (resp) {
@@ -42,7 +42,7 @@ class S3Service {
                         return;
                     }
                     logger.debug('File uploaded successfully', resp);
-                    resolve(`https://s3.amazonaws.com/${config.get('s3.bucket')}/forest-watcher/${uuid}.${ext}`);
+                    resolve(`https://s3.amazonaws.com/${config.get('s3.bucket')}/${config.get('s3.folder')}/${uuid}.${ext}`);
                 });
             });
         });
