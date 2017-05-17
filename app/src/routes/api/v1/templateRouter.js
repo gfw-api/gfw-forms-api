@@ -28,16 +28,18 @@ class TemplateRouter {
     }
 
     static * save(){
-        logger.info('Saving template');
+        logger.info('Saving template', this.request.body);
         const request = this.request.body;
         const template = yield new TemplateModel({
             name: request.name,
+            label: request.label,
             areaOfInterest: request.areaOfInterest,
             user: this.state.loggedUser.id,
             languages: request.languages,
             defaultLanguage: request.defaultLanguage,
             questions: request.questions
         }).save();
+        logger.debug('HOla i am done', template);
         this.body = TemplateSerializer.serialize(template);
     }
 

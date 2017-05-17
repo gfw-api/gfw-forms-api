@@ -5,7 +5,7 @@ class TemplateValidator {
     static * create(next) {
         const request = this.request.body;
         logger.debug('Validating body for create template');
-        this.checkBody('name').notEmpty().len(2, 100);
+        // this.checkBody('name').notEmpty().len(2, 100);
         this.checkBody('questions').notEmpty();
         // this.checkBody('languages').notEmpty();
 

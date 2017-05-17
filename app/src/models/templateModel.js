@@ -5,10 +5,10 @@ const ObjectId = Schema.ObjectId;
 
 var TemplateQuestionConditional = new Schema({
     type: {type: String, required: true, trim: true},
-    label: {type: Object, required: true, default: {}},
+    label: {type: Schema.Types.Mixed, required: true, default: {}},
     name: {type: String, required: true, trim: true},
     defaultValue: {type: Schema.Types.Mixed, required: false, trim: true},
-    values: [{type: Object, required: true, default: {}}],
+    values: {type: Schema.Types.Mixed, required: true, default: {}},
     required: {type: Boolean, required: true, default: false},
     order: {type: Number, required: false, default: false},
     conditionalValue: {type: Number, required: false, trim: true}
@@ -16,10 +16,10 @@ var TemplateQuestionConditional = new Schema({
 
 var TemplateQuestion = new Schema({
     type: {type: String, required: true, trim: true},
-    label: {type: Object, required: true, default: {}},
+    label: {type: Schema.Types.Mixed, required: true, default: {}},
     name: {type: String, required: true, trim: true},
     defaultValue: {type: Schema.Types.Mixed, required: false, trim: true},
-    values: [{type: Object, required: true, default: {}}],
+    values: {type: Schema.Types.Mixed, required: true, default: {}},
     required: {type: Boolean, required: true, default: false},
     order: {type: Number, required: false, default: false},
     childQuestions: [TemplateQuestionConditional],
@@ -30,7 +30,8 @@ var TemplateQuestion = new Schema({
 });
 
 var Template = new Schema({
-    name: {type: Object, required: true, default: {}},
+    name: {type: String, required: true, trim: true},
+    label: {type: Schema.Types.Mixed, required: true, default: {}},
     areaOfInterest: {type: String, required: true, trim: true},
     user: {type: String, required: true, trim: true},
     languages: {type: Array, required: true, default: false},
