@@ -128,7 +128,8 @@ function* loggedUserToState(next) {
 }
 
 function* checkExistTemplate(next) {
-    const template = yield TemplateModel.findById(this.params.templateId).populate('questions');
+    logger.debug(this.request.body.fields.template);
+    const template = yield TemplateModel.findById(this.request.body.fields.template).populate('questions');
     if (!template) {
         this.throw(404, 'Template not found');
         return;
