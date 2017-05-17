@@ -3,30 +3,77 @@ const ErrorSerializer = require('serializers/errorSerializer');
 
 class TemplateValidator {
     static * create(next) {
+        const request = this.request.body;
         logger.debug('Validating body for create template');
-        logger.debug(this.request.body);
         this.checkBody('name').notEmpty().len(2, 100);
         this.checkBody('questions').notEmpty();
-
-        // check length of languages array (must have one value min)
-        this.checkBody('languages').length();
-
-        //if languages > 1, must have a value and value must be in languages
-        this.checkBody('defaultLanguage').length();
-
-        // validate label for all label, must have values and only those in languages (not undefined)
-
-        // if question is type radio/checkbox/select, it must have a default value
-        // and values must be validated
-
-        // validate labels for children
-
+        // this.checkBody('languages').notEmpty();
 
         if (this.errors) {
             this.body = ErrorSerializer.serializeValidationBodyErrors(this.errors);
             this.status = 400;
             return;
         }
+
+        // // add custom validation for multilanguage
+        // const pushError = (source, detail) => {
+        //     // this.errors = {
+        //     //     source: {
+        //     //         parameter: source
+        //     //     },
+        //     //     detail: detail
+        //     // };
+        // };
+        //
+        // const checkQuestion = (question) => {
+        //     request.languages.forEach((lang) => {
+        //         if (question.label[lang] === undefined) {
+        //             return false;
+        //         }
+        //         if (question.type === 'text') {
+        //             if (question.defaultValue[lang] === undefined) {
+        //                 return false;
+        //             }
+        //         }
+        //         if (question.type === 'select' || question.type === 'radio' || question.type === 'checkbox') {
+        //             if (!question.values[lang] || question.values[lang] === undefined) {
+        //                 return false;
+        //             }
+        //         }
+        //     });
+        // };
+        //
+        // //check for languages
+        // if (request.languages.length > 1) {
+        //     if (!request.defaultLanguage || request.languages.indexOf(request.defaultLanguage) === -1 ) {
+        //         pushError('languages', 'you must have languages');
+        //     }
+        // }
+        //
+        // // check template names
+        // request.languages.forEach((lang) => {
+        //     if (request.name[lang] === undefined) {
+        //         pushError('name', 'Requires values for each language');
+        //     }
+        // });
+        //
+        // //check each question
+        // request.questions.forEach((question) => {
+        //     if (!checkQuestion(question)) {
+        //         pushError('name', 'Requires values for each language');
+        //     }
+        //
+        //     // check each child question
+        //     if (question.childQuestions) {
+        //         question.childQuestions.forEach((childQuestion) => {
+        //             if (!checkQuestion(childQuestion)) {
+        //                 pushError('name', 'Requires values for each language');
+        //             }
+        //         });
+        //     }
+        // });
+
+
         yield next;
     }
 

@@ -5,7 +5,7 @@ var JSONAPISerializer = require('jsonapi-serializer').Serializer;
 
 var templateSerializer = new JSONAPISerializer('template', {
   attributes: [
-    'name', 'questions', 'createdAt'
+    'name', 'questions', 'createdAt', 'defaultLanguage', 'languages', 'areaOfInterest', 'user'
   ],
   resource: {
     attributes: ['type', 'content']
