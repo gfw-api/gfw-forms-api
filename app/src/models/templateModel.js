@@ -3,7 +3,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 const ObjectId = Schema.ObjectId;
 
-var QuestionConditional = new Schema({
+var TemplateQuestionConditional = new Schema({
     type: {type: String, required: true, trim: true},
     label: {type: Schema.Types.Mixed, required: true, trim: true},
     name: {type: String, required: true, trim: true},
@@ -14,7 +14,7 @@ var QuestionConditional = new Schema({
     conditionalValue: {type: String, required: false, trim: true}
 });
 
-var Question = new Schema({
+var TemplateQuestion = new Schema({
     type: {type: String, required: true, trim: true},
     label: {type: String, required: true, trim: true},
     name: {type: String, required: true, trim: true},
@@ -22,18 +22,18 @@ var Question = new Schema({
     values: [{type: String, required: true, trim: true}],
     required: {type: Boolean, required: true, default: false},
     order: {type: Number, required: false, default: false},
-    childQuestions: [QuestionConditional],
+    childQuestions: [TemplateQuestionConditional],
     conditions: [{
         name: {type: String, required: false, trim: true},
         value: {type: String, required: false, trim: true},
     }]
 });
 
-var Questionnaire = new Schema({
+var Template = new Schema({
     name: {type: String, required: true, trim: true},
-    questions: [Question],
+    questions: [TemplateQuestion],
     createdAt: {type: Date, required: true, default: Date.now}
 });
 
-// mongoose.model('Question', Question);
-module.exports = mongoose.model('Questionnaire', Questionnaire);
+mongoose.model('Question', TemplateQuestion);
+module.exports = mongoose.model('Template', Template);

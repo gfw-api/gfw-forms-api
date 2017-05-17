@@ -3,8 +3,8 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 const ObjectId = Schema.ObjectId;
 
-var Response = new Schema({
-    questionnaire: { type: ObjectId, ref: 'Questionnaire', required: true },
+var Report = new Schema({
+    template: { type: ObjectId, ref: 'Template', required: true },
     user: {type: ObjectId, required: true},
     responses: [{
         question: {type: String, required: true, trim: true},
@@ -13,4 +13,5 @@ var Response = new Schema({
     createdAt: {type: Date, required: true, default: Date.now}
 });
 
-module.exports = mongoose.model('Response', Response);
+
+module.exports = mongoose.model('Report', Report);
