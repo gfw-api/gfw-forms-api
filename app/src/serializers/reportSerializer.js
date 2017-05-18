@@ -14,10 +14,10 @@ var reportSerializer = new JSONAPISerializer('report', {
   keyForAttribute: 'camelCase'
 });
 
-class AnswerSerializer {
+class ReportSerializer {
   static serialize(data) {
     return reportSerializer.serialize(data);
   }
 }
 
-module.exports = AnswerSerializer;
+module.exports = ReportSerializer;

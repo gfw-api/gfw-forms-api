@@ -4,7 +4,9 @@ var Schema = mongoose.Schema;
 const ObjectId = Schema.ObjectId;
 
 var Report = new Schema({
-    template: { type: ObjectId, ref: 'Template', required: true },
+    templateId: { type: ObjectId, ref: 'Template', required: true },
+    areaOfInterest: {type: String, required: true, trim: true},
+    language: {type: String, required: true, trim: true},
     user: {type: ObjectId, required: true},
     responses: [{
         question: {type: String, required: true, trim: true},
