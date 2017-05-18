@@ -130,7 +130,7 @@ function * checkPermission(next) {
 }
 
 function* checkAdmin(next) {
-    if (!this.state.loggedUser || this.state.loggedUser.role !== 'ADMIN') {
+    if (!this.state.loggedUser) {
         this.throw(403, 'Not authorized');
         return;
     }
