@@ -74,7 +74,8 @@ class QuestionnaireRouter {
             }
         }
         const answers = yield AnswerModel.find({
-            questionnaire: this.params.id
+            questionnaire: this.params.id,
+            user: this.state.loggedUser.id
         });
         logger.debug('Obtaining data');
         if (answers) {
