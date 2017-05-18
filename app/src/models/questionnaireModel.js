@@ -35,5 +35,5 @@ var Questionnaire = new Schema({
     createdAt: {type: Date, required: true, default: Date.now}
 });
 
-// mongoose.model('Question', Question);
+mongoose.model('Question', Question);
 module.exports = mongoose.model('Questionnaire', Questionnaire);

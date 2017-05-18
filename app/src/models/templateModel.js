@@ -30,8 +30,7 @@ var TemplateQuestion = new Schema({
 });
 
 var Template = new Schema({
-    name: {type: String, required: true, trim: true},
-    label: {type: Schema.Types.Mixed, required: true, default: {}},
+    name: {type: Schema.Types.Mixed, required: true, default: {}},
     areaOfInterest: {type: String, required: true, trim: true},
     user: {type: String, required: true, trim: true},
     languages: {type: Array, required: true, default: false},

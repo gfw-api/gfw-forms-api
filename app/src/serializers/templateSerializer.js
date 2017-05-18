@@ -8,12 +8,12 @@ var templateSerializer = null;
 function createSerializer(languages) {
     return new JSONAPISerializer('template', {
       attributes: [
-        'name', 'label', 'questions', 'createdAt', 'defaultLanguage', 'languages', 'areaOfInterest', 'user'
-      ]
+        'name', 'languages', 'defaultLanguage', 'areaOfInterest', 'user', 'questions', 'createdAt'
+      ],
       questions: {
           attributes: ['type', 'label', 'defaultValue', 'values', 'required']
       },
-      label: {
+      name: {
           attributes: languages
       },
       typeForAttribute: function (attribute) { return attribute; },

@@ -32,7 +32,6 @@ class TemplateRouter {
         const request = this.request.body;
         const template = yield new TemplateModel({
             name: request.name,
-            label: request.label,
             areaOfInterest: request.areaOfInterest,
             user: this.state.loggedUser.id,
             languages: request.languages,
