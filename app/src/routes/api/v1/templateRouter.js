@@ -39,7 +39,6 @@ class TemplateRouter {
             defaultLanguage: request.defaultLanguage,
             questions: request.questions
         }).save();
-        logger.debug('HOla i am done', template);
         this.body = TemplateSerializer.serialize(template);
     }
 

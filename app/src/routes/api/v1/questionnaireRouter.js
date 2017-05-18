@@ -72,7 +72,7 @@ class QuestionnaireRouter {
                     questions[question.childQuestions[j].name] = null;
                 }
             }
-        } 
+        }
         const answers = yield AnswerModel.find({
             questionnaire: this.params.id
         });
@@ -80,7 +80,7 @@ class QuestionnaireRouter {
         if (answers) {
             logger.debug('Data found!');
             let data = null;
-            
+
             for (let i = 0, length = answers.length; i < length; i++) {
                 const answer = answers[i];
                 const responses = Object.assign({}, questions);
@@ -96,7 +96,7 @@ class QuestionnaireRouter {
                 this.body.write(data);
             }
         }
-        this.body.end();    
+        this.body.end();
     }
 
 }
