@@ -2,35 +2,35 @@
 const Router = require('koa-router');
 const logger = require('logger');
 const ErrorSerializer = require('serializers/errorSerializer');
-const TemplateSerializer = require('serializers/templateSerializer');
-const TemplateModel = require('models/templateModel');
-const TemplateValidator = require('validators/templateValidator');
-const AnswerModel = require('models/answerModel');
+const ReportsSerializer = require('serializers/reportsSerializer');
+const ReportsModel = require('models/reportsModel');
+const ReportsValidator = require('validators/reportsValidator');
+const AnswersModel = require('models/answersModel');
 const passThrough = require('stream').PassThrough;
 const json2csv = require('json2csv');
 
 const router = new Router({
-    prefix: '/template',
+    prefix: '/reports'
 });
 
-class TemplateRouter {
+class ReportsRouter {
 
     static * getAll(){
-        logger.info('Obtaining all templates');
-        const templateModels = yield TemplateModel.find();
-        this.body = TemplateSerializer.serialize(templateModels);
+        logger.info('Obtaining all reports');
+        const reportsModels = yield ReportsModel.find();
+        this.body = ReportsSerializer.serialize(reportsModels);
     }
 
     static * get(){
-        logger.info(`Obtaining template with id ${this.params.id}`);
-        const template = yield TemplateModel.find({ _id: this.params.id });
-        this.body = TemplateSerializer.serialize(template);
+        logger.info(`Obtaining reports with id ${this.params.id}`);
+        const report = yield ReportsModel.find({ _id: this.params.id });
+        this.body = ReportsSerializer.serialize(report);
     }
 
     static * save(){
-        logger.info('Saving template', this.request.body);
+        logger.info('Saving reports', this.request.body);
         const request = this.request.body;
-        const template = yield new TemplateModel({
+        const report = yield new ReportsModel({
             name: request.name,
             areaOfInterest: request.areaOfInterest,
             user: this.state.loggedUser.id,
@@ -38,7 +38,7 @@ class TemplateRouter {
             defaultLanguage: request.defaultLanguage,
             questions: request.questions
         }).save();
-        this.body = TemplateSerializer.serialize(template);
+        this.body = ReportsSerializer.serialize(report);
     }
 
     static * update(){
@@ -47,10 +47,10 @@ class TemplateRouter {
     }
 
     static * delete(){
-        logger.info(`Deleting template with id ${this.params.id}`);
-        const result = yield TemplateModel.remove({ _id: this.params.id });
+        logger.info(`Deleting report with id ${this.params.id}`);
+        const result = yield ReportsModel.remove({ _id: this.params.id });
         if (!result || !result.result || result.result.ok === 0) {
-            this.throw(404, 'Template not found');
+            this.throw(404, 'Report not found');
             return;
         }
         this.body = '';
@@ -58,19 +58,19 @@ class TemplateRouter {
     }
 
     static * downloadAnswers() {
-        logger.info(`Download answers of template ${this.params.id}`);
+        logger.info(`Downloading answers for report ${this.params.id}`);
         this.set('Content-disposition', `attachment; filename=${this.params.id}.csv`);
         this.set('Content-type', 'text/csv');
         this.body = passThrough();
 
-        const template = yield TemplateModel.findById(this.params.id);
+        const report = yield ReportsModel.findById(this.params.id);
         const questions = {};
-        if (!template) {
-            this.throw(404, 'Not found');
+        if (!report) {
+            this.throw(404, 'Report not found');
             return;
         }
-        for (let i = 0, length = template.questions.length; i < length; i++) {
-            const question = template.questions[i];
+        for (let i = 0, length = report.questions.length; i < length; i++) {
+            const question = report.questions[i];
             questions[question.name] = null;
             if (question.childQuestions){
                 for (let j = 0, lengthChild =question.childQuestions.length; j < lengthChild; j++ ){
@@ -78,8 +78,8 @@ class TemplateRouter {
                 }
             }
         }
-        const answers = yield AnswerModel.find({
-            template: this.params.id
+        const answers = yield AnswersModel.find({
+            report: this.params.id
         });
         logger.debug('Obtaining data');
         if (answers) {
@@ -103,7 +103,6 @@ class TemplateRouter {
         }
         this.body.end();
     }
-
 }
 
 function * loggedUserToState(next) {
@@ -136,11 +135,11 @@ function* checkAdmin(next) {
     yield next;
 }
 
-router.post('/', loggedUserToState, TemplateValidator.create, TemplateRouter.save);
-router.patch('/:id', loggedUserToState, checkPermission, TemplateValidator.update, TemplateRouter.update);
-router.get('/', loggedUserToState, TemplateRouter.getAll);
-router.get('/:id', loggedUserToState, TemplateRouter.get);
-router.delete('/:id', loggedUserToState, checkPermission, TemplateRouter.delete);
-router.get('/:id/download-answers', loggedUserToState, checkAdmin, TemplateRouter.downloadAnswers);
+router.post('/', loggedUserToState, ReportsValidator.create, ReportsRouter.save);
+router.patch('/:id', loggedUserToState, checkPermission, ReportsValidator.update, ReportsRouter.update);
+router.get('/', loggedUserToState, ReportsRouter.getAll);
+router.get('/:id', loggedUserToState, ReportsRouter.get);
+router.delete('/:id', loggedUserToState, checkPermission, ReportsRouter.delete);
+router.get('/:id/download-answers', loggedUserToState, ReportsRouter.downloadAnswers);
 
 module.exports = router;

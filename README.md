@@ -37,66 +37,86 @@ It is necessary to define these environment variables:
 
 ## Quick Overview
 
-### Questionnaire Entity
+### Report template entity
 
 ```json
 
 {
   "data": [
     {
-      "type": "questionnaire",
+      "type": "template",
       "id": "5893463dbd106700c9cbef3c",
       "attributes": {
-        "name": "Ra questionnaire",
+        "areaOfInterest": "aoi-id",
+        "languages": ["EN", "ES"],
+        "defaultLanguage": "EN",
+        "name": {
+          "EN": "My report template",
+          "ES": "Mi report templato"
+        },
         "questions": [
           {
             "type": "text",
-            "label": "Name",
-            "defaultValue": "Insert your name",
-            "_id": "5893463dbd106700c9cbef41",
+            "label": {
+              "EN": "Name",
+              "ES": "Nombre"
+            },
+            "name": "name",
+            "_id": "591b198189199500118c568a",
+            "conditions": [],
+            "childQuestions": [],
+            "order": 1,
             "required": false,
-            "values": []
+            "values": {},
+            "defaultValue": {
+              "EN": "Insert your name",
+              "ES": "Spanish"
+            }
           },
           {
             "type": "checkbox",
-            "label": "Range age",
-            "_id": "5893463dbd106700c9cbef40",
+            "label": {
+              "EN": "Range age",
+              "ES": "Spanish"
+            },
+            "name": "age",
+            "_id": "591b198189199500118c5688",
+            "conditions": [],
+            "order": 2,
             "required": false,
-            "values": [
-              "0-18",
-              "19-50",
-              "+50"
-            ]
-          },
-          {
-            "type": "radio",
-            "label": "Gender",
-            "_id": "5893463dbd106700c9cbef3f",
-            "required": false,
-            "values": [
-              "Male",
-              "Female"
-            ]
-          },
-          {
-            "type": "text",
-            "label": "Photo",
-            "_id": "5893463dbd106700c9cbef3e",
-            "required": true,
-            "values": []
-          },
-          {
-            "type": "select",
-            "label": "Country",
-            "_id": "5893463dbd106700c9cbef3d",
-            "required": false,
-            "values": [
-              "Spain",
-              "EEUU"
+            "values": {
+              "EN": [
+                { "value": 0, "label": "0-32"},
+                { "value": 1, "label": "33-50"}
+              ],
+              "ES": [
+                { "value": 0, "label": "0-32"},
+                { "value": 1, "label": "33-50"}
+              ]
+            },
+            "defaultValue": 0,
+            "childQuestions": [
+              {
+                "type": "text",
+                "label": {
+                  "EN": "Specific age",
+                  "ES": "Specific age"
+                },
+                "name": "specific-age",
+                "defaultValue": {
+                  "EN": "Insert your name",
+                  "ES": "Spanish"
+                },
+                "conditionalValue": 0,
+                "_id": "591b198189199500118c5689",
+                "order": 0,
+                "required": true,
+                "values": {}
+              }
             ]
           }
         ],
-        "createdAt": "2017-02-02T14:46:21.862Z"
+        "createdAt": "2017-05-17T17:45:03.188Z"
       }
     }
   ]
@@ -106,15 +126,21 @@ It is necessary to define these environment variables:
 
 ### CRUD Questionnaire
 
-```
+```json
 
 All endpoints are logged.  Check if user is ADMIN or MANAGER in gfw application
 
-GET: /questionnaire -> Return all questionnaires of the user logged
-GET: /questionnaire/:id -> Return questionnaire with the same id. Check if user is ADMIN or MANAGER in gfw application
-POST: /questionnaire -> Create an questionnaire and associate to the user. With body:
+GET: /template -> Return all report templates of the user logged
+GET: /template/:id -> Return report templates with the same id. Check if user is ADMIN or MANAGER in gfw application
+POST: /template -> Create an report template and associate to the user. With body:
 {  
-   "name":"Example",
+   "areaOfInterest": "aoi-id",
+   "languages": ["EN", "ES"],
+   "defaultLanguage": "EN",
+   "name": {
+     "EN": "My report template",
+     "ES": "Mi report templato"
+   },
    "questions":[  
       {  
          "type":"text",
@@ -181,19 +207,19 @@ POST: /questionnaire -> Create an questionnaire and associate to the user. With 
 }
 
 
-PATCH: /questionnaire/:id -> Update the questionnaire with the same id. 
-DELETE: /questionnaire/:id -> Delete the questionnaire with the same id. 
+PATCH: /template/:id -> Update the report template with the same id.
+DELETE: /template/:id -> Delete the report template with the same id.
 
 ```
 
 
-### CRUD Questionnaire answers
+### CRUD report answers
 
 ```
 
-GET: /questionnaire/:idQuestionnaire/answer -> Return all answers of the questionnaires of the user logged
-GET: /questionnaire/:idQuestionnaire/answer/answer/:id -> Return answer with the same id. Check if the answer is owned of the logged user
-POST: /questionnaire/:idQuestionnaire/answer  -> Create an answer of the questionnaire with the id of the param and associate to the user. With body:
+GET: /report/:id/answer -> Return all answers of the questionnaires of the user logged
+GET: /report/:id/answer/answer/:id -> Return answer with the same id. Check if the answer is owned of the logged user
+POST: /questionnaire/:id/answer  -> Create an answer of the questionnaire with the id of the param and associate to the user. With body:
 Without Content-type (is possible send files)
 <questionId>:<responseValue>
 5893463dbd106700c9cbef41:Pepe
@@ -202,7 +228,7 @@ Without Content-type (is possible send files)
 5893463dbd106700c9cbef3d:Spain
 
 
-PATCH: /questionnaire/:idQuestionnaire/answer/:id -> Update the answer with the same id. Check if the ansers is owned of the logged user
-DELETE: /questionnaire/:idQuestionnaire/answer/:id -> Delete the asnwer with the same id. Check if the answer is owned of the logged user
+PATCH: /questionnaire/:id/answer/:id -> Update the answer with the same id. Check if the ansers is owned of the logged user
+DELETE: /questionnaire/:id/answer/:id -> Delete the asnwer with the same id. Check if the answer is owned of the logged user
 
 ```

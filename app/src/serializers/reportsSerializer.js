@@ -3,10 +3,10 @@
 var logger = require('logger');
 var JSONAPISerializer = require('jsonapi-serializer').Serializer;
 
-var templateSerializer = null;
+var reportsSerializer = null;
 
 function createSerializer(languages) {
-    return new JSONAPISerializer('template', {
+    return new JSONAPISerializer('reports', {
       attributes: [
         'name', 'languages', 'defaultLanguage', 'areaOfInterest', 'user', 'questions', 'createdAt'
       ],
@@ -21,7 +21,7 @@ function createSerializer(languages) {
     });
 }
 
-class TemplateSerializer {
+class ReportsSerializer {
   static serialize(data) {
     let languages = null;
     if(data && data.length > 0) {
@@ -33,4 +33,4 @@ class TemplateSerializer {
   }
 }
 
-module.exports = TemplateSerializer;
+module.exports = ReportsSerializer;

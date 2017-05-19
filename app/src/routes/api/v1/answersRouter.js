@@ -2,42 +2,45 @@
 const Router = require('koa-router');
 const logger = require('logger');
 const ErrorSerializer = require('serializers/errorSerializer');
-const ReportSerializer = require('serializers/reportSerializer');
-const ReportModel = require('models/reportModel');
-const TemplateModel = require('models/templateModel');
+const AnswersSerializer = require('serializers/answersSerializer');
+const AnswersModel = require('models/answersModel');
+const ReportsModel = require('models/reportsModel');
 const s3Service = require('services/s3Service');
+const passThrough = require('stream').PassThrough;
+const json2csv = require('json2csv');
 
 const router = new Router({
-    prefix: '/report',
+    prefix: '/reports/:reportId/answers'
 });
 
-class ReportRouter {
+class AnswersRouter {
 
     static * getAll() {
-        logger.info('Obtaining all report');
-        const reports = yield ReportModel.find({
-            user: this.state.loggedUser.id
+        logger.info('Obtaining all answers');
+        const answers = yield AnswersModel.find({
+            user: this.state.loggedUser.id,
+            report: this.params.reportId
         });
-        this.body = ReportSerializer.serialize(reports);
+        this.body = AnswersSerializer.serialize(answers);
     }
 
     static * get() {
-        logger.info(`Obtaining reports with id ${this.params.id}`);
-        const report = yield ReportModel.find({
+        logger.info(`Obtaining answers for report ${this.params.id}`);
+        const answers = yield AnswersModel.find({
             user: this.state.loggedUser.id,
             _id: this.params.id
         });
-        this.body = ReportSerializer.serialize(report);
+        this.body = AnswersSerializer.serialize(answers);
     }
 
     static * save() {
-        logger.info('Saving report');
+        logger.info('Saving answer');
         logger.debug(this.request.body);
 
         const fields = this.request.body.fields;
 
-        let report = {
-            template: fields.template,
+        let answer = {
+            report: this.params.reportId,
             areaOfInterest: fields.areaOfInterest,
             language: fields.language,
             userPosition: fields.userPosition.split(','),
@@ -49,10 +52,10 @@ class ReportRouter {
         };
 
         const pushResponse = (question, response) => {
-            report.responses.push({
+            answer.responses.push({
                 question: {
                     name: question.name,
-                    label: question.label[report.language],
+                    label: question.label[answer.language],
                     level: question.level
                 },
                 answer: {
@@ -62,11 +65,11 @@ class ReportRouter {
         };
 
         const pushError = (question) => {
-            this.throw(400, `${question.label[report.language]} (${question.name}) required`);
+            this.throw(400, `${question.label[answer.language]} (${question.name}) required`);
             return;
         };
 
-        const questions = this.state.template.questions;
+        const questions = this.state.report.questions;
 
         for (let i = 0; i < questions.length; i++) {
             const question = questions[i];
@@ -100,11 +103,9 @@ class ReportRouter {
             }
         }
 
-        logger.debug(report);
+        const answerModel = yield new AnswersModel(answer).save();
 
-        const reportModel = yield new ReportModel(report).save();
-
-        this.body = ReportSerializer.serialize(reportModel);
+        this.body = AnswersSerializer.serialize(answerModel);
     }
 
     static * update() {
@@ -113,20 +114,19 @@ class ReportRouter {
     }
 
     static * delete() {
-        logger.info(`Deleting report with id ${this.params.id}`);
-        const result = yield ReportModel.remove({
+        logger.info(`Deleting answer with id ${this.params.id}`);
+        const result = yield AnswersModel.remove({
             _id: this.params.id,
             userId: this.state.loggedUser.id,
         });
         if (!result || !result.result || result.result.ok === 0) {
-            this.throw(404, 'Report not found');
+            this.throw(404, 'Answer not found');
             return;
         }
         this.body = '';
         this.statusCode = 204;
     }
 }
-
 
 function* loggedUserToState(next) {
     if (this.query && this.query.loggedUser) {
@@ -147,21 +147,21 @@ function* loggedUserToState(next) {
     yield next;
 }
 
-function* checkExistTemplate(next) {
-    const template = yield TemplateModel.findById(this.request.body.fields.template).populate('questions');
-    if (!template) {
-        this.throw(404, 'Template not found');
+function* checkExistReport(next) {
+    const report = yield ReportsModel.findById(this.params.reportId).populate('questions');
+    if (!report) {
+        this.throw(404, 'Report not found');
         return;
     }
-    this.state.template = template;
+    this.state.report = report;
     yield next;
 }
 
-router.post('/', loggedUserToState, checkExistTemplate, ReportRouter.save);
-router.patch('/:id', loggedUserToState, checkExistTemplate, ReportRouter.update);
-router.get('/', loggedUserToState, ReportRouter.getAll);
-router.get('/:id', loggedUserToState, ReportRouter.get);
-router.delete('/:id', loggedUserToState, ReportRouter.delete);
 
+router.post('/', loggedUserToState, checkExistReport, AnswersRouter.save);
+router.patch('/:id', loggedUserToState, checkExistReport, AnswersRouter.update);
+router.get('/', loggedUserToState, AnswersRouter.getAll);
+router.get('/:id', loggedUserToState, AnswersRouter.get);
+router.delete('/:id', loggedUserToState, AnswersRouter.delete);
 
 module.exports = router;

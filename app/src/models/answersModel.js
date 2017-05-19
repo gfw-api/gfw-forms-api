@@ -14,15 +14,15 @@ var AnswerResponse = new Schema({
     label: {type: String, required: false, trim: true}
 });
 
-var Report = new Schema({
-    template: {type: String, required: true, trim: true},
+var Answer = new Schema({
+    report: {type: ObjectId, required: true},
     areaOfInterest: {type: String, required: true, trim: true},
     language: {type: String, required: true, trim: true},
     userPosition: {type: Array, required: false, default: []},
     clickedPosition: {type: Array, required: false, default: []},
     timeFrame: {type: Array, required: false, default: []},
     layer: {type: String, required: true, trim: true},
-    user: {type: String, required: true, trim: true},
+    user: {type: ObjectId, required: true},
     responses: [{
         question: QuestionResponse,
         answer: AnswerResponse
@@ -30,4 +30,4 @@ var Report = new Schema({
     createdAt: {type: Date, required: true, default: Date.now}
 });
 
-module.exports = mongoose.model('Report', Report);
+module.exports = mongoose.model('Answer', Answer);

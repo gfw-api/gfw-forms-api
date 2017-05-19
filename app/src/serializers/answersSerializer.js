@@ -3,9 +3,9 @@
 var logger = require('logger');
 var JSONAPISerializer = require('jsonapi-serializer').Serializer;
 
-var reportSerializer = new JSONAPISerializer('report', {
+var answersSerializer = new JSONAPISerializer('answers', {
   attributes: [
-    'template', 'areaOfInterest', 'language', 'userPosition', 'clickedPosition', 'timeFrame', 'layer', 'user', 'responses'
+    'report', 'areaOfInterest', 'language', 'userPosition', 'clickedPosition', 'timeFrame', 'layer', 'user', 'responses'
   ],
   responses: {
       attributes: ['question', 'answer']
@@ -14,10 +14,10 @@ var reportSerializer = new JSONAPISerializer('report', {
   keyForAttribute: 'camelCase'
 });
 
-class ReportSerializer {
+class AnswersSerializer {
   static serialize(data) {
-    return reportSerializer.serialize(data);
+    return answersSerializer.serialize(data);
   }
 }
 
-module.exports = ReportSerializer;
+module.exports = AnswersSerializer;

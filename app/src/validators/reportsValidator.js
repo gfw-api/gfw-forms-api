@@ -1,7 +1,7 @@
 const logger = require('logger');
 const ErrorSerializer = require('serializers/errorSerializer');
 
-class TemplateValidator {
+class ReportsValidator {
     static * create(next) {
         const request = this.request.body;
         logger.debug('Validating body for create template');
@@ -14,7 +14,6 @@ class TemplateValidator {
             this.status = 400;
             return;
         }
-
 
         // add custom validation for multilanguage
         const customErrors = [];
@@ -53,7 +52,7 @@ class TemplateValidator {
         // check template names
         request.languages.forEach((lang) => {
             if (request.name[lang] === undefined) {
-                pushError(request.name, 'Template name: values do not match language options');
+                pushError(request.name, 'Report name: values do not match language options');
             }
         });
 
@@ -76,7 +75,7 @@ class TemplateValidator {
     }
 
     static * update(next) {
-        logger.debug('Validating body for update template');
+        logger.debug('Validating body for update report');
         this.checkBody('name').optional().len(2, 100);
         this.checkBody('questions').optional();
 
@@ -89,4 +88,4 @@ class TemplateValidator {
     }
 }
 
-module.exports = TemplateValidator;
+module.exports = ReportsValidator;
