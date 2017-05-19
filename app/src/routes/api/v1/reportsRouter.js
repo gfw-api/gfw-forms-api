@@ -16,6 +16,7 @@ const router = new Router({
 class ReportsRouter {
 
     static * getAll(){
+        const query = this.request.query;
         logger.info('Obtaining all reports');
         const reportsModels = yield ReportsModel.find();
         this.body = ReportsSerializer.serialize(reportsModels);

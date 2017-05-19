@@ -16,11 +16,9 @@ const router = new Router({
 class AnswersRouter {
 
     static * getAll() {
+        const query = this.request.query;
         logger.info('Obtaining all answers');
-        const answers = yield AnswersModel.find({
-            user: this.state.loggedUser.id,
-            report: this.params.reportId
-        });
+        const answers = yield AnswersModel.find();
         this.body = AnswersSerializer.serialize(answers);
     }
 
