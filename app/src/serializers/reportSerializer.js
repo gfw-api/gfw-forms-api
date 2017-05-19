@@ -5,10 +5,10 @@ var JSONAPISerializer = require('jsonapi-serializer').Serializer;
 
 var reportSerializer = new JSONAPISerializer('report', {
   attributes: [
-    'template', 'responses', 'user'
+    'template', 'areaOfInterest', 'language', 'userPosition', 'clickedPosition', 'timeFrame', 'layer', 'user', 'responses'
   ],
   responses: {
-      attributes: ['question', 'value']
+      attributes: ['question', 'answer']
   },
   typeForAttribute: function (attribute) { return attribute; },
   keyForAttribute: 'camelCase'

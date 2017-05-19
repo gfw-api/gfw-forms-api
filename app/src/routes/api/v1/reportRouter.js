@@ -25,7 +25,6 @@ class ReportRouter {
         logger.info(`Obtaining reports with id ${this.params.id}`);
         const report = yield ReportModel.find({
             user: this.state.loggedUser.id,
-            template: this.params.template,
             _id: this.params.id
         });
         this.body = ReportSerializer.serialize(report);
@@ -35,55 +34,77 @@ class ReportRouter {
         logger.info('Saving report');
         logger.debug(this.request.body);
 
+        const fields = this.request.body.fields;
+
         let report = {
+            template: fields.template,
+            areaOfInterest: fields.areaOfInterest,
+            language: fields.language,
+            userPosition: fields.userPosition.split(','),
+            clickedPosition: fields.clickedPosition.split(','),
+            timeFrame: fields.timeFrame.split(','),
+            layer: fields.layer,
             user: this.state.loggedUser.id,
-            template: this.state.template._id,
             responses: []
         };
 
-        for (let i = 0, length = this.state.template.questions.length; i < length; i++) {
-            const question = this.state.template.questions[i];
-            let response = null;
-            if (question.conditionalQuestions) {
-                for (let j = 0, lengthSub = question.conditionalQuestions.length; j < lengthSub; j++) {
-                    response = this.request.body.fields[question.conditionalQuestions[j].name] || this.request.body.files[question.conditionalQuestions[j].name];
-                    if (!response && question.conditionalQuestions[j].required) {
-                        this.throw(400, `${question.label} (${question.name}) required`);
-                        return;
-                    }
-                    if (response) {
-                        if (question.type === 'blob') {
-                            //upload file
-                            response = yield s3Service.uploadFile(response.path, response.name);
-                        }
-                        report.responses.push({
-                            question: question.conditionalQuestions[j].name,
-                            value: response
-                        });
-                    }
-                }
-            }
-            response = this.request.body.fields[question.name] || this.request.body.files[question.name];
-            if (!response && question.required) {
-                this.throw(400, `${question.label} (${question.name}) required`);
-                return;
-            }
-            if (response) {
-                if (question.type === 'blob') {
-                    //upload file
-                    response = yield s3Service.uploadFile(response.path, response.name);
-                }
-                report.responses.push({
-                    question: question.name,
+        const pushResponse = (question, response) => {
+            report.responses.push({
+                question: {
+                    name: question.name,
+                    label: question.label[report.language],
+                    level: question.level
+                },
+                answer: {
                     value: response
-                });
+                }
+            });
+        };
+
+        const pushError = (question) => {
+            this.throw(400, `${question.label[report.language]} (${question.name}) required`);
+            return;
+        };
+
+        const questions = this.state.template.questions;
+
+        for (let i = 0; i < questions.length; i++) {
+            const question = questions[i];
+
+            // handle parent questions
+            let response = this.request.body.fields[question.name] || this.request.body.files[question.name];
+            if (!response && question.required) {
+                pushError(question);
+            }
+            if (question.type === 'blob') {
+                //upload file
+                response = yield s3Service.uploadFile(response.path, response.name);
+            }
+
+            pushResponse(question, response);
+
+            // handle child questions
+            if (question.childQuestions) {
+                for (let j = 0; j < question.childQuestions; j++) {
+                    const childQuestion = questions.childQuestions[j];
+                    let response = this.request.body.fields[childQuestion.name] || this.request.body.files[childQuestion.name];
+                    if (!response && question.required) {
+                        pushError(childQuestion);
+                    }
+                    if (question.type === 'blob') {
+                        //upload file
+                        response = yield s3Service.uploadFile(response.path, response.name);
+                    }
+                    pushResponse(childQuestion, response);
+                }
             }
         }
+
+        logger.debug(report);
 
         const reportModel = yield new ReportModel(report).save();
 
         this.body = ReportSerializer.serialize(reportModel);
-
     }
 
     static * update() {
@@ -96,7 +117,6 @@ class ReportRouter {
         const result = yield ReportModel.remove({
             _id: this.params.id,
             userId: this.state.loggedUser.id,
-            template: this.params.template,
         });
         if (!result || !result.result || result.result.ok === 0) {
             this.throw(404, 'Report not found');
@@ -128,7 +148,6 @@ function* loggedUserToState(next) {
 }
 
 function* checkExistTemplate(next) {
-    logger.debug(this.request.body.fields.template);
     const template = yield TemplateModel.findById(this.request.body.fields.template).populate('questions');
     if (!template) {
         this.throw(404, 'Template not found');
@@ -141,9 +160,8 @@ function* checkExistTemplate(next) {
 router.post('/', loggedUserToState, checkExistTemplate, ReportRouter.save);
 router.patch('/:id', loggedUserToState, checkExistTemplate, ReportRouter.update);
 router.get('/', loggedUserToState, ReportRouter.getAll);
-router.get('/:id', loggedUserToState, checkExistTemplate, ReportRouter.get);
-router.delete('/:id', loggedUserToState, checkExistTemplate, ReportRouter.delete);
-
+router.get('/:id', loggedUserToState, ReportRouter.get);
+router.delete('/:id', loggedUserToState, ReportRouter.delete);
 
 
 module.exports = router;
