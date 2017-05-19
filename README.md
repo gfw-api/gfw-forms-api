@@ -37,86 +37,97 @@ It is necessary to define these environment variables:
 
 ## Quick Overview
 
-### Report template entity
+### Report entity
 
 ```json
 
 {
   "data": [
     {
-      "type": "template",
-      "id": "5893463dbd106700c9cbef3c",
+      "type": "reports",
+      "id": "591f2513d3a6c4003f4960b4",
       "attributes": {
-        "areaOfInterest": "aoi-id",
-        "languages": ["EN", "ES"],
+        "name": {},
+        "languages": [
+          "EN",
+          "ES"
+        ],
         "defaultLanguage": "EN",
-        "name": {
-          "EN": "My report template",
-          "ES": "Mi report templato"
-        },
+        "areaOfInterest": "aoi-id",
+        "user": "1a10d7c6e0a37126611fd7a7",
         "questions": [
           {
             "type": "text",
-            "label": {
-              "EN": "Name",
-              "ES": "Nombre"
-            },
             "name": "name",
-            "_id": "591b198189199500118c568a",
+            "defaultValue": {
+              "EN": "Insert your name",
+              "ES": "Spanish"
+            },
+            "_id": "591f2513d3a6c4003f4960b7",
             "conditions": [],
             "childQuestions": [],
             "order": 1,
             "required": false,
-            "values": {},
-            "defaultValue": {
-              "EN": "Insert your name",
-              "ES": "Spanish"
+            "label": {
+              "EN": "Name",
+              "ES": "Nombre"
             }
           },
           {
             "type": "checkbox",
-            "label": {
-              "EN": "Range age",
-              "ES": "Spanish"
-            },
             "name": "age",
-            "_id": "591b198189199500118c5688",
-            "conditions": [],
-            "order": 2,
-            "required": false,
-            "values": {
-              "EN": [
-                { "value": 0, "label": "0-32"},
-                { "value": 1, "label": "33-50"}
-              ],
-              "ES": [
-                { "value": 0, "label": "0-32"},
-                { "value": 1, "label": "33-50"}
-              ]
-            },
             "defaultValue": 0,
+            "_id": "591f2513d3a6c4003f4960b5",
+            "conditions": [],
             "childQuestions": [
               {
                 "type": "text",
-                "label": {
-                  "EN": "Specific age",
-                  "ES": "Specific age"
-                },
                 "name": "specific-age",
                 "defaultValue": {
                   "EN": "Insert your name",
                   "ES": "Spanish"
                 },
                 "conditionalValue": 0,
-                "_id": "591b198189199500118c5689",
+                "_id": "591f2513d3a6c4003f4960b6",
                 "order": 0,
                 "required": true,
-                "values": {}
+                "label": {
+                  "EN": "Specific age",
+                  "ES": "Specific age"
+                }
               }
-            ]
+            ],
+            "order": 2,
+            "required": false,
+            "values": {
+              "EN": [
+                {
+                  "value": 0,
+                  "label": "19-32"
+                },
+                {
+                  "value": 1,
+                  "label": "12-43"
+                }
+              ],
+              "ES": [
+                {
+                  "value": 0,
+                  "label": "18-12"
+                },
+                {
+                  "value": 1,
+                  "label": "12-45"
+                }
+              ]
+            },
+            "label": {
+              "EN": "Range age",
+              "ES": "Spanish"
+            }
           }
         ],
-        "createdAt": "2017-05-17T17:45:03.188Z"
+        "createdAt": "2017-05-19T17:02:11.415Z"
       }
     }
   ]
@@ -130,85 +141,82 @@ It is necessary to define these environment variables:
 
 All endpoints are logged.  Check if user is ADMIN or MANAGER in gfw application
 
-GET: /template -> Return all report templates of the user logged
-GET: /template/:id -> Return report templates with the same id. Check if user is ADMIN or MANAGER in gfw application
-POST: /template -> Create an report template and associate to the user. With body:
-{  
-   "areaOfInterest": "aoi-id",
-   "languages": ["EN", "ES"],
-   "defaultLanguage": "EN",
-   "name": {
-     "EN": "My report template",
-     "ES": "Mi report templato"
-   },
-   "questions":[  
-      {  
-         "type":"text",
-         "label":"Name",
-         "name": "name",
-         "defaultValue":"Insert your name",
-         "order": 1,
+GET: /reports -> Return all reports accessible to user logged
+GET: /reports/:id -> Returns report with the same id. Check if user is ADMIN or MANAGER in gfw application
+POST: /reports -> Create an report and associate to the user. With body:
+{
+  "areaOfInterest": "aoi-id",
+  "languages": ["EN", "ES"],
+  "defaultLanguage": "EN",
+  "name": {
+    "EN": "My report template",
+    "ES": "Mi report templato"
+  },
+  "questions": [
+    {
+      "type": "text",
+      "label": {
+        "EN": "Name",
+        "ES": "Nombre"
       },
-      {  
-         "type":"checkbox",
-         "label":"Range age",
-         "name": "age",
-         "values":[  
-            "0-18",
-            "19-50",
-            "+50"
-         ],
-         "order": 2,
-         "childQuestions": [
-            {
-              "type": "text",
-              "label": "Specific age",
-              "name": "specific-age",
-              "defaultValue": "Insert your age",
-              "conditionalValue": "0-18",
-              "order": 0,
-              "required": true,
-              "values": []
-            }
-          ]
-      },
-      {  
-         "type":"radio",
-         "label":"Gender",
-         "name": "gender",
-         "values":[  
-            "Male",
-            "Female"
-         ],
-         "order": 3,
-      },
-      {  
-         "type":"blob",
-         "label":"Photo",
-         "name": "photo",
-         "required":true,
-         "order": 4,
-      },
-      {  
-         "type":"select",
-         "label":"Country",
-         "name": "country",
-         "conditions": [{
-           "name": "gender",
-           "value": "Female"
-         }],
-         "order": 5,
-         "values":[  
-            "Spain",
-            "EEUU"
-         ]
+      "name": "name",
+      "conditions": [],
+      "childQuestions": [],
+      "order": 1,
+      "required": false,
+      "values": {},
+      "defaultValue": {
+        "EN": "Insert your name",
+        "ES": "Spanish"
       }
-   ]
+    },
+    {
+      "type": "checkbox",
+      "label": {
+        "EN": "Range age",
+        "ES": "Spanish"
+      },
+      "name": "age",
+      "conditions": [],
+      "order": 2,
+      "required": false,
+      "values": {
+        "EN": [
+          { "value": 0, "label": "19-32"},
+          { "value": 1, "label": "12-43"}
+        ],
+        "ES": [
+          { "value": 0, "label": "18-12"},
+          { "value": 1, "label": "12-45"}
+        ]
+      },
+      "defaultValue": 0,
+      "childQuestions": [
+        {
+          "type": "text",
+          "label": {
+            "EN": "Specific age",
+            "ES": "Specific age"
+          },
+          "name": "specific-age",
+          "defaultValue": {
+            "EN": "Insert your name",
+            "ES": "Spanish"
+          },
+          "conditionalValue": 0,
+          "order": 0,
+          "required": true,
+          "values": {}
+        }
+      ]
+    }
+  ]
 }
 
 
-PATCH: /template/:id -> Update the report template with the same id.
-DELETE: /template/:id -> Delete the report template with the same id.
+
+PATCH: /reports/:id -> Update the report with the same id.
+DELETE: /reports/:id -> Delete the report with the same id.
 
 ```
 
@@ -217,18 +225,30 @@ DELETE: /template/:id -> Delete the report template with the same id.
 
 ```
 
-GET: /report/:id/answer -> Return all answers of the questionnaires of the user logged
-GET: /report/:id/answer/answer/:id -> Return answer with the same id. Check if the answer is owned of the logged user
-POST: /questionnaire/:id/answer  -> Create an answer of the questionnaire with the id of the param and associate to the user. With body:
-Without Content-type (is possible send files)
-<questionId>:<responseValue>
-5893463dbd106700c9cbef41:Pepe
-5893463dbd106700c9cbef40:0-18,19-50
-5893463dbd106700c9cbef3f:Male
-5893463dbd106700c9cbef3d:Spain
+GET: /report/:id/answers -> Return all answers of the report by id of the user logged
+GET: /report/:id/answers/:id -> Return answer with the same id. Check if the answer is owned of the logged user
+POST: /reports/:id/answers  -> Create an answer to the report with the id of the report and associate to the user. With body:
+Without Content-type (it is possible send files)
+<questionName>:<responseValue>
+name:Pepe
+age:0-18,19-50
+specific-age:32
 
 
-PATCH: /questionnaire/:id/answer/:id -> Update the answer with the same id. Check if the ansers is owned of the logged user
-DELETE: /questionnaire/:id/answer/:id -> Delete the asnwer with the same id. Check if the answer is owned of the logged user
+PATCH: /reports/:id/answer/:id -> Update the answer with the same id. Check if the answer is owned by the logged user
+DELETE: /reports/:id/answer/:id -> Delete the answer with the same id. Check if the answer is owned by the logged user
 
 ```
+
+### Download report answers
+
+```
+
+GET: /reports/:id/download-answers -> downloads all answers to the report by :id.
+
+```
+
+WIP:
+* All PATCH under development
+* Accept query params to all GET requests
+* Download individual answers for reports
