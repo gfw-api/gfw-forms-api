@@ -51,12 +51,12 @@ class AnswersRouter {
             responses: []
         };
 
-        const pushResponse = (question, response) => {
+        const pushResponse = (question, response, level) => {
             answer.responses.push({
                 question: {
                     name: question.name,
                     label: question.label[answer.language],
-                    level: question.level
+                    level: level
                 },
                 answer: {
                     value: response
@@ -84,12 +84,12 @@ class AnswersRouter {
                 response = yield s3Service.uploadFile(response.path, response.name);
             }
 
-            pushResponse(question, response);
+            pushResponse(question, response, 'parent');
 
             // handle child questions
             if (question.childQuestions) {
-                for (let j = 0; j < question.childQuestions; j++) {
-                    const childQuestion = questions.childQuestions[j];
+                for (let j = 0; j < question.childQuestions.length; j++) {
+                    const childQuestion = question.childQuestions[j];
                     let response = this.request.body.fields[childQuestion.name] || this.request.body.files[childQuestion.name];
                     if (!response && question.required) {
                         pushError(childQuestion);
@@ -98,7 +98,7 @@ class AnswersRouter {
                         //upload file
                         response = yield s3Service.uploadFile(response.path, response.name);
                     }
-                    pushResponse(childQuestion, response);
+                    pushResponse(childQuestion, response, 'child');
                 }
             }
         }

@@ -73,7 +73,7 @@ class ReportsRouter {
             const question = report.questions[i];
             questions[question.name] = null;
             if (question.childQuestions){
-                for (let j = 0, lengthChild =question.childQuestions.length; j < lengthChild; j++ ){
+                for (let j = 0, lengthChild = question.childQuestions.length; j < lengthChild; j++ ){
                     questions[question.childQuestions[j].name] = null;
                 }
             }
@@ -91,7 +91,7 @@ class ReportsRouter {
                 const responses = Object.assign({}, questions);
                 for(let j = 0, lengthResponses = answer.responses.length; j < lengthResponses; j++){
                     const res = answer.responses[j];
-                    responses[res.question] = res.value;
+                    responses[res.question.name] = res.answer.value;
                 }
                 logger.debug('Writting...');
                 data = json2csv({
