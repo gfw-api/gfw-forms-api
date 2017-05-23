@@ -341,48 +341,28 @@ Example response:
         "1",
         "1"
       ],
-      "timeFrame": [
-        "1",
-        "1"
-      ],
+      "startDate": "2013-01-23 12:00:33",
+      "endDate": "2013-02-23 15:00:33",
       "layer": "GLAD",
       "user": "1a10d7c6e0a37126611fd7a7",
       "responses": [
         {
-          "question": {
-            "name": "name",
-            "parent": "none",
-            "_id": "59240430cfcfaf0070e7886f"
-          },
-          "answer": {
-            "value": "Ed",
-            "_id": "59240430cfcfaf0070e7886e"
-          },
-          "_id": "59240430cfcfaf0070e7886d"
+          "name": "name",
+          "parent": "none",
+          "value": "Ed",
+          "_id": "59240430cfcfaf0070e7886f"
         },
         {
-          "question": {
-            "name": "age",
-            "parent": "none",
-            "_id": "59240430cfcfaf0070e7886c"
-          },
-          "answer": {
-            "value": "1",
-            "_id": "59240430cfcfaf0070e7886b"
-          },
-          "_id": "59240430cfcfaf0070e7886a"
+          "name": "age",
+          "parent": "none",
+          "value": "1",
+          "_id": "59240430cfcfaf0070e7886f"
         },
         {
-          "question": {
-            "name": "specific-age",
-            "parent": "age",
-            "_id": "59240430cfcfaf0070e78869"
-          },
-          "answer": {
-            "value": "21",
-            "_id": "59240430cfcfaf0070e78868"
-          },
-          "_id": "59240430cfcfaf0070e78867"
+          "name": "specific-age",
+          "parent": "age",
+          "value": "21",
+          "_id": "59240430cfcfaf0070e7886f"
         }
       ]
     }

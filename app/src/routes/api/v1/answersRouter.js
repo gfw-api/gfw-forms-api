@@ -18,11 +18,10 @@ class AnswersRouter {
 
     static * getAll() {
         logger.info(`Obtaining answers for report ${this.params.reportId}`);
-        let filter = {};
+        let filter = {
+            $and: [{report: new ObjectId(this.params.reportId)}]
+        };
         if (this.state.query) {
-            filter = {
-                $and: [{report: new ObjectId(this.params.reportId)}]
-            };
             Object.keys(this.state.query).forEach((key) => {
                 let value;
                 if (key === 'user') {
@@ -33,6 +32,7 @@ class AnswersRouter {
                 filter.$and.push({ [key]: value });
             });
         }
+        logger.debug(filter);
         const answers = yield AnswersModel.find(filter);
         this.body = AnswersSerializer.serialize(answers);
     }
@@ -68,7 +68,8 @@ class AnswersRouter {
         const pushResponse = (question, response, parent) => {
             answer.responses.push({
                 name: question.name,
-                value: response
+                value: response,
+                parent: parent
             });
         };
 
@@ -92,7 +93,7 @@ class AnswersRouter {
                 response = yield s3Service.uploadFile(response.path, response.name);
             }
 
-            pushResponse(question, response);
+            pushResponse(question, response, 'none');
 
             // handle child questions
             if (question.childQuestions) {
