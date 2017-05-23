@@ -67,14 +67,8 @@ class AnswersRouter {
 
         const pushResponse = (question, response, parent) => {
             answer.responses.push({
-                question: {
-                    name: question.name,
-                    label: question.label[answer.language],
-                    parent: parent || 'none'
-                },
-                answer: {
-                    value: response
-                }
+                name: question.name,
+                value: response
             });
         };
 

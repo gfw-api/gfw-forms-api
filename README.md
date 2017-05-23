@@ -351,7 +351,6 @@ Example response:
         {
           "question": {
             "name": "name",
-            "label": "Nombre",
             "parent": "none",
             "_id": "59240430cfcfaf0070e7886f"
           },
@@ -364,7 +363,6 @@ Example response:
         {
           "question": {
             "name": "age",
-            "label": "Spanish",
             "parent": "none",
             "_id": "59240430cfcfaf0070e7886c"
           },
@@ -377,7 +375,6 @@ Example response:
         {
           "question": {
             "name": "specific-age",
-            "label": "Specific age",
             "parent": "age",
             "_id": "59240430cfcfaf0070e78869"
           },
