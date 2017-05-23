@@ -6,12 +6,11 @@ const ObjectId = Schema.ObjectId;
 var QuestionResponse = new Schema({
     name: {type: String, required: true, trim: true},
     label: {type: String, required: true, trim: true},
-    level: {type: String, required: false, trim: true}
+    parent: {type: String, required: false, trim: true}
 });
 
 var AnswerResponse = new Schema({
-    value: {type: String, required: true, trim: true},
-    label: {type: String, required: false, trim: true}
+    value: {type: String, required: true, trim: true}
 });
 
 var Answer = new Schema({

@@ -47,12 +47,15 @@ It is necessary to define these environment variables:
       "type": "reports",
       "id": "591f2513d3a6c4003f4960b4",
       "attributes": {
-        "name": {},
+        "name": {
+          "en": "My first report",
+          "es": "Mi primer informe"
+        },
         "languages": [
-          "EN",
-          "ES"
+          "en",
+          "es"
         ],
-        "defaultLanguage": "EN",
+        "defaultLanguage": "en",
         "areaOfInterest": "aoi-id",
         "user": "1a10d7c6e0a37126611fd7a7",
         "questions": [
@@ -60,8 +63,8 @@ It is necessary to define these environment variables:
             "type": "text",
             "name": "name",
             "defaultValue": {
-              "EN": "Insert your name",
-              "ES": "Spanish"
+              "en": "Insert your name",
+              "es": "Spanish"
             },
             "_id": "591f2513d3a6c4003f4960b7",
             "conditions": [],
@@ -69,8 +72,8 @@ It is necessary to define these environment variables:
             "order": 1,
             "required": false,
             "label": {
-              "EN": "Name",
-              "ES": "Nombre"
+              "en": "Name",
+              "es": "Nombre"
             }
           },
           {
@@ -84,23 +87,23 @@ It is necessary to define these environment variables:
                 "type": "text",
                 "name": "specific-age",
                 "defaultValue": {
-                  "EN": "Insert your name",
-                  "ES": "Spanish"
+                  "en": "Insert your name",
+                  "es": "Spanish"
                 },
                 "conditionalValue": 0,
                 "_id": "591f2513d3a6c4003f4960b6",
                 "order": 0,
                 "required": true,
                 "label": {
-                  "EN": "Specific age",
-                  "ES": "Specific age"
+                  "en": "Specific age",
+                  "es": "Specific age"
                 }
               }
             ],
             "order": 2,
             "required": false,
             "values": {
-              "EN": [
+              "en": [
                 {
                   "value": 0,
                   "label": "19-32"
@@ -110,7 +113,7 @@ It is necessary to define these environment variables:
                   "label": "12-43"
                 }
               ],
-              "ES": [
+              "es": [
                 {
                   "value": 0,
                   "label": "18-12"
@@ -122,8 +125,8 @@ It is necessary to define these environment variables:
               ]
             },
             "label": {
-              "EN": "Range age",
-              "ES": "Spanish"
+              "en": "Range age",
+              "es": "Spanish"
             }
           }
         ],
@@ -143,21 +146,116 @@ All endpoints are logged.  Check if user is ADMIN or MANAGER in gfw application
 
 GET: /reports -> Return all reports accessible to user logged
 GET: /reports/:id -> Returns report with the same id. Check if user is ADMIN or MANAGER in gfw application
+Example response:
+
+{
+  "data": {
+    "type": "reports",
+    "id": "592402c4cfcfaf0070e78826",
+    "attributes": {
+      "name": {
+        "en": "My report template",
+        "es": "Mi report templato"
+      },
+      "languages": [
+        "en",
+        "es"
+      ],
+      "defaultLanguage": "en",
+      "areaOfInterest": "aoi-id",
+      "user": "1a10d7c6e0a37126611fd7a7",
+      "questions": [
+        {
+          "type": "text",
+          "name": "name",
+          "defaultValue": {
+            "es": "Spanish",
+            "en": "Insert your name"
+          },
+          "_id": "592402c4cfcfaf0070e78829",
+          "conditions": [],
+          "childQuestions": [],
+          "order": 1,
+          "required": false,
+          "label": {
+            "es": "Nombre",
+            "en": "Name"
+          }
+        },
+        {
+          "type": "checkbox",
+          "name": "age",
+          "defaultValue": 0,
+          "_id": "592402c4cfcfaf0070e78827",
+          "conditions": [],
+          "childQuestions": [
+            {
+              "type": "text",
+              "name": "specific-age",
+              "defaultValue": {
+                "es": "Spanish",
+                "en": "Insert your name"
+              },
+              "conditionalValue": 0,
+              "_id": "592402c4cfcfaf0070e78828",
+              "order": 0,
+              "required": true,
+              "label": {
+                "es": "Specific age",
+                "en": "Specific age"
+              }
+            }
+          ],
+          "order": 2,
+          "required": false,
+          "values": {
+            "es": [
+              {
+                "label": "18-12",
+                "value": 0
+              },
+              {
+                "label": "12-45",
+                "value": 1
+              }
+            ],
+            "en": [
+              {
+                "label": "19-32",
+                "value": 0
+              },
+              {
+                "label": "12-43",
+                "value": 1
+              }
+            ]
+          },
+          "label": {
+            "es": "Spanish",
+            "en": "Range age"
+          }
+        }
+      ],
+      "createdAt": "2017-05-23T09:37:08.315Z"
+    }
+  }
+}
+
 POST: /reports -> Create an report and associate to the user. With body:
 {
   "areaOfInterest": "aoi-id",
-  "languages": ["EN", "ES"],
-  "defaultLanguage": "EN",
+  "languages": ["en", "es"],
+  "defaultLanguage": "en",
   "name": {
-    "EN": "My report template",
-    "ES": "Mi report templato"
+    "en": "My report template",
+    "es": "Mi report templato"
   },
   "questions": [
     {
       "type": "text",
       "label": {
-        "EN": "Name",
-        "ES": "Nombre"
+        "en": "Name",
+        "es": "Nombre"
       },
       "name": "name",
       "conditions": [],
@@ -166,26 +264,26 @@ POST: /reports -> Create an report and associate to the user. With body:
       "required": false,
       "values": {},
       "defaultValue": {
-        "EN": "Insert your name",
-        "ES": "Spanish"
+        "en": "Insert your name",
+        "es": "Spanish"
       }
     },
     {
       "type": "checkbox",
       "label": {
-        "EN": "Range age",
-        "ES": "Spanish"
+        "en": "Range age",
+        "es": "Spanish"
       },
       "name": "age",
       "conditions": [],
       "order": 2,
       "required": false,
       "values": {
-        "EN": [
+        "en": [
           { "value": 0, "label": "19-32"},
           { "value": 1, "label": "12-43"}
         ],
-        "ES": [
+        "es": [
           { "value": 0, "label": "18-12"},
           { "value": 1, "label": "12-45"}
         ]
@@ -195,13 +293,13 @@ POST: /reports -> Create an report and associate to the user. With body:
         {
           "type": "text",
           "label": {
-            "EN": "Specific age",
-            "ES": "Specific age"
+            "en": "Specific age",
+            "es": "Specific age"
           },
           "name": "specific-age",
           "defaultValue": {
-            "EN": "Insert your name",
-            "ES": "Spanish"
+            "en": "Insert your name",
+            "es": "Spanish"
           },
           "conditionalValue": 0,
           "order": 0,
@@ -213,8 +311,6 @@ POST: /reports -> Create an report and associate to the user. With body:
   ]
 }
 
-
-
 PATCH: /reports/:id -> Update the report with the same id.
 DELETE: /reports/:id -> Delete the report with the same id.
 
@@ -223,17 +319,86 @@ DELETE: /reports/:id -> Delete the report with the same id.
 
 ### CRUD report answers
 
-```
+```json
 
 GET: /report/:id/answers -> Return all answers of the report by id of the user logged
 GET: /report/:id/answers/:id -> Return answer with the same id. Check if the answer is owned of the logged user
-POST: /reports/:id/answers  -> Create an answer to the report with the id of the report and associate to the user. With body:
-Without Content-type (it is possible send files)
-<questionName>:<responseValue>
-name:Pepe
-age:0-18,19-50
-specific-age:32
+Example response:
 
+{
+  "data": {
+    "type": "answers",
+    "id": "59240430cfcfaf0070e78866",
+    "attributes": {
+      "report": "592402c4cfcfaf0070e78826",
+      "areaOfInterest": "my-area-id",
+      "language": "es",
+      "userPosition": [
+        "1",
+        "1"
+      ],
+      "clickedPosition": [
+        "1",
+        "1"
+      ],
+      "timeFrame": [
+        "1",
+        "1"
+      ],
+      "layer": "GLAD",
+      "user": "1a10d7c6e0a37126611fd7a7",
+      "responses": [
+        {
+          "question": {
+            "name": "name",
+            "label": "Nombre",
+            "parent": "none",
+            "_id": "59240430cfcfaf0070e7886f"
+          },
+          "answer": {
+            "value": "Ed",
+            "_id": "59240430cfcfaf0070e7886e"
+          },
+          "_id": "59240430cfcfaf0070e7886d"
+        },
+        {
+          "question": {
+            "name": "age",
+            "label": "Spanish",
+            "parent": "none",
+            "_id": "59240430cfcfaf0070e7886c"
+          },
+          "answer": {
+            "value": "1",
+            "_id": "59240430cfcfaf0070e7886b"
+          },
+          "_id": "59240430cfcfaf0070e7886a"
+        },
+        {
+          "question": {
+            "name": "specific-age",
+            "label": "Specific age",
+            "parent": "age",
+            "_id": "59240430cfcfaf0070e78869"
+          },
+          "answer": {
+            "value": "21",
+            "_id": "59240430cfcfaf0070e78868"
+          },
+          "_id": "59240430cfcfaf0070e78867"
+        }
+      ]
+    }
+  }
+}
+
+POST: /reports/:id/answers  -> Create an answer to the report with the id of the report and associate to the user. With body:
+Without Content-type (it is possible send files as attachments). For example
+<questionName>: <responseValue>
+name: Pepe
+age: 0-18
+specific-age: 32
+photo: upload_file
 
 PATCH: /reports/:id/answer/:id -> Update the answer with the same id. Check if the answer is owned by the logged user
 DELETE: /reports/:id/answer/:id -> Delete the answer with the same id. Check if the answer is owned by the logged user
@@ -252,3 +417,4 @@ WIP:
 * All PATCH under development
 * Accept query params to all GET requests
 * Download individual answers for reports
+* Add query params to fetch answers by language
