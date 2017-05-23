@@ -16,19 +16,33 @@ const router = new Router({
 class AnswersRouter {
 
     static * getAll() {
-        const query = this.request.query;
-        logger.info('Obtaining all answers');
-        const answers = yield AnswersModel.find();
+        logger.info(`Obtaining answers for report ${this.params.reportId}`);
+        let answers;
+        if (this.state.query) {
+            let filter = [{report: this.params.reportId}];
+            Object.keys(this.state.query).forEach((key) => {
+                let queryObj = {};
+                queryObj[key] = this.state.query[key];
+                filter.push(queryObj);
+            });
+            answers = yield AnswersModel.find({
+                $and: filter
+            });
+            logger.debug(filter);
+        } else {
+            answers = yield AnswersModel.find();
+        }
         this.body = AnswersSerializer.serialize(answers);
     }
 
     static * get() {
-        logger.info(`Obtaining answers for report ${this.params.id}`);
-        const answers = yield AnswersModel.find({
+        logger.info(`Obtaining answer ${this.params.id} for report ${this.params.reportId}`);
+        const answer = yield AnswersModel.find({
             user: this.state.loggedUser.id,
-            _id: this.params.id
+            _id: this.params.id,
+            report: this.params.reportId
         });
-        this.body = AnswersSerializer.serialize(answers);
+        this.body = AnswersSerializer.serialize(answer);
     }
 
     static * save() {
@@ -145,6 +159,13 @@ function* loggedUserToState(next) {
     yield next;
 }
 
+function * queryToState(next) {
+    if (this.request.query && Object.keys(this.request.query).length > 0){
+        this.state.query = this.request.query;
+    }
+    yield next;
+}
+
 function* checkExistReport(next) {
     const report = yield ReportsModel.findById(this.params.reportId).populate('questions');
     if (!report) {
@@ -158,8 +179,8 @@ function* checkExistReport(next) {
 
 router.post('/', loggedUserToState, checkExistReport, AnswersRouter.save);
 router.patch('/:id', loggedUserToState, checkExistReport, AnswersRouter.update);
-router.get('/', loggedUserToState, AnswersRouter.getAll);
-router.get('/:id', loggedUserToState, AnswersRouter.get);
+router.get('/', loggedUserToState, queryToState, AnswersRouter.getAll);
+router.get('/:id', loggedUserToState, queryToState, AnswersRouter.get);
 router.delete('/:id', loggedUserToState, AnswersRouter.delete);
 
 module.exports = router;

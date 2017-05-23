@@ -16,9 +16,21 @@ const router = new Router({
 class ReportsRouter {
 
     static * getAll(){
-        const query = this.request.query;
         logger.info('Obtaining all reports');
-        const reportsModels = yield ReportsModel.find();
+        let reportsModels;
+        if (this.state.query) {
+            let filter = [];
+            Object.keys(this.state.query).forEach((key) => {
+                let queryObj = {};
+                queryObj[key] = this.state.query[key];
+                filter.push(queryObj);
+            });
+            reportsModels = yield ReportsModel.find({
+                $and: filter
+            });
+        } else {
+            reportsModels = yield ReportsModel.find();
+        }
         this.body = ReportsSerializer.serialize(reportsModels);
     }
 
@@ -120,6 +132,13 @@ function * loggedUserToState(next) {
     yield next;
 }
 
+function * queryToState(next) {
+    if (this.request.query && Object.keys(this.request.query).length > 0){
+        this.state.query = this.request.query;
+    }
+    yield next;
+}
+
 function * checkPermission(next) {
     if (this.state.loggedUser.role === 'USER' || (this.state.loggedUser.role==='MANAGER' && (!this.state.loggedUser.extraUserData || this.state.loggedUser.extraUserData.apps || this.state.loggedUser.extraUserData.apps.indexOf('gfw') === -1))) {
         this.throw(403, 'Not authorized');
@@ -138,8 +157,8 @@ function* checkAdmin(next) {
 
 router.post('/', loggedUserToState, ReportsValidator.create, ReportsRouter.save);
 router.patch('/:id', loggedUserToState, checkPermission, ReportsValidator.update, ReportsRouter.update);
-router.get('/', loggedUserToState, ReportsRouter.getAll);
-router.get('/:id', loggedUserToState, ReportsRouter.get);
+router.get('/', loggedUserToState, queryToState, ReportsRouter.getAll);
+router.get('/:id', loggedUserToState, queryToState, ReportsRouter.get);
 router.delete('/:id', loggedUserToState, checkPermission, ReportsRouter.delete);
 router.get('/:id/download-answers', loggedUserToState, ReportsRouter.downloadAnswers);
 
