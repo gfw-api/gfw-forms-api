@@ -5,8 +5,7 @@ const ObjectId = Schema.ObjectId;
 
 var AnswerResponse = new Schema({
     name: {type: String, required: true, trim: true},
-    value: {type: String, required: true, trim: true},
-    parent: {type: String, required: true, trim: true}
+    value: {type: String, required: true, trim: true}
 });
 
 var Answer = new Schema({

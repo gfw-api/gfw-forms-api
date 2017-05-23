@@ -65,11 +65,10 @@ class AnswersRouter {
             responses: []
         };
 
-        const pushResponse = (question, response, parent) => {
+        const pushResponse = (question, response) => {
             answer.responses.push({
                 name: question.name,
-                value: response,
-                parent: parent
+                value: response
             });
         };
 
@@ -93,7 +92,7 @@ class AnswersRouter {
                 response = yield s3Service.uploadFile(response.path, response.name);
             }
 
-            pushResponse(question, response, 'none');
+            pushResponse(question, response);
 
             // handle child questions
             if (question.childQuestions) {
@@ -107,7 +106,7 @@ class AnswersRouter {
                         //upload file
                         response = yield s3Service.uploadFile(response.path, response.name);
                     }
-                    pushResponse(childQuestion, response, question.name);
+                    pushResponse(childQuestion, response);
                 }
             }
         }
