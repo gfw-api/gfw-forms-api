@@ -4,7 +4,7 @@ var Schema = mongoose.Schema;
 const ObjectId = Schema.ObjectId;
 
 var Response = new Schema({
-    questionnaire: { type: ObjectId, ref: 'Questionnaire', required: true }, 
+    questionnaire: { type: ObjectId, ref: 'Questionnaire', required: true },
     user: {type: ObjectId, required: true},
     responses: [{
         question: {type: String, required: true, trim: true},
@@ -12,6 +12,5 @@ var Response = new Schema({
     }],
     createdAt: {type: Date, required: true, default: Date.now}
 });
-
 
 module.exports = mongoose.model('Response', Response);

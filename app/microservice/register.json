@@ -1,22 +1,22 @@
 {
-    "id": "#(service.id)",
-    "name": "#(service.name)",
-    "tags": ["gfw"],
-    "endpoints": [{
-        "path": "/v1/form/contribution-data",
-        "method": "POST",
-        "redirect": {
-            "method": "POST",
-            "path": "/api/v1/form/contribution-data"
-        }
-    },{
-        "path": "/v1/form/contact-us",
-        "method": "POST",
-        "redirect": {
-            "method": "POST",
-            "path": "/api/v1/form/contact-us"
-        }
-    }, {
+  "id": "#(service.id)",
+  "name": "#(service.name)",
+  "tags": ["gfw"],
+  "endpoints": [{
+      "path": "/v1/form/contribution-data",
+      "method": "POST",
+      "redirect": {
+          "method": "POST",
+          "path": "/api/v1/form/contribution-data"
+      }
+  },{
+      "path": "/v1/form/contact-us",
+      "method": "POST",
+      "redirect": {
+          "method": "POST",
+          "path": "/api/v1/form/contact-us"
+      }
+  }, {
 		"path": "/v1/questionnaire",
 		"method": "GET",
 		"authenticated": true,
@@ -105,6 +105,122 @@
 			"method": "GET",
 			"path": "/api/v1/questionnaire/:id/download-answers"
 		}
-	}
-  ]
+	},{
+		"path": "/v1/reports",
+		"method": "GET",
+		"authenticated": true,
+		"binary": true,
+		"redirect": {
+			"method": "GET",
+			"path": "/api/v1/reports"
+		}
+	},{
+		"path": "/v1/reports",
+		"method": "POST",
+		"authenticated": true,
+		"binary": true,
+		"redirect": {
+			"method": "POST",
+			"path": "/api/v1/reports"
+		}
+	},{
+		"path": "/v1/reports/:reportId",
+		"method": "GET",
+		"authenticated": true,
+		"binary": true,
+		"redirect": {
+			"method": "GET",
+			"path": "/api/v1/reports/:reportId"
+		}
+	},{
+		"path": "/v1/reports/:reportId",
+		"method": "POST",
+		"authenticated": true,
+		"binary": true,
+		"redirect": {
+			"method": "POST",
+			"path": "/api/v1/reports/:reportId"
+		}
+	},{
+		"path": "/v1/reports/:reportId",
+		"method": "PATCH",
+		"authenticated": true,
+		"binary": true,
+		"redirect": {
+			"method": "PATCH",
+			"path": "/api/v1/reports/:reportId"
+		}
+	},{
+		"path": "/v1/reports/:reportId",
+		"method": "DELETE",
+		"authenticated": true,
+		"binary": true,
+		"redirect": {
+			"method": "DELETE",
+			"path": "/api/v1/reports/:reportId"
+		}
+	},{
+		"path": "/v1/reports/:reportId/answers",
+		"method": "GET",
+		"authenticated": true,
+		"binary": true,
+		"redirect": {
+			"method": "GET",
+			"path": "/api/v1/reports/:reportId/answers"
+		}
+	},{
+		"path": "/v1/reports/:reportId/answers",
+		"method": "POST",
+		"authenticated": true,
+		"binary": true,
+		"redirect": {
+			"method": "POST",
+			"path": "/api/v1/reports/:reportId/answers"
+		}
+	},{
+		"path": "/v1/reports/:reportId/answers/:id",
+		"method": "GET",
+		"authenticated": true,
+		"binary": true,
+		"redirect": {
+			"method": "GET",
+			"path": "/api/v1/reports/:reportId/answers/:id"
+		}
+	},{
+		"path": "/v1/reports/:reportId/answers/:id",
+		"method": "POST",
+		"authenticated": true,
+		"binary": true,
+		"redirect": {
+			"method": "POST",
+			"path": "/api/v1/reports/:reportId/answers/:id"
+		}
+	},{
+		"path": "/v1/reports/:reportId/answers/:id",
+		"method": "PATCH",
+		"authenticated": true,
+		"binary": true,
+		"redirect": {
+			"method": "PATCH",
+			"path": "/api/v1/reports/:reportId/answers/:id"
+		}
+	},{
+		"path": "/v1/reports/:reportId/answers/:id",
+		"method": "DELETE",
+		"authenticated": true,
+		"binary": true,
+		"redirect": {
+			"method": "DELETE",
+			"path": "/api/v1/reports/:reportId/answers/:id"
+		}
+	},{
+		"path": "/v1/reports/:reportId/download-answers",
+		"method": "GET",
+		"authenticated": true,
+		"binary": true,
+		"redirect": {
+			"method": "GET",
+			"path": "/api/v1/reports/:reportId/download-answers"
+		}
+	}]
 }
