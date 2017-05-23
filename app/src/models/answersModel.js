@@ -10,7 +10,8 @@ var QuestionResponse = new Schema({
 });
 
 var AnswerResponse = new Schema({
-    value: {type: String, required: true, trim: true}
+    value: {type: String, required: true, trim: true},
+    label: {type: String, required: false, trim: true}
 });
 
 var Answer = new Schema({

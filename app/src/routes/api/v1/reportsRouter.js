@@ -8,6 +8,8 @@ const ReportsValidator = require('validators/reportsValidator');
 const AnswersModel = require('models/answersModel');
 const passThrough = require('stream').PassThrough;
 const json2csv = require('json2csv');
+const ObjectId = require('mongoose').Types.ObjectId;
+
 
 const router = new Router({
     prefix: '/reports'
@@ -17,21 +19,23 @@ class ReportsRouter {
 
     static * getAll(){
         logger.info('Obtaining all reports');
-        let reportsModels;
+        let filter = {};
         if (this.state.query) {
-            let filter = [];
+            filter = {
+                $and: []
+            };
             Object.keys(this.state.query).forEach((key) => {
-                let queryObj = {};
-                queryObj[key] = this.state.query[key];
-                filter.push(queryObj);
+                let value;
+                if (key === 'user') {
+                    value = new ObjectId(this.state.query[key]);
+                } else {
+                    value = this.state.query[key];
+                }
+                filter.$and.push({ [key]: value });
             });
-            reportsModels = yield ReportsModel.find({
-                $and: filter
-            });
-        } else {
-            reportsModels = yield ReportsModel.find();
         }
-        this.body = ReportsSerializer.serialize(reportsModels);
+        const reports = yield ReportsModel.find(filter);
+        this.body = ReportsSerializer.serialize(reports);
     }
 
     static * get(){

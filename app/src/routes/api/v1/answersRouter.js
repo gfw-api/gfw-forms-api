@@ -8,6 +8,7 @@ const ReportsModel = require('models/reportsModel');
 const s3Service = require('services/s3Service');
 const passThrough = require('stream').PassThrough;
 const json2csv = require('json2csv');
+const ObjectId = require('mongoose').Types.ObjectId;
 
 const router = new Router({
     prefix: '/reports/:reportId/answers'
@@ -17,21 +18,22 @@ class AnswersRouter {
 
     static * getAll() {
         logger.info(`Obtaining answers for report ${this.params.reportId}`);
-        let answers;
+        let filter = {};
         if (this.state.query) {
-            let filter = [{report: this.params.reportId}];
+            filter = {
+                $and: [{report: new ObjectId(this.params.reportId)}]
+            };
             Object.keys(this.state.query).forEach((key) => {
-                let queryObj = {};
-                queryObj[key] = this.state.query[key];
-                filter.push(queryObj);
+                let value;
+                if (key === 'user') {
+                    value = new ObjectId(this.state.query[key]);
+                } else {
+                    value = this.state.query[key];
+                }
+                filter.$and.push({ [key]: value });
             });
-            answers = yield AnswersModel.find({
-                $and: filter
-            });
-            logger.debug(filter);
-        } else {
-            answers = yield AnswersModel.find();
         }
+        const answers = yield AnswersModel.find(filter);
         this.body = AnswersSerializer.serialize(answers);
     }
 
