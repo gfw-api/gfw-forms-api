@@ -41,6 +41,10 @@ class ReportsRouter {
                 { $or: [{public: true}, {user: new ObjectId(this.state.loggedUser.id)}] }
             ]
         });
+        if (!report) {
+            this.throw(404, 'Report not found with these permissions');
+            return;
+        }
         this.body = ReportsSerializer.serialize(report);
     }
 
@@ -72,9 +76,14 @@ class ReportsRouter {
 
     static * delete(){
         logger.info(`Deleting report with id ${this.params.id}`);
-        const result = yield ReportsModel.remove({ _id: this.params.id });
+        const result = yield ReportsModel.remove({
+            $and: [
+                { _id: new ObjectId(this.params.id) },
+                { $or: [{public: true}, {user: new ObjectId(this.state.loggedUser.id)}] }
+            ]
+        });
         if (!result || !result.result || result.result.ok === 0) {
-            this.throw(404, 'Report not found');
+            this.throw(404, 'Report not found with these permissions');
             return;
         }
         this.body = '';
@@ -87,12 +96,19 @@ class ReportsRouter {
         this.set('Content-type', 'text/csv');
         this.body = passThrough();
 
-        const report = yield ReportsModel.findById(this.params.id);
-        const questions = {};
+        const report = yield ReportsModel.find({
+            $and: [
+                { _id: new ObjectId(this.params.id) },
+                { $or: [{public: true}, {user: new ObjectId(this.state.loggedUser.id)}] }
+            ]
+        });
         if (!report) {
-            this.throw(404, 'Report not found');
+            this.throw(404, 'Report not found with these permissions');
             return;
         }
+
+        const questions = {};
+
         for (let i = 0, length = report.questions.length; i < length; i++) {
             const question = report.questions[i];
             questions[question.name] = null;
@@ -102,9 +118,19 @@ class ReportsRouter {
                 }
             }
         }
-        const answers = yield AnswersModel.find({
-            report: this.params.id
-        });
+
+        let filter = {};
+        if (this.state.loggedUser.role === 'ADMIN') {
+            filter = { report: this.params.id };
+        } else {
+            filter = {
+                $and: [
+                    { report: new ObjectId(this.params.id) },
+                    { user: new ObjectId(this.state.loggedUser.id) }
+                ]
+            };
+        }
+        const answers = yield AnswersModel.find(filter);
         logger.debug('Obtaining data');
         if (answers) {
             logger.debug('Data found!');
@@ -124,6 +150,9 @@ class ReportsRouter {
                 }) + '\n';
                 this.body.write(data);
             }
+        } else {
+            this.throw(404, 'No data found');
+            return;
         }
         this.body.end();
     }
@@ -151,7 +180,7 @@ function * queryToState(next) {
 }
 
 function * checkPermission(next) {
-    if (this.state.loggedUser.role === 'USER' || (this.state.loggedUser.role==='MANAGER' && (!this.state.loggedUser.extraUserData || this.state.loggedUser.extraUserData.apps || this.state.loggedUser.extraUserData.apps.indexOf('gfw') === -1))) {
+    if (this.state.loggedUser.role === 'USER' || (this.state.loggedUser.role === 'MANAGER' && (!this.state.loggedUser.extraUserData || this.state.loggedUser.extraUserData.apps || this.state.loggedUser.extraUserData.apps.indexOf('gfw') === -1))) {
         this.throw(403, 'Not authorized');
         return;
     }
@@ -159,13 +188,14 @@ function * checkPermission(next) {
 }
 
 function* checkAdmin(next) {
-    if (!this.state.loggedUser) {
+    if (!this.state.loggedUser || this.state.loggedUser.role === 'ADMIN') {
         this.throw(403, 'Not authorized');
         return;
     }
     yield next;
 }
 
+// check permission must be added at some point
 router.post('/', loggedUserToState, ReportsValidator.create, ReportsRouter.save);
 router.patch('/:id', loggedUserToState, checkPermission, ReportsValidator.update, ReportsRouter.update);
 router.get('/', loggedUserToState, queryToState, ReportsRouter.getAll);

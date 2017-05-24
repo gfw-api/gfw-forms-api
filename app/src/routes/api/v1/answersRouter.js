@@ -18,32 +18,55 @@ class AnswersRouter {
 
     static * getAll() {
         logger.info(`Obtaining answers for report ${this.params.reportId}`);
-        let filter = {
-            $and: [{report: new ObjectId(this.params.reportId)}]
-        };
+
+        let filter = {};
+        if (this.state.loggedUser.role === 'ADMIN') {
+            filter = {
+                $and: [
+                    { report: new ObjectId(this.params.reportId) },
+                ]
+            };
+        } else {
+            filter = {
+                $and: [
+                    { report: new ObjectId(this.params.reportId) },
+                    { user: new ObjectId(this.state.loggedUser.id) }
+                ]
+            };
+        }
         if (this.state.query) {
             Object.keys(this.state.query).forEach((key) => {
-                let value;
-                if (key === 'user') {
-                    value = new ObjectId(this.state.query[key]);
-                } else {
-                    value = this.state.query[key];
-                }
-                filter.$and.push({ [key]: value });
+                filter.$and.push({ [key]: this.state.query[key] });
             });
         }
-        logger.debug(filter);
         const answers = yield AnswersModel.find(filter);
+        if (!answers) {
+            this.throw(404, 'Answers not found with these permissions');
+            return;
+        }
         this.body = AnswersSerializer.serialize(answers);
     }
 
     static * get() {
         logger.info(`Obtaining answer ${this.params.id} for report ${this.params.reportId}`);
-        const answer = yield AnswersModel.find({
-            user: this.state.loggedUser.id,
-            _id: this.params.id,
-            report: this.params.reportId
-        });
+        let filter = {};
+        if (this.state.loggedUser.role === 'ADMIN') {
+            filter = {
+                _id: new ObjectId(this.state.loggedUser.id),
+                report: new ObjectId(this.state.loggedUser.id)
+            };
+        } else {
+            filter = {
+                user: new ObjectId(this.state.loggedUser.id),
+                _id: new ObjectId(this.state.loggedUser.id),
+                report: new ObjectId(this.state.loggedUser.id)
+            };
+        }
+        const answer = yield AnswersModel.find(filter);
+        if (!answer) {
+            this.throw(404, 'Answer not found with these permissions');
+            return;
+        }
         this.body = AnswersSerializer.serialize(answer);
     }
 
@@ -124,8 +147,10 @@ class AnswersRouter {
     static * delete() {
         logger.info(`Deleting answer with id ${this.params.id}`);
         const result = yield AnswersModel.remove({
-            _id: this.params.id,
-            userId: this.state.loggedUser.id,
+            $and: [
+                { _id: new ObjectId(this.params.id) },
+                { user: new ObjectId(this.state.loggedUser.id) }
+            ]
         });
         if (!result || !result.result || result.result.ok === 0) {
             this.throw(404, 'Answer not found');
@@ -163,9 +188,14 @@ function * queryToState(next) {
 }
 
 function* checkExistReport(next) {
-    const report = yield ReportsModel.findById(this.params.reportId).populate('questions');
+    const report = yield ReportsModel.find({
+        $and: [
+            { _id: new ObjectId(this.params.reportId) },
+            { $or: [{public: true}, {user: new ObjectId(this.state.loggedUser.id)}] }
+        ]
+    }).populate('questions');
     if (!report) {
-        this.throw(404, 'Report not found');
+        this.throw(404, 'Report not found with these permissions');
         return;
     }
     this.state.report = report;
@@ -175,7 +205,7 @@ function* checkExistReport(next) {
 
 router.post('/', loggedUserToState, checkExistReport, AnswersRouter.save);
 router.patch('/:id', loggedUserToState, checkExistReport, AnswersRouter.update);
-router.get('/', loggedUserToState, queryToState, AnswersRouter.getAll);
+router.get('/', loggedUserToState, checkExistReport, queryToState, AnswersRouter.getAll);
 router.get('/:id', loggedUserToState, queryToState, AnswersRouter.get);
 router.delete('/:id', loggedUserToState, AnswersRouter.delete);
 
