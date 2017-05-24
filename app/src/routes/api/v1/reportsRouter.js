@@ -19,19 +19,14 @@ class ReportsRouter {
 
     static * getAll(){
         logger.info('Obtaining all reports');
-        let filter = {};
+        let filter = {
+            $and: [
+                { $or: [{public: true}, {user: new ObjectId(this.state.loggedUser.id)}] }
+            ]
+        };
         if (this.state.query) {
-            filter = {
-                $and: []
-            };
             Object.keys(this.state.query).forEach((key) => {
-                let value;
-                if (key === 'user') {
-                    value = new ObjectId(this.state.query[key]);
-                } else {
-                    value = this.state.query[key];
-                }
-                filter.$and.push({ [key]: value });
+                filter.$and.push({ [key]: this.state.query[key] });
             });
         }
         const reports = yield ReportsModel.find(filter);
@@ -40,20 +35,32 @@ class ReportsRouter {
 
     static * get(){
         logger.info(`Obtaining reports with id ${this.params.id}`);
-        const report = yield ReportsModel.find({ _id: this.params.id });
+        const report = yield ReportsModel.find({
+            $and: [
+                { _id: this.params.id },
+                { $or: [{public: true}, {user: new ObjectId(this.state.loggedUser.id)}] }
+            ]
+        });
         this.body = ReportsSerializer.serialize(report);
     }
 
     static * save(){
         logger.info('Saving reports', this.request.body);
         const request = this.request.body;
+
+        if (request.public && this.state.loggedUser.role !== 'ADMIN') {
+            this.throw(404, 'Admin permissions required to save public templates');
+            return;
+        }
+
         const report = yield new ReportsModel({
             name: request.name,
             areaOfInterest: request.areaOfInterest,
             user: this.state.loggedUser.id,
             languages: request.languages,
             defaultLanguage: request.defaultLanguage,
-            questions: request.questions
+            questions: request.questions,
+            public: request.public
         }).save();
         this.body = ReportsSerializer.serialize(report);
     }
