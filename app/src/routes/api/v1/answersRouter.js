@@ -52,14 +52,14 @@ class AnswersRouter {
         let filter = {};
         if (this.state.loggedUser.role === 'ADMIN') {
             filter = {
-                _id: new ObjectId(this.state.loggedUser.id),
-                report: new ObjectId(this.state.loggedUser.id)
+                _id: new ObjectId(this.params.id),
+                report: new ObjectId(this.params.reportId)
             };
         } else {
             filter = {
                 user: new ObjectId(this.state.loggedUser.id),
-                _id: new ObjectId(this.state.loggedUser.id),
-                report: new ObjectId(this.state.loggedUser.id)
+                _id: new ObjectId(this.params.id),
+                report: new ObjectId(this.params.reportId)
             };
         }
         const answer = yield AnswersModel.find(filter);
