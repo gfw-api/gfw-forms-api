@@ -35,6 +35,7 @@ var Report = new Schema({
     user: {type: ObjectId, required: true},
     languages: {type: Array, required: true, default: false},
     defaultLanguage: {type: String, required: true, trim: true},
+    public: {type: Boolean, required: true, default: false},
     createdAt: {type: Date, required: true, default: Date.now},
     questions: [ReportsQuestion]
 });
