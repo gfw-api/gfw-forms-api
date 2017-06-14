@@ -75,14 +75,24 @@ class AnswersRouter {
         logger.debug(this.request.body);
 
         const fields = this.request.body.fields;
+        let userPosition = [];
+        let clickedPosition = [];
+
+        try {
+            userPosition = fields.userPosition.split(',');
+            clickedPosition = fields.clickedPosition.split(',');
+        } catch(e) {
+            this.throw(400, `Position values must be separated by ','`);
+        }
 
         let answer = {
             report: this.params.reportId,
             areaOfInterest: fields.areaOfInterest,
             language: fields.language,
-            userPosition: fields.userPosition.split(','),
-            clickedPosition: fields.clickedPosition.split(','),
-            timeFrame: fields.timeFrame.split(','),
+            userPosition: userPosition,
+            clickedPosition: clickedPosition,
+            startTime: fields.startTime,
+            endTime: fields.endTime,
             layer: fields.layer,
             user: this.state.loggedUser.id,
             responses: []
