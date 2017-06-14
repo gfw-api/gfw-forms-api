@@ -121,15 +121,15 @@ class AnswersRouter {
             if (question.childQuestions) {
                 for (let j = 0; j < question.childQuestions.length; j++) {
                     const childQuestion = question.childQuestions[j];
-                    let response = this.request.body.fields[childQuestion.name] || this.request.body.files[childQuestion.name];
-                    if (!response && question.required) {
+                    let childResponse = this.request.body.fields[childQuestion.name] || this.request.body.files[childQuestion.name];
+                    if (!childResponse && childQuestion.required && childQuestion.conditionalValue === response ) {
                         pushError(childQuestion);
                     }
                     if (question.type === 'blob') {
                         //upload file
-                        response = yield s3Service.uploadFile(response.path, response.name);
+                        childResponse = yield s3Service.uploadFile(response.path, response.name);
                     }
-                    pushResponse(childQuestion, response);
+                    pushResponse(childQuestion, childResponse);
                 }
             }
         }
