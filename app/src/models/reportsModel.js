@@ -31,7 +31,7 @@ var ReportsQuestion = new Schema({
 
 var Report = new Schema({
     name: {type: Schema.Types.Mixed, required: true, default: {}},
-    areaOfInterest: {type: String, required: true, trim: true},
+    areaOfInterest: {type: String, required: false, trim: true},
     user: {type: ObjectId, required: true},
     languages: {type: Array, required: true, default: false},
     defaultLanguage: {type: String, required: true, trim: true},

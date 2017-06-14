@@ -75,14 +75,24 @@ class AnswersRouter {
         logger.debug(this.request.body);
 
         const fields = this.request.body.fields;
+        let userPosition = [];
+        let clickedPosition = [];
+
+        try {
+            userPosition = fields.userPosition.split(',');
+            clickedPosition = fields.clickedPosition.split(',');
+        } catch(e) {
+            this.throw(400, `Position values must be separated by ','`);
+        }
 
         let answer = {
             report: this.params.reportId,
             areaOfInterest: fields.areaOfInterest,
             language: fields.language,
-            userPosition: fields.userPosition.split(','),
-            clickedPosition: fields.clickedPosition.split(','),
-            timeFrame: fields.timeFrame.split(','),
+            userPosition: userPosition,
+            clickedPosition: clickedPosition,
+            startTime: fields.startTime,
+            endTime: fields.endTime,
             layer: fields.layer,
             user: this.state.loggedUser.id,
             responses: []
@@ -121,15 +131,15 @@ class AnswersRouter {
             if (question.childQuestions) {
                 for (let j = 0; j < question.childQuestions.length; j++) {
                     const childQuestion = question.childQuestions[j];
-                    let response = this.request.body.fields[childQuestion.name] || this.request.body.files[childQuestion.name];
-                    if (!response && question.required) {
+                    let childResponse = this.request.body.fields[childQuestion.name] || this.request.body.files[childQuestion.name];
+                    if (!childResponse && childQuestion.required && childQuestion.conditionalValue === response ) {
                         pushError(childQuestion);
                     }
                     if (question.type === 'blob') {
                         //upload file
-                        response = yield s3Service.uploadFile(response.path, response.name);
+                        childResponse = yield s3Service.uploadFile(response.path, response.name);
                     }
-                    pushResponse(childQuestion, response);
+                    pushResponse(childQuestion, childResponse);
                 }
             }
         }
