@@ -87,7 +87,7 @@ class AnswersRouter {
 
         let answer = {
             report: this.params.reportId,
-            userName: fields.userName,
+            username: fields.username,
             organization: fields.organization,
             areaOfInterest: fields.areaOfInterest,
             language: fields.language,
@@ -104,7 +104,7 @@ class AnswersRouter {
         const pushResponse = (question, response) => {
             answer.responses.push({
                 name: question.name,
-                value: response
+                value: response || null
             });
         };
 
@@ -127,7 +127,7 @@ class AnswersRouter {
             if (!response && question.required) {
                 pushError(question);
             }
-            if (question.type === 'blob') {
+            if (response && question.type === 'blob') {
                 //upload file
                 response = yield s3Service.uploadFile(response.path, response.name);
             }
@@ -142,7 +142,7 @@ class AnswersRouter {
                     if (!childResponse && childQuestion.required && childQuestion.conditionalValue === response ) {
                         pushError(childQuestion);
                     }
-                    if (question.type === 'blob') {
+                    if (childResponse && question.type === 'blob') {
                         //upload file
                         childResponse = yield s3Service.uploadFile(response.path, response.name);
                     }
@@ -150,6 +150,7 @@ class AnswersRouter {
                 }
             }
         }
+
 
         const answerModel = yield new AnswersModel(answer).save();
 
@@ -211,8 +212,6 @@ function * checkExistReport(next) {
             { $or: [{public: true}, {user: new ObjectId(this.state.loggedUser.id)}] }
         ]
     }).populate('questions');
-    logger.info('REPORT FOUND: ');
-    logger.info(report);
     if (!report) {
         this.throw(404, 'Report not found with these permissions');
         return;

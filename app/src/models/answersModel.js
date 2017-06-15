@@ -5,12 +5,12 @@ const ObjectId = Schema.ObjectId;
 
 var AnswerResponse = new Schema({
     name: {type: String, required: true, trim: true},
-    value: {type: String, required: true, trim: true}
+    value: {type: String, required: false, trim: true}
 });
 
 var Answer = new Schema({
     report: {type: ObjectId, required: true},
-    userName: {type: String, required: false, trim: true},
+    username: {type: String, required: false, trim: true},
     organization: {type: String, required: false, trim: true},
     areaOfInterest: {type: String, required: false, trim: true},
     language: {type: String, required: true, trim: true},

@@ -5,7 +5,9 @@ var JSONAPISerializer = require('jsonapi-serializer').Serializer;
 
 var answersSerializer = new JSONAPISerializer('answers', {
   attributes: [
-    'report', 'areaOfInterest', 'language', 'userPosition', 'clickedPosition', 'timeFrame', 'layer', 'user', 'responses'
+    'report', 'username', 'organization', 'areaOfInterest', 'language',
+    'userPosition', 'clickedPosition', 'startDate', 'endDate', 'layer',
+    'user', 'createdAt', 'responses'
   ],
   responses: {
       attributes: ['question', 'answer']
