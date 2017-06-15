@@ -91,8 +91,8 @@ class AnswersRouter {
             language: fields.language,
             userPosition: userPosition,
             clickedPosition: clickedPosition,
-            startTime: fields.startTime,
-            endTime: fields.endTime,
+            startDate: fields.startDate,
+            endDate: fields.endDate,
             layer: fields.layer,
             user: this.state.loggedUser.id,
             responses: []
@@ -111,6 +111,10 @@ class AnswersRouter {
         };
 
         const questions = this.state.report.questions;
+
+        if (questions.length === 0) {
+            this.throw(400, `No question associated with this report`);
+        }
 
         for (let i = 0; i < questions.length; i++) {
             const question = questions[i];
@@ -204,6 +208,7 @@ function* checkExistReport(next) {
             { $or: [{public: true}, {user: new ObjectId(this.state.loggedUser.id)}] }
         ]
     }).populate('questions');
+    logger.info(report);
     if (!report) {
         this.throw(404, 'Report not found with these permissions');
         return;
