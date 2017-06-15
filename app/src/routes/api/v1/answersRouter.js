@@ -112,7 +112,7 @@ class AnswersRouter {
 
         const questions = this.state.report.questions;
 
-        if (questions.length === 0) {
+        if (!questions.length) {
             this.throw(400, `No question associated with this report`);
         }
 
@@ -208,6 +208,7 @@ function* checkExistReport(next) {
             { $or: [{public: true}, {user: new ObjectId(this.state.loggedUser.id)}] }
         ]
     }).populate('questions');
+    logger.info('REPORT FOUND: ');
     logger.info(report);
     if (!report) {
         this.throw(404, 'Report not found with these permissions');
