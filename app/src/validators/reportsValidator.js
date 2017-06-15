@@ -29,7 +29,7 @@ class ReportsValidator {
                 if (!question.label[lang]) {
                     pushError('name', `Question ${question.name}: label does not match language options`);
                 }
-                if (question.type === 'text') {
+                if (question.type === 'text' && question.defaultValue) {
                     if (!question.defaultValue[lang]) {
                         pushError('name', `Question ${question.name}: defaultValue does not match language options`);
                     }
