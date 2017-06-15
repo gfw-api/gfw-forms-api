@@ -14,9 +14,9 @@ var Answer = new Schema({
     language: {type: String, required: true, trim: true},
     userPosition: {type: Array, required: false, default: []},
     clickedPosition: {type: Array, required: false, default: []},
-    startDate: {type: String, required: true, trim: true},
-    endDate: {type: String, required: true, trim: true},
-    layer: {type: String, required: true, trim: true},
+    startDate: {type: String, required: false, trim: true},
+    endDate: {type: String, required: false, trim: true},
+    layer: {type: String, required: false, trim: true},
     user: {type: ObjectId, required: true},
     responses: [AnswerResponse],
     createdAt: {type: Date, required: true, default: Date.now}

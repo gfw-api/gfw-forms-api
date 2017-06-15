@@ -112,6 +112,12 @@ class AnswersRouter {
 
         const questions = this.state.report.questions;
 
+        logger.debug(this.state.report.questions);
+
+        if (!questions || (questions && !questions.length)) {
+            this.throw(400, `No question associated with this report`);
+        }
+
         for (let i = 0; i < questions.length; i++) {
             const question = questions[i];
 
@@ -197,8 +203,8 @@ function * queryToState(next) {
     yield next;
 }
 
-function* checkExistReport(next) {
-    const report = yield ReportsModel.find({
+function * checkExistReport(next) {
+    const report = yield ReportsModel.findOne({
         $and: [
             { _id: new ObjectId(this.params.reportId) },
             { $or: [{public: true}, {user: new ObjectId(this.state.loggedUser.id)}] }
