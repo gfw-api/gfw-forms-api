@@ -87,6 +87,8 @@ class AnswersRouter {
 
         let answer = {
             report: this.params.reportId,
+            userName: fields.userName,
+            organization: fields.organization,
             areaOfInterest: fields.areaOfInterest,
             language: fields.language,
             userPosition: userPosition,
@@ -95,6 +97,7 @@ class AnswersRouter {
             endDate: fields.endDate,
             layer: fields.layer,
             user: this.state.loggedUser.id,
+            createdAt: fields.date,
             responses: []
         };
 
