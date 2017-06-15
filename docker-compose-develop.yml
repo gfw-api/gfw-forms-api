@@ -5,7 +5,7 @@ develop:
   ports:
     - "35736:35729"
   container_name: gfw-forms-develop
-  environment: 
+  environment:
     NODE_ENV: dev
     QUEUE_URL: redis://mymachine:6379
     QUEUE_PROVIDER: redis
@@ -23,7 +23,7 @@ develop:
   command: develop
   volumes:
     - ./app:/opt/gfw-forms-api/app
-  links: 
+  links:
     - mongo
 mongo:
   extends:
