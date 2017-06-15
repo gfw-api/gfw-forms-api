@@ -112,7 +112,7 @@ class AnswersRouter {
 
         const questions = this.state.report.questions;
 
-        if (questions.length === 0) {
+        if (!questions.length) {
             this.throw(400, `No question associated with this report`);
         }
 
