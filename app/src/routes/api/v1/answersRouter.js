@@ -79,8 +79,8 @@ class AnswersRouter {
         let clickedPosition = [];
 
         try {
-            userPosition = fields.userPosition.split(',');
-            clickedPosition = fields.clickedPosition.split(',');
+            userPosition = fields.userPosition ? fields.userPosition.split(',') : [];
+            clickedPosition = fields.clickedPosition ? fields.clickedPosition.split(',') : [];
         } catch(e) {
             this.throw(400, `Position values must be separated by ','`);
         }
