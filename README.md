@@ -138,7 +138,7 @@ It is necessary to define these environment variables:
 
 ```
 
-### CRUD Questionnaire
+### CRUD Reports
 
 ```json
 
@@ -164,6 +164,7 @@ Example response:
       "defaultLanguage": "en",
       "areaOfInterest": "aoi-id",
       "user": "1a10d7c6e0a37126611fd7a7",
+      "public": false,
       "questions": [
         {
           "type": "text",
@@ -250,6 +251,7 @@ POST: /reports -> Create an report and associate to the user. With body:
     "en": "My report template",
     "es": "Mi report templato"
   },
+  "public": false,
   "questions": [
     {
       "type": "text",
@@ -311,6 +313,13 @@ POST: /reports -> Create an report and associate to the user. With body:
   ]
 }
 
+Notes: public fields can only be passed as true by ADMINs. These templates appear to all users. Required fields:
+- name
+- languages
+- defaultLanguage
+- public
+- questions
+
 PATCH: /reports/:id -> Update the report with the same id.
 DELETE: /reports/:id -> Delete the report with the same id.
 
@@ -331,8 +340,11 @@ Example response:
     "id": "59240430cfcfaf0070e78866",
     "attributes": {
       "report": "592402c4cfcfaf0070e78826",
+      "username": "fwuser",
+      "organization": "gfw",
       "areaOfInterest": "my-area-id",
       "language": "es",
+      "createdAt": "12-04-2017T13:40:34:223Z",
       "userPosition": [
         "1",
         "1"
@@ -376,6 +388,13 @@ name: Pepe
 age: 0-18
 specific-age: 32
 photo: upload_file
+
+Notes: These templates appear to all users. Required fields:
+- language
+- userPosition (comma separated lat lng [1,1])
+- clickedPosition (comma separated lat lng [1,1])
+- createdAt
+- Any questions for the template that have the value required as true
 
 PATCH: /reports/:id/answer/:id -> Update the answer with the same id. Check if the answer is owned by the logged user
 DELETE: /reports/:id/answer/:id -> Delete the answer with the same id. Check if the answer is owned by the logged user
