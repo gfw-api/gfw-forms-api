@@ -96,12 +96,13 @@ class ReportsRouter {
         this.set('Content-type', 'text/csv');
         this.body = passThrough();
 
-        const report = yield ReportsModel.find({
+        const report = yield ReportsModel.findOne({
             $and: [
                 { _id: new ObjectId(this.params.id) },
                 { $or: [{public: true}, {user: new ObjectId(this.state.loggedUser.id)}] }
             ]
         });
+        
         if (!report) {
             this.throw(404, 'Report not found with these permissions');
             return;
@@ -109,7 +110,7 @@ class ReportsRouter {
 
         const questions = {};
 
-        for (let i = 0, length = report.questions.length; i < length; i++) {
+        for (let i = 0; i < report.questions.length; i++) {
             const question = report.questions[i];
             questions[question.name] = null;
             if (question.childQuestions){
