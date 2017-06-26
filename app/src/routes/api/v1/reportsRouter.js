@@ -102,7 +102,7 @@ class ReportsRouter {
                 { $or: [{public: true}, {user: new ObjectId(this.state.loggedUser.id)}] }
             ]
         });
-        
+
         if (!report) {
             this.throw(404, 'Report not found with these permissions');
             return;
@@ -142,7 +142,7 @@ class ReportsRouter {
                 const responses = Object.assign({}, questions);
                 for(let j = 0, lengthResponses = answer.responses.length; j < lengthResponses; j++){
                     const res = answer.responses[j];
-                    responses[res.question.name] = res.answer.value;
+                    responses[res.name] = res.value;
                 }
                 logger.debug('Writting...');
                 data = json2csv({
