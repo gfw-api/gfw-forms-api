@@ -12,7 +12,7 @@ var Answer = new Schema({
     report: {type: ObjectId, required: true},
     username: {type: String, required: false, trim: true},
     organization: {type: String, required: false, trim: true},
-    areaOfInterest: {type: String, required: false, trim: true},
+    areaOfInterest: {type: ObjectId, required: false},
     language: {type: String, required: true, trim: true},
     userPosition: {type: Array, required: false, default: []},
     clickedPosition: {type: Array, required: false, default: []},
