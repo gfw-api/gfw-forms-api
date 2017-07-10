@@ -37,6 +37,7 @@ var Report = new Schema({
     defaultLanguage: {type: String, required: true, trim: true},
     public: {type: Boolean, required: true, default: false},
     createdAt: {type: Date, required: true, default: Date.now},
+    answers: [{type: Schema.Types.ObjectId, ref: 'Answers'}],
     questions: [ReportsQuestion]
 });
 

@@ -35,16 +35,33 @@ class ReportsRouter {
 
     static * get(){
         logger.info(`Obtaining reports with id ${this.params.id}`);
-        const report = yield ReportsModel.find({
+        const report = yield ReportsModel.findOne({
             $and: [
                 { _id: this.params.id },
                 { $or: [{public: true}, {user: new ObjectId(this.state.loggedUser.id)}] }
             ]
+        }).exec((err, report) => {
+            logger.info(report);
         });
         if (!report) {
             this.throw(404, 'Report not found with these permissions');
             return;
         }
+
+        let answersFilter = {};
+        if (this.state.loggedUser.role === 'ADMIN') {
+            answersFilter = {
+                report: new ObjectId(this.params.id)
+            };
+        } else {
+            answersFilter = {
+                user: new ObjectId(this.state.loggedUser.id),
+                report: new ObjectId(this.params.id)
+            };
+        }
+
+        const answers = yield AnswersModel.count(answersFilter);
+        // logger.info(report);
         this.body = ReportsSerializer.serialize(report);
     }
 
