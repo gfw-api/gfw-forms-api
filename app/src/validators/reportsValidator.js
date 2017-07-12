@@ -8,6 +8,7 @@ class ReportsValidator {
         this.checkBody('name').notEmpty();
         this.checkBody('questions').notEmpty();
         this.checkBody('languages').notEmpty();
+        this.checkBody('status').notEmpty().isIn(['draft', 'published', 'unpublished']);
 
         if (this.errors) {
             this.body = ErrorSerializer.serializeValidationBodyErrors(this.errors);
