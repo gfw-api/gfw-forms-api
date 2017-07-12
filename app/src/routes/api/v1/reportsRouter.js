@@ -30,12 +30,32 @@ class ReportsRouter {
             });
         }
         const reports = yield ReportsModel.find(filter);
+        
+        // get answer count for each report
+        const numReports = reports.length;
+        for (let i = 1; i < numReports; i++) {
+            let answersFilter = {};
+            if (this.state.loggedUser.role === 'ADMIN') {
+                answersFilter = {
+                    report: new ObjectId(reports[i].id)
+                };
+            } else {
+                answersFilter = {
+                    user: new ObjectId(this.state.loggedUser.id),
+                    report: new ObjectId(this.params.id)
+                };
+            }
+            const answers = yield AnswersModel.count(answersFilter);
+            logger.info(answers);
+            reports[i].answersCount = answers || 0;
+        }
+
         this.body = ReportsSerializer.serialize(reports);
     }
 
     static * get(){
         logger.info(`Obtaining reports with id ${this.params.id}`);
-        const report = yield ReportsModel.find({
+        const report = yield ReportsModel.findOne({
             $and: [
                 { _id: this.params.id },
                 { $or: [{public: true}, {user: new ObjectId(this.state.loggedUser.id)}] }
@@ -45,6 +65,22 @@ class ReportsRouter {
             this.throw(404, 'Report not found with these permissions');
             return;
         }
+
+        // get answers count for the report
+        let answersFilter = {};
+        if (this.state.loggedUser.role === 'ADMIN') {
+            answersFilter = {
+                report: new ObjectId(this.params.id)
+            };
+        } else {
+            answersFilter = {
+                user: new ObjectId(this.state.loggedUser.id),
+                report: new ObjectId(this.params.id)
+            };
+        }
+        const answers = yield AnswersModel.count(answersFilter);
+        report.answersCount = answers;
+        
         this.body = ReportsSerializer.serialize(report);
     }
 
