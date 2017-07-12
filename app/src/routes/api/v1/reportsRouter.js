@@ -30,6 +30,26 @@ class ReportsRouter {
             });
         }
         const reports = yield ReportsModel.find(filter);
+        
+        // get answer count for each report
+        const numReports = reports.length;
+        for (let i = 1; i < numReports; i++) {
+            let answersFilter = {};
+            if (this.state.loggedUser.role === 'ADMIN') {
+                answersFilter = {
+                    report: new ObjectId(reports[i].id)
+                };
+            } else {
+                answersFilter = {
+                    user: new ObjectId(this.state.loggedUser.id),
+                    report: new ObjectId(this.params.id)
+                };
+            }
+            const answers = yield AnswersModel.count(answersFilter);
+            logger.info(answers);
+            reports[i].answerCount = answers || 0;
+        }
+
         this.body = ReportsSerializer.serialize(reports);
     }
 
@@ -40,14 +60,13 @@ class ReportsRouter {
                 { _id: this.params.id },
                 { $or: [{public: true}, {user: new ObjectId(this.state.loggedUser.id)}] }
             ]
-        }).exec((err, report) => {
-            logger.info(report);
         });
         if (!report) {
             this.throw(404, 'Report not found with these permissions');
             return;
         }
 
+        // get answers count for the report
         let answersFilter = {};
         if (this.state.loggedUser.role === 'ADMIN') {
             answersFilter = {
@@ -59,9 +78,9 @@ class ReportsRouter {
                 report: new ObjectId(this.params.id)
             };
         }
-
         const answers = yield AnswersModel.count(answersFilter);
-        // logger.info(report);
+        report.answerCount = answers;
+        
         this.body = ReportsSerializer.serialize(report);
     }
 
