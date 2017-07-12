@@ -1,4 +1,4 @@
-FROM mhart/alpine-node:6.2
+FROM mhart/alpine-node:8.1
 MAINTAINER raul.requero@vizzuality.com
 
 ENV NAME gfw-forms-api
