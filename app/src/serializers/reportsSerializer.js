@@ -23,13 +23,17 @@ function createSerializer(languages) {
 
 class ReportsSerializer {
   static serialize(data) {
-    let languages = null;
-    if(data && data.length > 0) {
-        languages = data[0].languages;
+        logger.debug(data);
+    if (Array.isArray(data)) {
+        let reports = { data: [] };
+        data.forEach((report) => {
+            const serializedData = createSerializer(report.languages).serialize(report);
+            reports.data.push(serializedData.data);
+        });
+        return reports;
     } else {
-        languages = data.languages;
+        return createSerializer(data.languages).serialize(data);
     }
-    return createSerializer(languages).serialize(data);
   }
 }
 
