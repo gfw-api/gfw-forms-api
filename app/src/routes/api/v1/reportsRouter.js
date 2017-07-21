@@ -9,6 +9,7 @@ const AnswersModel = require('models/answersModel');
 const passThrough = require('stream').PassThrough;
 const json2csv = require('json2csv');
 const ObjectId = require('mongoose').Types.ObjectId;
+const ctRegisterMicroservice = require('ct-register-microservice-node');
 
 
 const router = new Router({
@@ -95,14 +96,25 @@ class ReportsRouter {
 
         const report = yield new ReportsModel({
             name: request.name,
-            areaOfInterest: request.areaOfInterest,
             user: this.state.loggedUser.id,
             languages: request.languages,
             defaultLanguage: request.defaultLanguage,
             questions: request.questions,
             public: request.public
         }).save();
+
         this.body = ReportsSerializer.serialize(report);
+
+        // PATCH templateId onto area
+        const result = yield ctRegisterMicroservice.requestToMicroservice({
+            uri: `/v1/area/${request.areaOfInterest}`,
+            method: 'PATCH',
+            json: true,
+            body: {
+                templateId: this.body.data.id,
+                userId: this.state.loggedUser.id
+            }
+        });
     }
 
     static * update(){
@@ -168,9 +180,9 @@ class ReportsRouter {
             };
         }
         const answers = yield AnswersModel.find(filter);
-        logger.debug('Obtaining data');
+        logger.info('Obtaining data');
         if (answers) {
-            logger.debug('Data found!');
+            logger.info('Data found!');
             let data = null;
 
             for (let i = 0, length = answers.length; i < length; i++) {
@@ -180,7 +192,7 @@ class ReportsRouter {
                     const res = answer.responses[j];
                     responses[res.name] = res.value;
                 }
-                logger.debug('Writting...');
+                logger.info('Writting...');
                 data = json2csv({
                     data: responses,
                     hasCSVColumnTitle: i === 0
