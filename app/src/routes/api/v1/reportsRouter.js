@@ -95,7 +95,6 @@ class ReportsRouter {
 
         const report = yield new ReportsModel({
             name: request.name,
-            areaOfInterest: request.areaOfInterest,
             user: this.state.loggedUser.id,
             languages: request.languages,
             defaultLanguage: request.defaultLanguage,
