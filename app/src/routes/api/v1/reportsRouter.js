@@ -103,11 +103,9 @@ class ReportsRouter {
             public: request.public
         }).save();
 
-        logger.debug();
-
         // PATCH templateId onto area
         // Remove report if PATCH fails
-        if (report.areaOfInterest) {
+        if (request.areaOfInterest) {
             const reportId = report._id.toString();
             try {
                 const result = yield ctRegisterMicroservice.requestToMicroservice({
