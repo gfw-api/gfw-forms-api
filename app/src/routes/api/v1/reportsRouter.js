@@ -103,18 +103,28 @@ class ReportsRouter {
             public: request.public
         }).save();
 
-        this.body = ReportsSerializer.serialize(report);
+        logger.debug();
 
         // PATCH templateId onto area
-        const result = yield ctRegisterMicroservice.requestToMicroservice({
-            uri: `/v1/area/${request.areaOfInterest}`,
-            method: 'PATCH',
-            json: true,
-            body: {
-                templateId: this.body.data.id,
-                userId: this.state.loggedUser.id
-            }
-        });
+        // Remove report if PATCH fails
+        const reportId = report._id.toString();
+        try {
+            const result = yield ctRegisterMicroservice.requestToMicroservice({
+                uri: `/v1/area/${request.areaOfInterest}`,
+                method: 'PATCH',
+                json: true,
+                body: {
+                    templateId: reportId,
+                    userId: this.state.loggedUser.id
+                }
+            });
+        } catch (e) {
+            const result = yield ReportsModel.remove({ _id: reportId });
+            logger.error(e);
+            this.throw(500, 'Error creating templates: patch to area failed');
+        }
+
+        this.body = ReportsSerializer.serialize(report);
     }
 
     static * update(){
