@@ -133,15 +133,21 @@ class ReportsRouter {
     }
 
     static * delete(){
-        logger.info(`Deleting report with id ${this.params.id}`);
+        logger.info(`Checking report for answers...`);
+        const answers = yield AnswersModel.count({report: new ObjectId(this.params.id)});
+        if (answers.length > 0) {
+            this.throw(404, 'This report has answers, you cannot delete. Please unpublish instead.');
+        }
+        logger.info(`Report has no answers.`);
+        logger.info(`Deleting report with id ${this.params.id}...`);
         const result = yield ReportsModel.remove({
             $and: [
                 { _id: new ObjectId(this.params.id) },
-                { $or: [{public: true}, {user: new ObjectId(this.state.loggedUser.id)}] }
+                { user: new ObjectId(this.state.loggedUser.id) }
             ]
         });
         if (!result || !result.result || result.result.ok === 0) {
-            this.throw(404, 'Report not found with these permissions');
+            this.throw(404, 'Report not found with these permissions. You must be the owner to remove.');
             return;
         }
         this.body = '';
@@ -239,7 +245,7 @@ function * queryToState(next) {
 }
 
 function * checkPermission(next) {
-    if (this.state.loggedUser.role === 'USER' || (this.state.loggedUser.role === 'MANAGER' && (!this.state.loggedUser.extraUserData || this.state.loggedUser.extraUserData.apps || this.state.loggedUser.extraUserData.apps.indexOf('gfw') === -1))) {
+    if (this.state.loggedUser.role === 'MANAGER' && (!this.state.loggedUser.extraUserData || this.state.loggedUser.extraUserData.apps || this.state.loggedUser.extraUserData.apps.indexOf('gfw') === -1)) {
         this.throw(403, 'Not authorized');
         return;
     }
@@ -259,7 +265,7 @@ router.post('/', loggedUserToState, ReportsValidator.create, ReportsRouter.save)
 router.patch('/:id', loggedUserToState, checkPermission, ReportsValidator.update, ReportsRouter.update);
 router.get('/', loggedUserToState, queryToState, ReportsRouter.getAll);
 router.get('/:id', loggedUserToState, queryToState, ReportsRouter.get);
-router.delete('/:id', loggedUserToState, checkPermission, ReportsRouter.delete);
+router.delete('/:id', loggedUserToState, ReportsRouter.delete);
 router.get('/:id/download-answers', loggedUserToState, ReportsRouter.downloadAnswers);
 
 module.exports = router;
