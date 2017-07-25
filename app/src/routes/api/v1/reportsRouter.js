@@ -133,11 +133,11 @@ class ReportsRouter {
     }
 
     static * delete(){
-        const aoi = this.state.query.aoi.split(',');
+        const aoi = this.state.query.aoi ? this.state.query.aoi.split(',') : null;
         logger.info(`Checking report for answers...`);
         const answers = yield AnswersModel.count({report: new ObjectId(this.params.id)});
         if (answers.length > 0) {
-            this.throw(404, 'This report has answers, you cannot delete. Please unpublish instead.');
+            this.throw(403, 'This report has answers, you cannot delete. Please unpublish instead.');
         }
         logger.info(`Report has no answers.`);
         logger.info(`Deleting report with id ${this.params.id}...`);
