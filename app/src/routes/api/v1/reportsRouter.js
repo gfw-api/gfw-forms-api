@@ -143,7 +143,8 @@ class ReportsRouter {
         const result = yield ReportsModel.remove({
             $and: [
                 { _id: new ObjectId(this.params.id) },
-                { user: new ObjectId(this.state.loggedUser.id) }
+                { user: new ObjectId(this.state.loggedUser.id) },
+                { status: 'unpublished' }
             ]
         });
         if (!result || !result.result || result.result.ok === 0) {
