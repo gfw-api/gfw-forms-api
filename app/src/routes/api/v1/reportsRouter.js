@@ -133,6 +133,7 @@ class ReportsRouter {
     }
 
     static * delete(){
+        const aoi = this.state.query.aoi.split(',');
         logger.info(`Checking report for answers...`);
         const answers = yield AnswersModel.count({report: new ObjectId(this.params.id)});
         if (answers.length > 0) {
@@ -140,13 +141,38 @@ class ReportsRouter {
         }
         logger.info(`Report has no answers.`);
         logger.info(`Deleting report with id ${this.params.id}...`);
+        if (aoi) {
+            for (let i = 0; i < aoi.length; i++) {
+                logger.debug(aoi[i]);
+                logger.info(`PATCHing area ${aoi[i]} to remove template association...`);
+                try {
+                    const result = yield ctRegisterMicroservice.requestToMicroservice({
+                        uri: `/v1/area/${aoi[i]}`,
+                        method: 'PATCH',
+                        json: true,
+                        body: {
+                            templateId: null,
+                            userId: this.state.loggedUser.id
+                        }
+                    });
+                    logger.info(`Area ${aoi[i]} patched.`);
+                } catch (e) {
+                    logger.error(e);
+                    this.throw(500, e);
+                }
+            }
+            logger.info('Areas patched. Remvoing template...');
+        }
+
+        // finally remove template
         const result = yield ReportsModel.remove({
             $and: [
                 { _id: new ObjectId(this.params.id) },
                 { user: new ObjectId(this.state.loggedUser.id) },
-                { status: 'unpublished' }
+                { status: ['draft', 'unpublished'] }
             ]
         });
+
         if (!result || !result.result || result.result.ok === 0) {
             this.throw(404, 'Report not found with these permissions. You must be the owner to remove.');
             return;
@@ -266,7 +292,7 @@ router.post('/', loggedUserToState, ReportsValidator.create, ReportsRouter.save)
 router.patch('/:id', loggedUserToState, checkPermission, ReportsValidator.update, ReportsRouter.update);
 router.get('/', loggedUserToState, queryToState, ReportsRouter.getAll);
 router.get('/:id', loggedUserToState, queryToState, ReportsRouter.get);
-router.delete('/:id', loggedUserToState, ReportsRouter.delete);
+router.delete('/:id', loggedUserToState, queryToState, ReportsRouter.delete);
 router.get('/:id/download-answers', loggedUserToState, ReportsRouter.downloadAnswers);
 
 module.exports = router;
