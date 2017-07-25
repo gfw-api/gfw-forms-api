@@ -168,11 +168,13 @@ class ReportsRouter {
         const result = yield ReportsModel.remove({
             $and: [
                 { _id: new ObjectId(this.params.id) },
-                { $or: [{public: true}, {user: new ObjectId(this.state.loggedUser.id)}] }
+                { user: new ObjectId(this.state.loggedUser.id) },
+                { status: ['draft', 'unpublished'] }
             ]
         });
+
         if (!result || !result.result || result.result.ok === 0) {
-            this.throw(404, 'Report not found with these permissions');
+            this.throw(404, 'Report not found with these permissions. You must be the owner to remove.');
             return;
         }
         this.body = '';
@@ -270,7 +272,7 @@ function * queryToState(next) {
 }
 
 function * checkPermission(next) {
-    if (this.state.loggedUser.role === 'USER' || (this.state.loggedUser.role === 'MANAGER' && (!this.state.loggedUser.extraUserData || this.state.loggedUser.extraUserData.apps || this.state.loggedUser.extraUserData.apps.indexOf('gfw') === -1))) {
+    if (this.state.loggedUser.role === 'MANAGER' && (!this.state.loggedUser.extraUserData || this.state.loggedUser.extraUserData.apps || this.state.loggedUser.extraUserData.apps.indexOf('gfw') === -1)) {
         this.throw(403, 'Not authorized');
         return;
     }
@@ -290,7 +292,7 @@ router.post('/', loggedUserToState, ReportsValidator.create, ReportsRouter.save)
 router.patch('/:id', loggedUserToState, checkPermission, ReportsValidator.update, ReportsRouter.update);
 router.get('/', loggedUserToState, queryToState, ReportsRouter.getAll);
 router.get('/:id', loggedUserToState, queryToState, ReportsRouter.get);
-router.delete('/:id', loggedUserToState, checkPermission, ReportsRouter.delete);
+router.delete('/:id', loggedUserToState, queryToState, ReportsRouter.delete);
 router.get('/:id/download-answers', loggedUserToState, ReportsRouter.downloadAnswers);
 
 module.exports = router;
