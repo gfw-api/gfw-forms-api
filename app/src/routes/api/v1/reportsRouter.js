@@ -22,7 +22,10 @@ class ReportsRouter {
         logger.info('Obtaining all reports');
         let filter = {
             $and: [
-                { $or: [{public: true}, {user: new ObjectId(this.state.loggedUser.id)}] }
+                { $or: [{
+                    $and: [ {public: true}, {status: 'published'} ]},
+                    {user: new ObjectId(this.state.loggedUser.id)}]
+                }
             ]
         };
         if (this.state.query) {
