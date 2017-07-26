@@ -59,7 +59,7 @@ class ReportsRouter {
         const report = yield ReportsModel.findOne({
             $and: [
                 { _id: this.params.id },
-                { $or: [{public: true}, {user: new ObjectId(this.state.loggedUser.id)}] }
+                { $or: [{public: true}] }
             ]
         });
         if (!report) {
@@ -68,18 +68,9 @@ class ReportsRouter {
         }
 
         // get answers count for the report
-        let answersFilter = {};
-        if (this.state.loggedUser.role === 'ADMIN') {
-            answersFilter = {
-                report: new ObjectId(this.params.id)
-            };
-        } else {
-            answersFilter = {
-                user: new ObjectId(this.state.loggedUser.id),
-                report: new ObjectId(this.params.id)
-            };
-        }
-        const answers = yield AnswersModel.count(answersFilter);
+        const answers = yield AnswersModel.count({
+            report: new ObjectId(this.params.id)
+        });
         report.answersCount = answers;
         
         this.body = ReportsSerializer.serialize(report);
