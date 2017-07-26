@@ -20,7 +20,8 @@ class AnswersRouter {
         logger.info(`Obtaining answers for report ${this.params.reportId}`);
 
         let filter = {};
-        if (this.state.loggedUser.role === 'ADMIN') {
+        const template = yield ReportsModel.findOne({ _id: this.params.reportId });
+        if (this.state.loggedUser.role === 'ADMIN' || this.state.loggedUser.id === template.user) {
             filter = {
                 $and: [
                     { report: new ObjectId(this.params.reportId) },

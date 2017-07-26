@@ -36,7 +36,7 @@ class ReportsRouter {
         const numReports = reports.length;
         for (let i = 1; i < numReports; i++) {
             let answersFilter = {};
-            if (this.state.loggedUser.role === 'ADMIN') {
+            if (this.state.loggedUser.role === 'ADMIN' || this.state.loggedUser.id === reports[i].user) {
                 answersFilter = {
                     report: new ObjectId(reports[i].id)
                 };
@@ -68,9 +68,18 @@ class ReportsRouter {
         }
 
         // get answers count for the report
-        const answers = yield AnswersModel.count({
-            report: new ObjectId(this.params.id)
-        });
+        let answersFilter = {};
+        if (this.state.loggedUser.role === 'ADMIN' || this.state.loggedUser.id === report.user) {
+            answersFilter = {
+                report: new ObjectId(this.params.id)
+            };
+        } else {
+            answersFilter = {
+                user: new ObjectId(this.state.loggedUser.id),
+                report: new ObjectId(this.params.id)
+            };
+        }
+        const answers = yield AnswersModel.count(answersFilter);
         report.answersCount = answers;
         
         this.body = ReportsSerializer.serialize(report);
