@@ -56,12 +56,7 @@ class ReportsRouter {
 
     static * get(){
         logger.info(`Obtaining reports with id ${this.params.id}`);
-        const report = yield ReportsModel.findOne({
-            $and: [
-                { _id: this.params.id },
-                { $or: [{public: true}] }
-            ]
-        });
+        const report = yield ReportsModel.findOne({ _id: this.params.id });
         if (!report) {
             this.throw(404, 'Report not found with these permissions');
             return;
