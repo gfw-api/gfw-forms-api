@@ -361,7 +361,7 @@ function* checkAdmin(next) {
 
 // check permission must be added at some point
 router.post('/', loggedUserToState, ReportsValidator.create, ReportsRouter.save);
-router.patch('/:id', loggedUserToState, checkPermission, ReportsValidator.update, ReportsRouter.update);
+router.patch('/:id', loggedUserToState, ReportsValidator.update, ReportsRouter.update);
 router.get('/', loggedUserToState, queryToState, ReportsRouter.getAll);
 router.get('/:id', loggedUserToState, queryToState, ReportsRouter.get);
 router.delete('/:id', loggedUserToState, queryToState, ReportsRouter.delete);

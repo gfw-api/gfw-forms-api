@@ -76,15 +76,47 @@ class ReportsValidator {
     }
 
     static * update(next) {
-        logger.debug('Validating body for update report');
-        this.checkBody('name').optional().len(2, 100);
-        this.checkBody('questions').optional();
+        const request = this.request.body;
+        logger.debug('Validating body for create template');
+        this.checkBody('name').notEmpty();
+        this.checkBody('defaultLanguage').notEmpty();
+        this.checkBody('status').notEmpty().isIn(['published', 'unpublished']);
 
         if (this.errors) {
             this.body = ErrorSerializer.serializeValidationBodyErrors(this.errors);
             this.status = 400;
             return;
         }
+
+        // add custom validation for multilanguage
+        const customErrors = [];
+
+        const pushError = (source, detail) => {
+            customErrors.push({
+                source: detail
+            });
+        };
+
+        // check for languages
+        if (request.languages.length > 1) {
+            if (!request.defaultLanguage || request.languages.indexOf(request.defaultLanguage) === -1 ) {
+                pushError('languages', `Languages: values do not match language options`);
+            }
+        }
+
+        // check template names
+        request.languages.forEach((lang) => {
+            if (request.name[lang] === undefined) {
+                pushError(request.name, 'Report name: values do not match language options');
+            }
+        });
+
+        if (customErrors.length > 0) {
+            this.body = ErrorSerializer.serializeValidationBodyErrors(customErrors);
+            this.status = 400;
+            return;
+        }
+        
         yield next;
     }
 }
