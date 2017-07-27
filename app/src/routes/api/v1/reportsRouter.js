@@ -127,8 +127,81 @@ class ReportsRouter {
     }
 
     static * update(){
-        this.throw(500, 'Not implemented');
-        return;
+        logger.info(`Updating template with id ${this.params.id}...`);
+        const reportFilter = {
+            $and: [
+                { _id: new ObjectId(this.params.id) },
+                { user: new ObjectId(this.state.loggedUser.id) }
+            ]
+        };
+        const report = yield ReportsModel.findOne(reportFilter);
+        const request = this.request.body;
+
+        // if user did not create then return error
+        if (!report) {
+            this.throw(404, 'Report not found with these permissions');
+            return;
+        }
+
+        // props allow to change even with answers
+        if (request.name) {
+            report.name = request.name;
+        }
+        if (request.status) {
+            report.status = request.status;
+        }
+        if (request.languages) {
+            report.languages = request.languages;
+        }
+
+        // if user is an admin, they can make the report public
+        if (this.state.loggedUser.role === 'ADMIN' && request.public) {
+            report.public = request.public;
+        }
+
+        // PATCH templateId onto area
+        // Remove report if PATCH fails
+        if (report.areaOfInterest && (request.areaOfInterest !== report.areaOfInterest)) {
+            try {
+                const result = yield ctRegisterMicroservice.requestToMicroservice({
+                    uri: `/v1/area/${request.areaOfInterest}`,
+                    method: 'PATCH',
+                    json: true,
+                    body: {
+                        templateId: null,
+                        userId: this.state.loggedUser.id
+                    }
+                });
+            } catch (e) {
+                logger.error(e);
+                this.throw(500, 'Error patching templates: patch to area failed');
+            }
+        }
+
+        if (request.areaOfInterest) {
+            try {
+                const result = yield ctRegisterMicroservice.requestToMicroservice({
+                    uri: `/v1/area/${request.areaOfInterest}`,
+                    method: 'PATCH',
+                    json: true,
+                    body: {
+                        templateId: this.params.id,
+                        userId: this.state.loggedUser.id
+                    }
+                });
+            } catch (e) {
+                logger.error(e);
+                this.throw(500, 'Error patching templates: patch to area failed');
+            }
+        }
+
+        // add answers count to return and updated date
+        const answers = yield AnswersModel.count({report: new ObjectId(this.params.id)});        
+        report.answersCount = answers;
+        report.updatedDate = Date.now;
+
+        yield report.save();
+        this.body = ReportsSerializer.serialize(report);
     }
 
     static * delete(){
