@@ -98,7 +98,8 @@ class ReportsRouter {
             languages: request.languages,
             defaultLanguage: request.defaultLanguage,
             questions: request.questions,
-            public: request.public
+            public: request.public,
+            status: request.status
         }).save();
 
         // PATCH templateId onto area
