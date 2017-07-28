@@ -152,7 +152,6 @@ class AnswersRouter {
             }
         }
 
-
         const answerModel = yield new AnswersModel(answer).save();
 
         this.body = AnswersSerializer.serialize(answerModel);
@@ -207,12 +206,32 @@ function * queryToState(next) {
 }
 
 function * checkExistReport(next) {
-    const report = yield ReportsModel.findOne({
-        $and: [
-            { _id: new ObjectId(this.params.reportId) },
-            { $or: [{public: true}, {user: new ObjectId(this.state.loggedUser.id)}] }
-        ]
-    }).populate('questions');
+    const team = yield ctRegisterMicroservice.requestToMicroservice({
+        uri: `/teams/user/${this.state.loggedUser.id}`,
+        method: 'GET',
+        json: true
+    });
+    if (!team) {
+        logger.info('User does not belong to a team.');
+    }
+    let filters = {};
+    if (team) {
+        const manager = team.data.managers[0].id;
+        filters = {
+            $and: [
+                { _id: new ObjectId(this.params.reportId) },
+                { $or: [{public: true}, {user: new ObjectId(this.state.loggedUser.id)}, {user: manager}] }
+            ]
+        };
+    } else {
+        filters = {
+            $and: [
+                { _id: new ObjectId(this.params.reportId) },
+                { $or: [{public: true}, {user: new ObjectId(this.state.loggedUser.id)}] }
+            ]
+        };
+    }
+    const report = yield ReportsModel.findOne(filters).populate('questions');
     if (!report) {
         this.throw(404, 'Report not found with these permissions');
         return;
