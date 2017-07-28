@@ -161,10 +161,9 @@ class ReportsRouter {
 
         // PATCH templateId onto area
         // Remove report if PATCH fails
-
-        logger.info('Old area of interest:', report.areaOfInterest);
+        logger.info('Old area of interest:', request.oldAreaOfInterest);
         logger.info('New area of interest:', request.areaOfInterest);
-        if (report.areaOfInterest && (request.areaOfInterest !== report.areaOfInterest)) {
+        if (request.oldAreaOfInterest && (request.areaOfInterest !== request.oldAreaOfInterest)) {
             try {
                 const result = yield ctRegisterMicroservice.requestToMicroservice({
                     uri: `/v1/area/${request.areaOfInterest}`,
