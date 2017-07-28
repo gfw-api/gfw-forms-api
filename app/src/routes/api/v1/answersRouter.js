@@ -1,6 +1,7 @@
 'use strict';
 const Router = require('koa-router');
 const logger = require('logger');
+const ctRegisterMicroservice = require('ct-register-microservice-node');
 const ErrorSerializer = require('serializers/errorSerializer');
 const AnswersSerializer = require('serializers/answersSerializer');
 const AnswersModel = require('models/answersModel');
