@@ -161,40 +161,49 @@ class ReportsRouter {
 
         // PATCH templateId onto area
         // Remove report if PATCH fails
-        logger.info('Old area of interest:', request.oldAreaOfInterest);
-        logger.info('New area of interest:', request.areaOfInterest);
-        if (request.oldAreaOfInterest && (request.areaOfInterest !== request.oldAreaOfInterest)) {
-            try {
-                const result = yield ctRegisterMicroservice.requestToMicroservice({
-                    uri: `/v1/area/${request.areaOfInterest}`,
-                    method: 'PATCH',
-                    json: true,
-                    body: {
-                        templateId: null,
-                        userId: this.state.loggedUser.id
-                    }
-                });
-            } catch (e) {
-                logger.error(e);
-                this.throw(500, 'Error patching templates: patch to area failed');
+        if (request.areaOfInterest !== request.oldAreaOfInterest) {
+
+            // remove old area
+            if (request.oldAreaOfInterest) {
+                logger.info(`PATCHing old area of interes ${request.oldAreaOfInterest}...`);
+                try {
+                    const result = yield ctRegisterMicroservice.requestToMicroservice({
+                        uri: `/v1/area/${request.oldAreaOfInterest}`,
+                        method: 'PATCH',
+                        json: true,
+                        body: {
+                            templateId: null,
+                            userId: this.state.loggedUser.id
+                        }
+                    });
+                } catch (e) {
+                    logger.error(e);
+                    this.throw(500, 'PATCHing old area failed');
+                }
+            }
+            
+            // PATCH new area
+            if (request.areaOfInterest) {
+                logger.info(`PATCHing new area of interes ${request.oldAreaOfInterest}...`);
+                try {
+                    const result = yield ctRegisterMicroservice.requestToMicroservice({
+                        uri: `/v1/area/${request.areaOfInterest}`,
+                        method: 'PATCH',
+                        json: true,
+                        body: {
+                            templateId: this.params.id,
+                            userId: this.state.loggedUser.id
+                        }
+                    });
+                } catch (e) {
+                    logger.error(e);
+                    this.throw(500, 'PATCHing new area failed');
+                }
             }
         }
 
         if (request.areaOfInterest) {
-            try {
-                const result = yield ctRegisterMicroservice.requestToMicroservice({
-                    uri: `/v1/area/${request.areaOfInterest}`,
-                    method: 'PATCH',
-                    json: true,
-                    body: {
-                        templateId: this.params.id,
-                        userId: this.state.loggedUser.id
-                    }
-                });
-            } catch (e) {
-                logger.error(e);
-                this.throw(500, 'Error patching templates: patch to area failed');
-            }
+
         }
 
         // add answers count to return and updated date
