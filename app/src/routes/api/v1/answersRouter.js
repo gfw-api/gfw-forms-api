@@ -21,11 +21,35 @@ class AnswersRouter {
         logger.info(`Obtaining answers for report ${this.params.reportId}`);
 
         let filter = {};
+        let manager = false;
+        let confirmedUsers = [{user: new ObjectId(this.state.loggedUser.id)}];
+
         const template = yield ReportsModel.findOne({ _id: this.params.reportId });
+
+        if (this.state.team) {
+            // check team
+            manager = this.state.team.managers.fitler((manager) => {
+                return this.state.loggedUser.id === manager.id;
+            });
+
+            // check confirmed users
+            if (this.state.team.confirmedUsers.length) {
+                this.state.team.confirmedUsers.forEach((user) => {
+                    confirmedUsers.push({user: new ObjectId(user.id)});
+                });
+            }
+        }
+
         if (this.state.loggedUser.role === 'ADMIN' || this.state.loggedUser.id === template.user) {
             filter = {
                 $and: [
                     { report: new ObjectId(this.params.reportId) },
+                ]
+            };
+        } else if (manager && template.public) {
+            filter = {
+                $and: [
+                    { $or: confirmedUsers }
                 ]
             };
         } else {
@@ -226,7 +250,7 @@ function * checkExistReport(next) {
     }
     let filters = {};
     if (team.data) {
-        this.state.team = team.data;
+        this.state.team = team.data.attributes;
         const manager = team.data.attributes.managers[0].id ? team.data.attributes.managers[0].id : team.data.attributes.managers[0];
         filters = {
             $and: [
