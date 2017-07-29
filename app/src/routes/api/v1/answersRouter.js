@@ -52,7 +52,10 @@ class AnswersRouter {
     static * get() {
         logger.info(`Obtaining answer ${this.params.id} for report ${this.params.reportId}`);
         let filter = {};
-        if (this.state.loggedUser.role === 'ADMIN') {
+
+        const template = yield ReportsModel.findOne({ _id: this.params.reportId });
+
+        if (this.state.loggedUser.role === 'ADMIN' || this.state.loggedUser.id === template.user) {
             filter = {
                 _id: new ObjectId(this.params.id),
                 report: new ObjectId(this.params.reportId)
@@ -207,17 +210,23 @@ function * queryToState(next) {
 }
 
 function * checkExistReport(next) {
-    const team = yield ctRegisterMicroservice.requestToMicroservice({
-        uri: `/v1/teams/user/${this.state.loggedUser.id}`,
-        method: 'GET',
-        json: true
-    });
+    let team = {};
+    try {
+        team = yield ctRegisterMicroservice.requestToMicroservice({
+            uri: `/v1/teams/user/${this.state.loggedUser.id}`,
+            method: 'GET',
+            json: true
+        });
+
+    } catch(e) {
+        logger.info('Failed to fetch team');
+    }
     if (!team.data) {
         logger.info('User does not belong to a team.');
     }
     let filters = {};
-    logger.debug(team);
     if (team.data) {
+        this.state.team = team.data;
         const manager = team.data.attributes.managers[0].id ? team.data.attributes.managers[0].id : team.data.attributes.managers[0];
         filters = {
             $and: [
