@@ -216,8 +216,9 @@ function * checkExistReport(next) {
         logger.info('User does not belong to a team.');
     }
     let filters = {};
+    logger.debug(team);
     if (team.data) {
-        const manager = team.data.managers[0].id;
+        const manager = team.data.attributes.managers[0].id ? team.data.attributes.managers[0].id : team.data.attributes.managers[0];
         filters = {
             $and: [
                 { _id: new ObjectId(this.params.reportId) },
