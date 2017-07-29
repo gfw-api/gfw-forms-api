@@ -208,15 +208,15 @@ function * queryToState(next) {
 
 function * checkExistReport(next) {
     const team = yield ctRegisterMicroservice.requestToMicroservice({
-        uri: `/teams/user/${this.state.loggedUser.id}`,
+        uri: `/v1/teams/user/${this.state.loggedUser.id}`,
         method: 'GET',
         json: true
     });
-    if (!team) {
+    if (!team.data) {
         logger.info('User does not belong to a team.');
     }
     let filters = {};
-    if (team) {
+    if (team.data) {
         const manager = team.data.managers[0].id;
         filters = {
             $and: [
