@@ -28,7 +28,7 @@ class AnswersRouter {
 
         if (this.state.team) {
             // check team
-            manager = this.state.team.managers.fitler((manager) => {
+            manager = this.state.team.managers.filter((manager) => {
                 return this.state.loggedUser.id === manager.id;
             });
 
@@ -249,7 +249,7 @@ function * checkExistReport(next) {
         logger.info('User does not belong to a team.');
     }
     let filters = {};
-    if (team.data) {
+    if (team.data.length > 0) {
         this.state.team = team.data.attributes;
         const manager = team.data.attributes.managers[0].id ? team.data.attributes.managers[0].id : team.data.attributes.managers[0];
         filters = {
