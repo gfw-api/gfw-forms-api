@@ -335,7 +335,7 @@ class ReportsRouter {
                     const reportQuestions = report.questions;
                     let activeQuestion = {};
                     for (let k = 0; k < reportQuestions.length; k ++) {
-                        if (reportQuestions[k].name === res.question.name) {
+                        if (reportQuestions[k].name && reportQuestions[k].name === res.question.name) {
                             activeQuestion = reportQuestions[k];
                         }
                     }
