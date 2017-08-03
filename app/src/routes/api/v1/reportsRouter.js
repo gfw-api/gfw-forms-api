@@ -295,6 +295,8 @@ class ReportsRouter {
             }
         }
 
+        logger.info('quesitons found');
+
         for (let i = 0; i < report.questions.length; i++) {
             const question = report.questions[i];
             questionLabels[question.name] = question.label[report.defaultLanguage];
@@ -304,6 +306,8 @@ class ReportsRouter {
                 }
             }
         }
+
+        logger.info('labels found');
 
         const questionLabelsData = json2csv({
             data: questionLabels
@@ -334,11 +338,12 @@ class ReportsRouter {
                     const res = answer.responses[j];
                     const reportQuestions = report.questions;
                     let activeQuestion = {};
-                    for (let k = 0; k < reportQuestions.length; k ++) {
+                    for (let k = 0; k < reportQuestions.length; k++) {
                         if (reportQuestions[k].name && reportQuestions[k].name === res.question.name) {
                             activeQuestion = reportQuestions[k];
                         }
                     }
+                    logger.info('activeQuestion found');
                     if (( activeQuestion.type === 'checkbox' || activeQuestion.type === 'radio' || activeQuestion.type === 'select' ) && typeof res.answer.value === 'number') {
                         let activeValue = {};
                         for (let x = 0; x < activeQuestion.values[report.defaultLanguage].length; x ++) {
@@ -347,8 +352,10 @@ class ReportsRouter {
                             }
                         }
                         responses[res.question.name] = activeValue.label;
+                        logger.info('conditional found');
                     } else {
                         responses[res.question.name] = res.answer.value;
+                        logger.info('regular found');
                     }
                 }
                 logger.info('Writting...');
