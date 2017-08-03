@@ -282,8 +282,21 @@ class ReportsRouter {
             return;
         }
 
-        const questions = {};
-        const questionLabels = {};
+        const questions = {
+            userId: null,
+            areaOfInterest: null,
+            clickedPosition: null,
+            userPosition: null,
+            alertSystem: null
+        };
+
+        const questionLabels = {
+            userId: 'User',
+            areaOfInterest: 'Area of Interest',
+            clickedPosition: 'Position of Report',
+            userPosition: 'Position of User',
+            alertSystem: 'Alert type'
+        };
 
         for (let i = 0; i < report.questions.length; i++) {
             const question = report.questions[i];
@@ -295,8 +308,6 @@ class ReportsRouter {
             }
         }
 
-        logger.info('quesitons found');
-
         for (let i = 0; i < report.questions.length; i++) {
             const question = report.questions[i];
             questionLabels[question.name] = question.label[report.defaultLanguage];
@@ -306,8 +317,6 @@ class ReportsRouter {
                 }
             }
         }
-
-        logger.info('labels found');
 
         const questionLabelsData = json2csv({
             data: questionLabels
@@ -334,6 +343,12 @@ class ReportsRouter {
             for (let i = 0, length = answers.length; i < length; i++) {
                 const answer = answers[i].toObject();
                 const responses = Object.assign({}, questions);
+                responses.userId = answer.user ? answer.user : null;
+                responses.areaOfInterest = answer.areaOfInterest ? answer.areaOfInterest : null;
+                responses.clickedPosition = answer.clickedPosition ? answer.clickedPosition : null;
+                responses.userPosition = answer.userPosition ? answer.userPosition : null;
+                responses.alertSystem = answer.layer ? answer.layer : null;                
+                
                 for (let j = 0, lengthResponses = answer.responses.length; j < lengthResponses; j++){
                     const res = answer.responses[j];
                     const reportQuestions = report.questions;
@@ -343,7 +358,6 @@ class ReportsRouter {
                             activeQuestion = reportQuestions[k];
                         }
                     }
-                    logger.info('activeQuestion found');
                     if (( activeQuestion.type === 'checkbox' || activeQuestion.type === 'radio' || activeQuestion.type === 'select' ) && typeof res.answer.value === 'number') {
                         let activeValue = {};
                         for (let x = 0; x < activeQuestion.values[report.defaultLanguage].length; x ++) {
