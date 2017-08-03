@@ -1,0 +1,101 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    name: {name}
+  name: {name}
+spec:
+  revisionHistoryLimit: 0
+  template:
+    metadata:
+      annotations:
+        chaos.alpha.kubernetes.io/enabled: "true"
+      labels:
+        name: {name}
+    spec:
+      containers:
+      - name: {name}
+        image: vizzuality/{name}
+        imagePullPolicy: Always
+        resources:
+          requests:
+            memory: "0Mi"
+            cpu: "0m"
+        args:
+          - start
+        env:
+          - name: PORT
+            value: "4400"
+          - name: NODE_ENV
+            value: staging
+          - name: NODE_PATH
+            value: app/src
+          - name: LOCAL_URL
+            value: http://{name}.default.svc.cluster.local:4400
+          - name: QUEUE_PROVIDER
+            value: redis
+          - name: QUEUE_NAME
+            value: mail_staging
+          - name: WRI_MAIL_RECIPIENTS
+            value: raul.requero@vizzuality.com,sergio.gordillo@vizzuality.com
+          - name: MONGO_URI
+            valueFrom:
+                secretKeyRef:
+                  name: dbsecrets
+                  key: FORMS_MONGO_URI
+          - name: QUEUE_URL
+            valueFrom:
+                secretKeyRef:
+                  name: dbsecrets
+                  key: REDIS_URI
+          - name: CT_URL
+            valueFrom:
+                secretKeyRef:
+                  name: mssecrets
+                  key: CT_URL
+          - name: CT_TOKEN
+            valueFrom:
+                secretKeyRef:
+                  name: mssecrets
+                  key: CT_TOKEN
+          - name: CT_REGISTER_MODE
+            valueFrom:
+                secretKeyRef:
+                  name: mssecrets
+                  key: CT_REGISTER_MODE
+          - name: API_VERSION
+            valueFrom:
+                secretKeyRef:
+                  name: mssecrets
+                  key: API_VERSION
+          - name: S3_ACCESS_KEY_ID
+            valueFrom:
+                secretKeyRef:
+                  name: mssecrets
+                  key: FORMS_S3_ACCESS_KEY_ID
+          - name: S3_SECRET_ACCESS_KEY
+            valueFrom:
+                secretKeyRef:
+                  name: mssecrets
+                  key: FORMS_S3_SECRET_ACCESS_KEY
+          - name: S3_BUCKET
+            value: forest-watcher-files
+          - name: GOOGLE_PRIVATE_KEY
+            valueFrom:
+                secretKeyRef:
+                  name: mssecrets
+                  key: FORMS_GOOGLE_PRIVATE_KEY
+          - name: GOOGLE_PROJECT_EMAIL
+            valueFrom:
+                secretKeyRef:
+                  name: mssecrets
+                  key: FORMS_GOOGLE_PROJECT_EMAIL
+          - name: TARGET_SHEET_ID
+            value: 1F6D2lrifcI4QPhAXK2FBdEQ15uI0YPIsfAATI_EUe6A
+          - name: TARGET_SHEET_INDEX
+            value: "2"
+
+        ports:
+          - containerPort: 4400
+
+      restartPolicy: Always

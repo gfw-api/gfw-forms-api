@@ -6,6 +6,7 @@ develop:
     - "35736:35729"
   container_name: gfw-forms-develop
   environment:
+    CT_REGISTER_MODE: auto
     NODE_ENV: dev
     QUEUE_URL: redis://mymachine:6379
     QUEUE_PROVIDER: redis

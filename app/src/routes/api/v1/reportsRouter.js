@@ -283,16 +283,32 @@ class ReportsRouter {
         }
 
         const questions = {};
+        const questionLabels = {};
 
         for (let i = 0; i < report.questions.length; i++) {
             const question = report.questions[i];
-            questions[question.name] = null;
+            questions[question.name] = '';
             if (question.childQuestions){
                 for (let j = 0, lengthChild = question.childQuestions.length; j < lengthChild; j++ ){
-                    questions[question.childQuestions[j].name] = null;
+                    questions[question.childQuestions[j].name] = '';
                 }
             }
         }
+
+        for (let i = 0; i < report.questions.length; i++) {
+            const question = report.questions[i];
+            questionLabels[question.name] = question.label[report.defaultLanguage];
+            if (question.childQuestions){
+                for (let j = 0, lengthChild = question.childQuestions.length; j < lengthChild; j++ ){
+                    questionLabels[question.childQuestions[j].name] = question.childQuestions[j].label[report.defaultLanguage];
+                }
+            }
+        }
+
+        const questionLabelsData = json2csv({
+            data: questionLabels
+        }) + '\n';
+        this.body.write(questionLabelsData);
 
         let filter = {};
         if (this.state.loggedUser.role === 'ADMIN') {
@@ -305,23 +321,40 @@ class ReportsRouter {
                 ]
             };
         }
+
         const answers = yield AnswersModel.find(filter);
         logger.info('Obtaining data');
         if (answers) {
             logger.info('Data found!');
             let data = null;
-
             for (let i = 0, length = answers.length; i < length; i++) {
-                const answer = answers[i];
+                const answer = answers[i].toObject();
                 const responses = Object.assign({}, questions);
-                for(let j = 0, lengthResponses = answer.responses.length; j < lengthResponses; j++){
+                for (let j = 0, lengthResponses = answer.responses.length; j < lengthResponses; j++){
                     const res = answer.responses[j];
-                    responses[res.name] = res.value;
+                    const reportQuestions = report.questions;
+                    let activeQuestion = {};
+                    for (let k = 0; k < reportQuestions.length; k ++) {
+                        if (reportQuestions[k].name && reportQuestions[k].name === res.question.name) {
+                            activeQuestion = reportQuestions[k];
+                        }
+                    }
+                    if (( activeQuestion.type === 'checkbox' || activeQuestion.type === 'radio' || activeQuestion.type === 'select' ) && typeof res.answer.value === 'number') {
+                        let activeValue = {};
+                        for (let x = 0; x < activeQuestion.values[report.defaultLanguage].length; x ++) {
+                            if (activeQuestion.values[report.defaultLanguage][x].value === res.answer.value) {
+                                activeValue = activeQuestion.values[report.defaultLanguage][x];
+                            }
+                        }
+                        responses[res.question.name] = activeValue.label;
+                    } else {
+                        responses[res.question.name] = res.answer.value;
+                    }
                 }
                 logger.info('Writting...');
                 data = json2csv({
                     data: responses,
-                    hasCSVColumnTitle: i === 0
+                    hasCSVColumnTitle: false
                 }) + '\n';
                 this.body.write(data);
             }
