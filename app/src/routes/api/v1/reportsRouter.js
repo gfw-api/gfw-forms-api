@@ -285,16 +285,20 @@ class ReportsRouter {
         const questions = {
             userId: null,
             areaOfInterest: null,
-            clickedPosition: null,
-            userPosition: null,
+            clickedPositionLat: null,
+            clickedPositionLon: null,
+            userPositionLat: null,
+            userPositionLon: null,
             alertSystem: null
         };
 
         const questionLabels = {
             userId: 'User',
             areaOfInterest: 'Area of Interest',
-            clickedPosition: 'Position of Report',
-            userPosition: 'Position of User',
+            clickedPositionLat: 'Position of report lat',
+            clickedPositionLon: 'Position of report lon',
+            userPositionLat: 'Position of user lat',
+            userPositionLon: 'Position of user lon',            
             alertSystem: 'Alert type'
         };
 
@@ -345,8 +349,10 @@ class ReportsRouter {
                 const responses = Object.assign({}, questions);
                 responses.userId = answer.user ? answer.user : null;
                 responses.areaOfInterest = answer.areaOfInterest ? answer.areaOfInterest : null;
-                responses.clickedPosition = answer.clickedPosition ? answer.clickedPosition : null;
-                responses.userPosition = answer.userPosition ? answer.userPosition : null;
+                responses.clickedPositionLat = answer.clickedPosition.length ? answer.clickedPosition[0].lat : null;
+                responses.clickedPositionLon = answer.clickedPosition.length ? answer.clickedPosition[0].lon : null;                
+                responses.userPositionLat = answer.userPosition.length ? answer.userPosition[0].lat : null;
+                responses.userPositionLon = answer.userPosition.length ? answer.userPosition[0].lon : null;                
                 responses.alertSystem = answer.layer ? answer.layer : null;                
                 
                 for (let j = 0, lengthResponses = answer.responses.length; j < lengthResponses; j++){

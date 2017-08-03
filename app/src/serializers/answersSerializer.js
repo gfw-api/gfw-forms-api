@@ -12,6 +12,12 @@ var answersSerializer = new JSONAPISerializer('answers', {
   responses: {
       attributes: ['question', 'answer']
   },
+  userPosition: {
+      attributes: ['lat', 'lon']
+  },
+  clickedPosition: {
+      attributes: ['lat', 'lon']
+  },
   typeForAttribute: function (attribute) { return attribute; },
   keyForAttribute: 'camelCase'
 });
