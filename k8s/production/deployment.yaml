@@ -44,7 +44,7 @@ spec:
                 secretKeyRef:
                   name: dbsecrets
                   key: FORMS_MONGO_URI
-         - name: QUEUE_URL
+          - name: QUEUE_URL
             valueFrom:
                 secretKeyRef:
                   name: dbsecrets
