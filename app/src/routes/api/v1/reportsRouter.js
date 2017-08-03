@@ -358,7 +358,7 @@ class ReportsRouter {
                             activeQuestion = reportQuestions[k];
                         }
                     }
-                    if (( activeQuestion.type === 'checkbox' || activeQuestion.type === 'radio' || activeQuestion.type === 'select' ) && typeof res.value === 'number') {
+                    if (( activeQuestion.type === 'checkbox' || activeQuestion.type === 'radio' || activeQuestion.type === 'select' ) && typeof parseInt(res.value) === 'number') {
                         let activeValue = {};
                         for (let x = 0; x < activeQuestion.values[report.defaultLanguage].length; x ++) {
                             if (activeQuestion.values[report.defaultLanguage][x].value === res.value) {
