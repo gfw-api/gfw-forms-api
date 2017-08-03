@@ -354,21 +354,21 @@ class ReportsRouter {
                     const reportQuestions = report.questions;
                     let activeQuestion = {};
                     for (let k = 0; k < reportQuestions.length; k++) {
-                        if (reportQuestions[k].name && reportQuestions[k].name === res.question.name) {
+                        if (reportQuestions[k].name && reportQuestions[k].name === res.name) {
                             activeQuestion = reportQuestions[k];
                         }
                     }
-                    if (( activeQuestion.type === 'checkbox' || activeQuestion.type === 'radio' || activeQuestion.type === 'select' ) && typeof res.answer.value === 'number') {
+                    if (( activeQuestion.type === 'checkbox' || activeQuestion.type === 'radio' || activeQuestion.type === 'select' ) && typeof res.value === 'number') {
                         let activeValue = {};
                         for (let x = 0; x < activeQuestion.values[report.defaultLanguage].length; x ++) {
-                            if (activeQuestion.values[report.defaultLanguage][x].value === res.answer.value) {
+                            if (activeQuestion.values[report.defaultLanguage][x].value === res.value) {
                                 activeValue = activeQuestion.values[report.defaultLanguage][x];
                             }
                         }
-                        responses[res.question.name] = activeValue.label;
+                        responses[res.name] = activeValue.label;
                         logger.info('conditional found');
                     } else {
-                        responses[res.question.name] = res.answer.value;
+                        responses[res.name] = res.value;
                         logger.info('regular found');
                     }
                 }
