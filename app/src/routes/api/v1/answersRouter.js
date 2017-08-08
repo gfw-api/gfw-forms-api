@@ -108,6 +108,7 @@ class AnswersRouter {
         let clickedPosition = [];
 
         logger.info('userPosition', fields.userPosition);
+        logger.info('TYPE OF userPosition', typeof fields.userPosition);
 
         let answer = {
             report: this.params.reportId,
@@ -261,9 +262,10 @@ function * checkExistReport(next) {
             ]
         };
     }
+    logger.info('FILTERS:', filters);
     const report = yield ReportsModel.findOne(filters).populate('questions');
     if (!report) {
-        this.throw(404, 'Report not found with these permissions');
+        this.throw(404, 'Report not found');
         return;
     }
     this.state.report = report;
