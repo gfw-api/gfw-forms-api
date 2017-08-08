@@ -110,13 +110,19 @@ class AnswersRouter {
         logger.info('userPosition', fields.userPosition);
         logger.info('TYPE OF userPosition', typeof fields.userPosition);
 
+        try {
+            userPosition = fields.userPosition ? fields.userPosition.split(',') : [];
+        } catch(e) {
+            this.throw(400, `Position values must be separated by ','`);
+        }
+
         let answer = {
             report: this.params.reportId,
             username: fields.username,
             organization: fields.organization,
             areaOfInterest: fields.areaOfInterest,
             language: fields.language,
-            userPosition: JSON.parse(fields.userPosition),
+            userPosition: userPosition,
             clickedPosition: JSON.parse(fields.clickedPosition),
             startDate: fields.startDate,
             endDate: fields.endDate,
