@@ -351,8 +351,8 @@ class ReportsRouter {
                 responses.areaOfInterest = answer.areaOfInterest ? answer.areaOfInterest : null;
                 responses.clickedPositionLat = answer.clickedPosition.length ? answer.clickedPosition[0].lat : null;
                 responses.clickedPositionLon = answer.clickedPosition.length ? answer.clickedPosition[0].lon : null;                
-                responses.userPositionLat = answer.userPosition.length ? answer.userPosition[0].lat : null;
-                responses.userPositionLon = answer.userPosition.length ? answer.userPosition[0].lon : null;                
+                responses.userPositionLat = answer.userPosition.length ? answer.userPosition[0] : null;
+                responses.userPositionLon = answer.userPosition.length ? answer.userPosition[1] : null;                
                 responses.alertSystem = answer.layer ? answer.layer : null;                
                 
                 for (let j = 0, lengthResponses = answer.responses.length; j < lengthResponses; j++){
