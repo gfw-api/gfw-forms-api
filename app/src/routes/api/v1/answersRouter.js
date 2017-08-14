@@ -105,7 +105,6 @@ class AnswersRouter {
 
         const fields = this.request.body.fields;
         let userPosition = [];
-        let clickedPosition = [];
 
         logger.info('userPosition', fields.userPosition);
         logger.info('TYPE OF userPosition', typeof fields.userPosition);
@@ -127,7 +126,7 @@ class AnswersRouter {
             startDate: fields.startDate,
             endDate: fields.endDate,
             layer: fields.layer,
-            user: this.state.loggedUser.id,
+            user: new ObjectId(this.state.loggedUser.id),
             createdAt: fields.date,
             responses: []
         };
