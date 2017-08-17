@@ -106,9 +106,6 @@ class AnswersRouter {
         const fields = this.request.body.fields;
         let userPosition = [];
 
-        logger.info('userPosition', fields.userPosition);
-        logger.info('TYPE OF userPosition', typeof fields.userPosition);
-
         try {
             userPosition = fields.userPosition ? fields.userPosition.split(',') : [];
         } catch(e) {
@@ -134,13 +131,12 @@ class AnswersRouter {
         const pushResponse = (question, response) => {
             answer.responses.push({
                 name: question.name,
-                value: response || null
+                value: typeof response !== 'undefined' ? response : null
             });
         };
 
         const pushError = (question) => {
             this.throw(400, `${question.label[answer.language]} (${question.name}) required`);
-            return;
         };
 
         const questions = this.state.report.questions;
@@ -153,11 +149,13 @@ class AnswersRouter {
             const question = questions[i];
 
             // handle parent questions
-            let response = this.request.body.fields[question.name] || this.request.body.files[question.name];
+            const bodyAnswer = this.request.body.fields[question.name];
+            const fileAnswer = this.request.body.files[question.name];
+            let response = typeof bodyAnswer !== 'undefined' ?  bodyAnswer : fileAnswer;
             if (!response && question.required) {
                 pushError(question);
             }
-            if (response && question.type === 'blob') {
+            if (response && response.path && response.name && question.type === 'blob') {
                 //upload file
                 response = yield s3Service.uploadFile(response.path, response.name);
             }
@@ -168,8 +166,11 @@ class AnswersRouter {
             if (question.childQuestions) {
                 for (let j = 0; j < question.childQuestions.length; j++) {
                     const childQuestion = question.childQuestions[j];
-                    let childResponse = this.request.body.fields[childQuestion.name] || this.request.body.files[childQuestion.name];
-                    if (!childResponse && childQuestion.required && childQuestion.conditionalValue === response ) {
+                    const childBodyAnswer = this.request.body.fields[childQuestion.name];
+                    const childFileAnswer = this.request.body.files[childQuestion.name];
+                    const conditionMatches = typeof bodyAnswer !== 'undefined' && childQuestion.conditionalValue === bodyAnswer;
+                    let childResponse = typeof childBodyAnswer !== 'undefined' ? childBodyAnswer : childFileAnswer;
+                    if (!childResponse && childQuestion.required && conditionMatches) {
                         pushError(childQuestion);
                     }
                     if (childResponse && question.type === 'blob') {
@@ -188,7 +189,6 @@ class AnswersRouter {
 
     static * update() {
         this.throw(500, 'Not implemented');
-        return;
     }
 
     static * delete() {
@@ -208,7 +208,7 @@ class AnswersRouter {
     }
 }
 
-function* loggedUserToState(next) {
+function * loggedUserToState(next) {
     if (this.query && this.query.loggedUser) {
         this.state.loggedUser = JSON.parse(this.query.loggedUser);
         delete this.query.loggedUser;
