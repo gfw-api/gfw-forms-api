@@ -46,7 +46,7 @@ class ReportsRouter {
             } else {
                 answersFilter = {
                     user: new ObjectId(this.state.loggedUser.id),
-                    report: new ObjectId(this.params.id)
+                    report: new ObjectId(reports[i].id)
                 };
             }
             const answers = yield AnswersModel.count(answersFilter);
@@ -165,7 +165,7 @@ class ReportsRouter {
 
             // remove old area
             if (request.oldAreaOfInterest) {
-                logger.info(`PATCHing old area of interes ${request.oldAreaOfInterest}...`);
+                logger.info(`PATCHing old area of interest ${request.oldAreaOfInterest}...`);
                 try {
                     const result = yield ctRegisterMicroservice.requestToMicroservice({
                         uri: `/v1/area/${request.oldAreaOfInterest}`,
@@ -378,7 +378,7 @@ class ReportsRouter {
                         logger.info('regular found');
                     }
                 }
-                logger.info('Writting...');
+                logger.info('Writing...');
                 data = json2csv({
                     data: responses,
                     hasCSVColumnTitle: false
