@@ -1,7 +1,6 @@
 'use strict';
 const Router = require('koa-router');
 const logger = require('logger');
-const ErrorSerializer = require('serializers/errorSerializer');
 const ReportsSerializer = require('serializers/reportsSerializer');
 const ReportsModel = require('models/reportsModel');
 const ReportsValidator = require('validators/reportsValidator');
@@ -129,12 +128,15 @@ class ReportsRouter {
 
     static * update(){
         logger.info(`Updating template with id ${this.params.id}...`);
+
         const reportFilter = {
             $and: [
-                { _id: new ObjectId(this.params.id) },
-                { user: new ObjectId(this.state.loggedUser.id) }
+                { _id: new ObjectId(this.params.id) }
             ]
         };
+        if (this.state.loggedUser.role !== 'ADMIN') {
+            reportFilter.$and.push({ user: new ObjectId(this.state.loggedUser.id) });
+        }
         const report = yield ReportsModel.findOne(reportFilter);
         const request = this.request.body;
 
@@ -148,9 +150,11 @@ class ReportsRouter {
         if (request.name) {
             report.name = request.name;
         }
+
         if (request.status) {
             report.status = request.status;
         }
+
         if (request.languages) {
             report.languages = request.languages;
         }
@@ -218,11 +222,12 @@ class ReportsRouter {
         this.body = ReportsSerializer.serialize(report);
     }
 
-    static * delete(){
+    static * delete() {
+        const role = this.state.loggedUser.role;
         const aoi = this.state.query && this.state.query.aoi !== null ? this.state.query.aoi.split(',') : null;
         logger.info(`Checking report for answers...`);
-        const answers = yield AnswersModel.count({report: new ObjectId(this.params.id)});
-        if (answers.length > 0) {
+        const answers = yield AnswersModel.count({ report: new ObjectId(this.params.id) });
+        if (answers > 0 && role !== 'ADMIN') {
             this.throw(403, 'This report has answers, you cannot delete. Please unpublish instead.');
             return;
         }
@@ -230,7 +235,6 @@ class ReportsRouter {
         logger.info(`Deleting report with id ${this.params.id}...`);
         if (aoi !== null) {
             for (let i = 0; i < aoi.length; i++) {
-                logger.debug(aoi[i]);
                 logger.info(`PATCHing area ${aoi[i]} to remove template association...`);
                 try {
                     const result = yield ctRegisterMicroservice.requestToMicroservice({
@@ -249,18 +253,20 @@ class ReportsRouter {
                     return;
                 }
             }
-            logger.info('Areas patched. Remvoing template...');
+            logger.info('Areas patched. Removing template...');
         }
 
         // finally remove template
         const query = {
             $and: [
-                { _id: new ObjectId(this.params.id) },
-                { status: ['draft', 'unpublished'] }
+                { _id: new ObjectId(this.params.id) }
             ]
         };
-        if (this.state.loggedUser.role !== 'ADMIN') {
+        if (role !== 'ADMIN') {
             query.$and.push({ user: new ObjectId(this.state.loggedUser.id) });
+            query.$and.push({ status: ['draft', 'unpublished'] });
+        } else if (answers > 0) {
+            yield AnswersModel.remove({ report: new ObjectId(this.params.id) });
         }
         const result = yield ReportsModel.remove(query);
 
