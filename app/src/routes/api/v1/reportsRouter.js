@@ -253,19 +253,21 @@ class ReportsRouter {
         }
 
         // finally remove template
-        const result = yield ReportsModel.remove({
+        const query = {
             $and: [
                 { _id: new ObjectId(this.params.id) },
-                { user: new ObjectId(this.state.loggedUser.id) },
                 { status: ['draft', 'unpublished'] }
             ]
-        });
+        };
+        if (this.state.loggedUser.role !== 'ADMIN') {
+            query.$and.push({ user: new ObjectId(this.state.loggedUser.id) });
+        }
+        const result = yield ReportsModel.remove(query);
 
         if (!result || !result.result || result.result.ok === 0) {
             this.throw(404, 'Report not found with these permissions. You must be the owner to remove.');
             return;
         }
-        this.body = '';
         this.statusCode = 204;
     }
 
