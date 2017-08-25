@@ -120,6 +120,7 @@ class ReportsRouter {
                 const result = yield ReportsModel.remove({ _id: reportId });
                 logger.error(e);
                 this.throw(500, 'Error creating templates: patch to area failed');
+                return;
             }
         }
 
@@ -179,6 +180,7 @@ class ReportsRouter {
                 } catch (e) {
                     logger.error(e);
                     this.throw(500, 'PATCHing old area failed');
+                    return;
                 }
             }
             
@@ -198,6 +200,7 @@ class ReportsRouter {
                 } catch (e) {
                     logger.error(e);
                     this.throw(500, 'PATCHing new area failed');
+                    return;
                 }
             }
         }
@@ -221,6 +224,7 @@ class ReportsRouter {
         const answers = yield AnswersModel.count({report: new ObjectId(this.params.id)});
         if (answers.length > 0) {
             this.throw(403, 'This report has answers, you cannot delete. Please unpublish instead.');
+            return;
         }
         logger.info(`Report has no answers.`);
         logger.info(`Deleting report with id ${this.params.id}...`);
@@ -242,6 +246,7 @@ class ReportsRouter {
                 } catch (e) {
                     logger.error(e);
                     this.throw(500, e);
+                    return;
                 }
             }
             logger.info('Areas patched. Remvoing template...');
