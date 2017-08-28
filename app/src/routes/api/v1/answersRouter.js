@@ -114,6 +114,7 @@ class AnswersRouter {
 
         let answer = {
             report: this.params.reportId,
+            reportName: fields.reportName,
             username: fields.username,
             organization: fields.organization,
             areaOfInterest: fields.areaOfInterest,
