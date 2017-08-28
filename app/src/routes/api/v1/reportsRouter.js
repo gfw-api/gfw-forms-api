@@ -333,7 +333,8 @@ class ReportsRouter {
         });
 
         const questionLabelsData = json2csv({
-            data: questionLabels
+            data: questionLabels,
+            hasCSVColumnTitle: false
         }) + '\n';
         this.body.write(questionLabelsData);
 
