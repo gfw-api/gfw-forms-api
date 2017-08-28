@@ -33,7 +33,7 @@ class ReportsRouter {
             });
         }
         const reports = yield ReportsModel.find(filter);
-        
+
         // get answer count for each report
         const numReports = reports.length;
         for (let i = 1; i < numReports; i++) {
@@ -60,7 +60,7 @@ class ReportsRouter {
         logger.info(`Obtaining reports with id ${this.params.id}`);
         const report = yield ReportsModel.findOne({ _id: this.params.id });
         if (!report) {
-            this.throw(404, 'Report not found with these permissions');
+            this.throw(404, 'Report not found');
             return;
         }
 
@@ -78,7 +78,7 @@ class ReportsRouter {
         }
         const answers = yield AnswersModel.count(answersFilter);
         report.answersCount = answers;
-        
+
         this.body = ReportsSerializer.serialize(report);
     }
 
@@ -187,7 +187,7 @@ class ReportsRouter {
                     return;
                 }
             }
-            
+
             // PATCH new area
             if (request.areaOfInterest) {
                 logger.info(`PATCHing new area of interes ${request.oldAreaOfInterest}...`);
@@ -214,7 +214,7 @@ class ReportsRouter {
         }
 
         // add answers count to return and updated date
-        const answers = yield AnswersModel.count({report: new ObjectId(this.params.id)});        
+        const answers = yield AnswersModel.count({report: new ObjectId(this.params.id)});
         report.answersCount = answers;
         report.updatedDate = Date.now;
 
@@ -266,6 +266,7 @@ class ReportsRouter {
             query.$and.push({ user: new ObjectId(this.state.loggedUser.id) });
             query.$and.push({ status: ['draft', 'unpublished'] });
         } else if (answers > 0) {
+            logger.info('User is admin, removing report answers...');
             yield AnswersModel.remove({ report: new ObjectId(this.params.id) });
         }
         const result = yield ReportsModel.remove(query);
@@ -286,17 +287,18 @@ class ReportsRouter {
         const report = yield ReportsModel.findOne({
             $and: [
                 { _id: new ObjectId(this.params.id) },
-                { $or: [{public: true}, {user: new ObjectId(this.state.loggedUser.id)}] }
+                { $or: [{ public: true }, { user: new ObjectId(this.state.loggedUser.id) }] }
             ]
         });
 
         if (!report) {
-            this.throw(404, 'Report not found with these permissions');
+            this.throw(404, 'Report not found');
             return;
         }
 
         const questions = {
             userId: null,
+            reportName: null,
             areaOfInterest: null,
             clickedPositionLat: null,
             clickedPositionLon: null,
@@ -307,101 +309,77 @@ class ReportsRouter {
 
         const questionLabels = {
             userId: 'User',
+            reportName: 'Name',
             areaOfInterest: 'Area of Interest',
             clickedPositionLat: 'Position of report lat',
             clickedPositionLon: 'Position of report lon',
             userPositionLat: 'Position of user lat',
-            userPositionLon: 'Position of user lon',            
+            userPositionLon: 'Position of user lon',
             alertSystem: 'Alert type'
         };
 
-        for (let i = 0; i < report.questions.length; i++) {
-            const question = report.questions[i];
+        report.questions.forEach((question) => {
             questions[question.name] = '';
-            if (question.childQuestions){
-                for (let j = 0, lengthChild = question.childQuestions.length; j < lengthChild; j++ ){
-                    questions[question.childQuestions[j].name] = '';
-                }
-            }
-        }
+            question.childQuestions.forEach((childQuestion) => {
+                questions[childQuestion.name] = '';
+            });
+        });
 
-        for (let i = 0; i < report.questions.length; i++) {
-            const question = report.questions[i];
+        report.questions.forEach((question) => {
             questionLabels[question.name] = question.label[report.defaultLanguage];
-            if (question.childQuestions){
-                for (let j = 0, lengthChild = question.childQuestions.length; j < lengthChild; j++ ){
-                    questionLabels[question.childQuestions[j].name] = question.childQuestions[j].label[report.defaultLanguage];
-                }
-            }
-        }
+            question.childQuestions.forEach((childQuestion) => {
+                questionLabels[childQuestion.name] = childQuestion.label[report.defaultLanguage];
+            });
+        });
 
         const questionLabelsData = json2csv({
-            data: questionLabels
+            data: questionLabels,
+            hasCSVColumnTitle: false
         }) + '\n';
         this.body.write(questionLabelsData);
 
-        let filter = {};
-        if (this.state.loggedUser.role === 'ADMIN') {
-            filter = { report: this.params.id };
-        } else {
-            filter = {
-                $and: [
-                    { report: new ObjectId(this.params.id) },
-                    { user: new ObjectId(this.state.loggedUser.id) }
-                ]
-            };
+        const filter = {
+            $and: [
+                { report: new ObjectId(this.params.id) }
+            ]
+        };
+
+        if (this.state.loggedUser.role !== 'ADMIN' && report.user.toString() !== this.state.loggedUser.id) {
+            filter.$and.push({ user: new ObjectId(this.state.loggedUser.id) });
         }
 
         const answers = yield AnswersModel.find(filter);
         logger.info('Obtaining data');
-        if (answers) {
-            logger.info('Data found!');
-            let data = null;
-            for (let i = 0, length = answers.length; i < length; i++) {
-                const answer = answers[i].toObject();
-                const responses = Object.assign({}, questions);
-                responses.userId = answer.user ? answer.user : null;
-                responses.areaOfInterest = answer.areaOfInterest ? answer.areaOfInterest : null;
-                responses.clickedPositionLat = answer.clickedPosition.length ? answer.clickedPosition[0].lat : null;
-                responses.clickedPositionLon = answer.clickedPosition.length ? answer.clickedPosition[0].lon : null;                
-                responses.userPositionLat = answer.userPosition.length ? answer.userPosition[0] : null;
-                responses.userPositionLon = answer.userPosition.length ? answer.userPosition[1] : null;                
-                responses.alertSystem = answer.layer ? answer.layer : null;                
-                
-                for (let j = 0, lengthResponses = answer.responses.length; j < lengthResponses; j++){
-                    const res = answer.responses[j];
-                    const reportQuestions = report.questions;
-                    let activeQuestion = {};
-                    for (let k = 0; k < reportQuestions.length; k++) {
-                        if (reportQuestions[k].name && reportQuestions[k].name === res.name) {
-                            activeQuestion = reportQuestions[k];
-                        }
-                    }
-                    if (( activeQuestion.type === 'checkbox' || activeQuestion.type === 'radio' || activeQuestion.type === 'select' ) && typeof parseInt(res.value) === 'number') {
-                        let activeValue = {};
-                        for (let x = 0; x < activeQuestion.values[report.defaultLanguage].length; x ++) {
-                            if (activeQuestion.values[report.defaultLanguage][x].value === res.value) {
-                                activeValue = activeQuestion.values[report.defaultLanguage][x];
-                            }
-                        }
-                        responses[res.name] = activeValue.label;
-                        logger.info('conditional found');
-                    } else {
-                        responses[res.name] = res.value;
-                        logger.info('regular found');
-                    }
+
+        let data = null;
+        answers.map(answer => answer.toObject())
+            .forEach((answer) => {
+              const responses = Object.assign({}, questions, {
+                userId: answer.user || null,
+                areaOfInterest: answer.areaOfInterest || null,
+                clickedPositionLat: answer.clickedPosition.length ? answer.clickedPosition[0].lat : null,
+                clickedPositionLon: answer.clickedPosition.length ? answer.clickedPosition[0].lon : null,
+                userPositionLat: answer.userPosition.length ? answer.userPosition[0] : null
+              });
+
+              answer.responses.forEach((response) => {
+                const currentQuestion = Object.assign({}, report.questions.find((question) => (question.name && question.name === response.name)));
+                if (['checkbox', 'radio', 'select'].includes(currentQuestion.type) && !isNaN(parseInt(response.value))) {
+                  const questionValues = currentQuestion.values[report.defaultLanguage];
+                  const currentValue = Object.assign({}, questionValues.find((questionValue) => questionValue.value === response.value));
+                  responses[response.name] = currentValue.label;
+                } else {
+                  responses[response.name] = response.value;
                 }
-                logger.info('Writing...');
-                data = json2csv({
-                    data: responses,
-                    hasCSVColumnTitle: false
-                }) + '\n';
-                this.body.write(data);
-            }
-        } else {
-            this.throw(404, 'No data found');
-            return;
-        }
+              });
+
+              data = json2csv({
+                data: responses,
+                hasCSVColumnTitle: false
+              }) + '\n';
+              this.body.write(data);
+            });
+
         this.body.end();
     }
 }
