@@ -141,7 +141,17 @@
 			"method": "POST",
 			"path": "/api/v1/reports/:reportId"
 		}
-	},{
+	},
+	  {
+		  "path": "/v1/reports/:reportId",
+		  "method": "PUT",
+		  "authenticated": true,
+		  "binary": true,
+		  "redirect": {
+			  "method": "PUT",
+			  "path": "/api/v1/reports/:reportId"
+		  }
+	  },{
 		"path": "/v1/reports/:reportId",
 		"method": "PATCH",
 		"authenticated": true,

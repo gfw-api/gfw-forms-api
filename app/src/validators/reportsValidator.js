@@ -75,7 +75,7 @@ class ReportsValidator {
         yield next;
     }
 
-    static * update(next) {
+    static * patch(next) {
         const request = this.request.body;
         logger.debug('Validating body for create template');
         this.checkBody('name').notEmpty();
