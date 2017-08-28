@@ -284,12 +284,13 @@ class ReportsRouter {
         this.set('Content-type', 'text/csv');
         this.body = passThrough();
 
-        const report = yield ReportsModel.findOne({
+        let report = yield ReportsModel.findOne({
             $and: [
                 { _id: new ObjectId(this.params.id) },
                 { $or: [{ public: true }, { user: new ObjectId(this.state.loggedUser.id) }] }
             ]
         });
+        report = report.toObject();
 
         if (!report) {
             this.throw(404, 'Report not found');
@@ -348,7 +349,8 @@ class ReportsRouter {
             filter.$and.push({ user: new ObjectId(this.state.loggedUser.id) });
         }
 
-        const answers = yield AnswersModel.find(filter);
+        let answers = yield AnswersModel.find(filter);
+
         logger.info('Obtaining data');
 
         let data = null;
@@ -363,13 +365,24 @@ class ReportsRouter {
               });
 
               answer.responses.forEach((response) => {
-                const currentQuestion = Object.assign({}, report.questions.find((question) => (question.name && question.name === response.name)));
-                if (['checkbox', 'radio', 'select'].includes(currentQuestion.type) && !isNaN(parseInt(response.value))) {
-                  const questionValues = currentQuestion.values[report.defaultLanguage];
-                  const currentValue = Object.assign({}, questionValues.find((questionValue) => questionValue.value === response.value));
-                  responses[response.name] = currentValue.label;
+                let currentQuestion = Object.assign({}, report.questions.find((question) => (question.name && question.name === response.name)));
+
+                if (response.value !== null) {
+                    if (['checkbox', 'radio', 'select'].includes(currentQuestion.type)) {
+                        const getCurrentValue = (list, val) => (Object.assign({}, list.find((item) => (item.value === val || item.value === parseInt(val)))));
+                        const values = !isNaN(parseInt(response.value)) ? [response.value] : response.value.split(',');
+                        logger.info(values);
+                        const questionValues = currentQuestion.values[report.defaultLanguage];
+                        responses[response.name] = values.map(value => {
+                            const val = getCurrentValue(questionValues, value);
+                            return typeof val !== 'undefined' ? val.label : value;
+                        })
+                            .reduce((acc, next) => {
+                                return acc ? `${acc}\n${next}` : `${next}`;
+                            }, '');
+                    }
                 } else {
-                  responses[response.name] = response.value;
+                    responses[response.name] = response.value;
                 }
               });
 
