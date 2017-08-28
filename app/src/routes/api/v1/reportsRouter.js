@@ -370,7 +370,7 @@ class ReportsRouter {
                 if (response.value !== null) {
                     if (['checkbox', 'radio', 'select'].includes(currentQuestion.type)) {
                         const getCurrentValue = (list, val) => (list.find((item) => (item.value === val || item.value === parseInt(val))));
-                        const values = !isNaN(parseInt(response.value)) ? [response.value] : response.value.split(',');
+                        const values = !response.value.includes(',') && !isNaN(parseInt(response.value)) ? [response.value] : response.value.split(',');
                         const questionValues = currentQuestion.values[report.defaultLanguage];
                         responses[response.name] = values.map(value => {
                             const val = getCurrentValue(questionValues, value);
@@ -379,6 +379,8 @@ class ReportsRouter {
                             .reduce((acc, next) => {
                                 return acc ? `${acc}\n${next}` : `${next}`;
                             }, '');
+                    } else {
+                        responses[response.name] = response.value;
                     }
                 } else {
                     responses[response.name] = response.value;
