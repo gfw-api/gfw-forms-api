@@ -87,7 +87,7 @@ class ReportsRouter {
         const request = this.request.body;
 
         if (request.public && this.state.loggedUser.role !== 'ADMIN') {
-            this.throw(404, 'Admin permissions required to save public templates');
+            this.throw(403, 'Admin permissions required to save public templates');
             return;
         }
 
@@ -126,7 +126,35 @@ class ReportsRouter {
         this.body = ReportsSerializer.serialize(report);
     }
 
-    static * update(){
+    static * put() {
+        logger.info('Updating report', this.request.body);
+        const body = this.request.body;
+
+        // updating private reports is not yet implemented on the front end, we won't support that action on the back either
+        if (!body.public || this.state.loggedUser !== 'ADMIN') {
+            this.throw(403, 'Only admins can update reports. Only public reports can be updated.');
+            return;
+        }
+
+        const report = yield ReportsModel.findOne({ _id: new ObjectId(this.params.id) });
+
+        if (!report) {
+            this.throw(404, 'Report not found with these permissions');
+            return;
+        }
+
+        Object.assign(report, body);
+
+        // add answers count to return and updated date
+        const answers = yield AnswersModel.count({report: new ObjectId(this.params.id)});
+        report.answersCount = answers;
+        report.updatedDate = Date.now;
+
+        yield report.save();
+        this.body = ReportsSerializer.serialize(report);
+    }
+
+    static * patch(){
         logger.info(`Updating template with id ${this.params.id}...`);
 
         const reportFilter = {
@@ -142,7 +170,7 @@ class ReportsRouter {
 
         // if user did not create then return error
         if (!report) {
-            this.throw(404, 'Report not found with these permissions');
+            this.throw(404, 'Report not found.');
             return;
         }
 
@@ -190,7 +218,7 @@ class ReportsRouter {
 
             // PATCH new area
             if (request.areaOfInterest) {
-                logger.info(`PATCHing new area of interes ${request.oldAreaOfInterest}...`);
+                logger.info(`PATCHing new area of interest ${request.oldAreaOfInterest}...`);
                 try {
                     const result = yield ctRegisterMicroservice.requestToMicroservice({
                         uri: `/v1/area/${request.areaOfInterest}`,
@@ -207,10 +235,6 @@ class ReportsRouter {
                     return;
                 }
             }
-        }
-
-        if (request.areaOfInterest) {
-
         }
 
         // add answers count to return and updated date
@@ -437,9 +461,10 @@ function* checkAdmin(next) {
 
 // check permission must be added at some point
 router.post('/', loggedUserToState, ReportsValidator.create, ReportsRouter.save);
-router.patch('/:id', loggedUserToState, ReportsValidator.update, ReportsRouter.update);
+router.patch('/:id', loggedUserToState, ReportsValidator.patch, ReportsRouter.patch);
 router.get('/', loggedUserToState, queryToState, ReportsRouter.getAll);
 router.get('/:id', loggedUserToState, queryToState, ReportsRouter.get);
+router.put('/:id', loggedUserToState, queryToState, ReportsValidator.create, ReportsRouter.put);
 router.delete('/:id', loggedUserToState, queryToState, ReportsRouter.delete);
 router.get('/:id/download-answers', loggedUserToState, ReportsRouter.downloadAnswers);
 
