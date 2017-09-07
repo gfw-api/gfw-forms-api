@@ -235,11 +235,11 @@ function * queryToState(next) {
     yield next;
 }
 
-function * checkExistReport(next) {
+function * getTeam(user) {
     let team = {};
     try {
         team = yield ctRegisterMicroservice.requestToMicroservice({
-            uri: `/v1/teams/user/${this.state.loggedUser.id}`,
+            uri: `/v1/teams/user/${user}`,
             method: 'GET',
             json: true
         });
@@ -250,8 +250,13 @@ function * checkExistReport(next) {
     if (!team.data) {
         logger.info('User does not belong to a team.');
     }
+    return team;
+}
+
+function * reportPermissions(next) {
+    const team = yield getTeam(this.state.loggedUser.id);
     let filters = {};
-    if (team.data && team.data.length > 0) {
+    if (team.data && team.data.attributes) {
         this.state.team = team.data.attributes;
         const manager = team.data.attributes.managers[0].id ? team.data.attributes.managers[0].id : team.data.attributes.managers[0];
         filters = {
@@ -268,7 +273,7 @@ function * checkExistReport(next) {
             ]
         };
     }
-    logger.info('FILTERS:', filters);
+    
     const report = yield ReportsModel.findOne(filters).populate('questions');
     if (!report) {
         this.throw(404, 'Report not found');
@@ -279,9 +284,9 @@ function * checkExistReport(next) {
 }
 
 
-router.post('/', loggedUserToState, checkExistReport, AnswersRouter.save);
-router.patch('/:id', loggedUserToState, checkExistReport, AnswersRouter.update);
-router.get('/', loggedUserToState, checkExistReport, queryToState, AnswersRouter.getAll);
+router.post('/', loggedUserToState, reportPermissions, AnswersRouter.save);
+router.patch('/:id', loggedUserToState, AnswersRouter.update);
+router.get('/', loggedUserToState, reportPermissions, queryToState, AnswersRouter.getAll);
 router.get('/:id', loggedUserToState, queryToState, AnswersRouter.get);
 router.delete('/:id', loggedUserToState, AnswersRouter.delete);
 
