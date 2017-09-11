@@ -380,11 +380,12 @@ class ReportsRouter {
         answers.map(answer => answer.toObject())
             .forEach((answer) => {
               const responses = Object.assign({}, questions, {
-                userId: answer.user || null,
-                areaOfInterest: answer.areaOfInterest || null,
-                clickedPositionLat: answer.clickedPosition.length ? answer.clickedPosition[0].lat : null,
-                clickedPositionLon: answer.clickedPosition.length ? answer.clickedPosition[0].lon : null,
-                userPositionLat: answer.userPosition.length ? answer.userPosition[0] : null
+                  userId: answer.user || null,
+                  reportName: answer.reportName,
+                  areaOfInterest: answer.areaOfInterest || null,
+                  clickedPositionLat: answer.clickedPosition.length ? answer.clickedPosition[0].lat : null,
+                  clickedPositionLon: answer.clickedPosition.length ? answer.clickedPosition[0].lon : null,
+                  userPositionLat: answer.userPosition.length ? answer.userPosition[0] : null
               });
 
               answer.responses.forEach((response) => {
