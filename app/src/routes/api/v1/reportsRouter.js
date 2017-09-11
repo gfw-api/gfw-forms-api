@@ -422,6 +422,13 @@ class ReportsRouter {
     }
 }
 
+function * mapTemplateParamToId(next) {
+    if (this.request.params.id === LEGACY_TEMPLATE_ID || this.request.params.id === 'default') {
+        this.request.params.id = DEFAULT_TEMPLATE_ID;
+    }
+    yield next;
+}
+
 function * loggedUserToState(next) {
     if (this.query && this.query.loggedUser){
         this.state.loggedUser = JSON.parse(this.query.loggedUser);
@@ -461,11 +468,11 @@ function* checkAdmin(next) {
 
 // check permission must be added at some point
 router.post('/', loggedUserToState, ReportsValidator.create, ReportsRouter.save);
-router.patch('/:id', loggedUserToState, ReportsValidator.patch, ReportsRouter.patch);
+router.patch('/:id', mapTemplateParamToId, loggedUserToState, ReportsValidator.patch, ReportsRouter.patch);
 router.get('/', loggedUserToState, queryToState, ReportsRouter.getAll);
-router.get('/:id', loggedUserToState, queryToState, ReportsRouter.get);
-router.put('/:id', loggedUserToState, queryToState, ReportsValidator.create, ReportsRouter.put);
-router.delete('/:id', loggedUserToState, queryToState, ReportsRouter.delete);
-router.get('/:id/download-answers', loggedUserToState, ReportsRouter.downloadAnswers);
+router.get('/:id', mapTemplateParamToId, loggedUserToState, queryToState, ReportsRouter.get);
+router.put('/:id', mapTemplateParamToId, loggedUserToState, queryToState, ReportsValidator.create, ReportsRouter.put);
+router.delete('/:id', mapTemplateParamToId, loggedUserToState, queryToState, ReportsRouter.delete);
+router.get('/:id/download-answers', mapTemplateParamToId, loggedUserToState, ReportsRouter.downloadAnswers);
 
 module.exports = router;

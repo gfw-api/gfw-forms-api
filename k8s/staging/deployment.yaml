@@ -94,6 +94,10 @@ spec:
             value: 1F6D2lrifcI4QPhAXK2FBdEQ15uI0YPIsfAATI_EUe6A
           - name: TARGET_SHEET_INDEX
             value: "2"
+          - name: LEGACY_TEMPLATE_ID
+            value: "597b0f55856351000b087c9c"
+          - name: DEFAULT_TEMPLATE_ID
+            value: "59b6a26b138f260012e9fdeb"
 
         ports:
           - containerPort: 4400

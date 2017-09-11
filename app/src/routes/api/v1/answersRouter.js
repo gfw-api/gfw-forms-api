@@ -2,13 +2,10 @@
 const Router = require('koa-router');
 const logger = require('logger');
 const ctRegisterMicroservice = require('ct-register-microservice-node');
-const ErrorSerializer = require('serializers/errorSerializer');
 const AnswersSerializer = require('serializers/answersSerializer');
 const AnswersModel = require('models/answersModel');
 const ReportsModel = require('models/reportsModel');
 const s3Service = require('services/s3Service');
-const passThrough = require('stream').PassThrough;
-const json2csv = require('json2csv');
 const ObjectId = require('mongoose').Types.ObjectId;
 
 const router = new Router({
@@ -283,11 +280,17 @@ function * reportPermissions(next) {
     yield next;
 }
 
+function * mapTemplateParamToId(next) {
+    if (this.request.params.reportId === LEGACY_TEMPLATE_ID || this.request.params.reportId === 'default') {
+        this.request.params.reportId = DEFAULT_TEMPLATE_ID;
+    }
+    yield next;
+}
 
-router.post('/', loggedUserToState, reportPermissions, AnswersRouter.save);
-router.patch('/:id', loggedUserToState, AnswersRouter.update);
-router.get('/', loggedUserToState, reportPermissions, queryToState, AnswersRouter.getAll);
-router.get('/:id', loggedUserToState, queryToState, AnswersRouter.get);
-router.delete('/:id', loggedUserToState, AnswersRouter.delete);
+router.post('/', mapTemplateParamToId, loggedUserToState, reportPermissions, AnswersRouter.save);
+router.patch('/:id', mapTemplateParamToId, loggedUserToState, AnswersRouter.update);
+router.get('/', mapTemplateParamToId, loggedUserToState, reportPermissions, queryToState, AnswersRouter.getAll);
+router.get('/:id', mapTemplateParamToId, loggedUserToState, queryToState, AnswersRouter.get);
+router.delete('/:id', mapTemplateParamToId, loggedUserToState, AnswersRouter.delete);
 
 module.exports = router;
