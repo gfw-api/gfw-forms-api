@@ -423,8 +423,8 @@ class ReportsRouter {
 }
 
 function * mapTemplateParamToId(next) {
-    if (this.request.params.id === process.env.LEGACY_TEMPLATE_ID || this.request.params.id === 'default') {
-        this.request.params.id = process.env.DEFAULT_TEMPLATE_ID;
+    if (this.params.id === process.env.LEGACY_TEMPLATE_ID || this.params.id === 'default') {
+        this.params.id = process.env.DEFAULT_TEMPLATE_ID;
     }
     yield next;
 }
