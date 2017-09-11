@@ -10,6 +10,7 @@ var AnswerResponse = new Schema({
 
 var Answer = new Schema({
     report: {type: ObjectId, required: true},
+    reportName: {type: String, required: true},
     username: {type: String, required: false, trim: true},
     organization: {type: String, required: false, trim: true},
     areaOfInterest: {type: ObjectId, required: false},
