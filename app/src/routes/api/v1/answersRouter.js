@@ -281,8 +281,8 @@ function * reportPermissions(next) {
 }
 
 function * mapTemplateParamToId(next) {
-    if (this.request.params.reportId === LEGACY_TEMPLATE_ID || this.request.params.reportId === 'default') {
-        this.request.params.reportId = DEFAULT_TEMPLATE_ID;
+    if (this.request.params.reportId === process.env.LEGACY_TEMPLATE_ID || this.request.params.reportId === 'default') {
+        this.request.params.reportId = process.env.DEFAULT_TEMPLATE_ID;
     }
     yield next;
 }
