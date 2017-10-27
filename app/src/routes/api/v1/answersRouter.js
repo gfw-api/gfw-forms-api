@@ -1,9 +1,10 @@
 'use strict';
 const Router = require('koa-router');
 const logger = require('logger');
-const ctRegisterMicroservice = require('ct-register-microservice-node');
 const AnswersSerializer = require('serializers/answersSerializer');
 const AnswersModel = require('models/answersModel');
+const AnswersService = require('services/answersService');
+const TeamService = require('services/teamService');
 const ReportsModel = require('models/reportsModel');
 const s3Service = require('services/s3Service');
 const ObjectId = require('mongoose').Types.ObjectId;
@@ -17,64 +18,17 @@ class AnswersRouter {
     static * getAll() {
         logger.info(`Obtaining answers for report ${this.params.reportId}`);
 
-        let filter = {};
-        let manager = false;
-        let confirmedUsers = [];
-
         const template = yield ReportsModel.findOne({ _id: this.params.reportId });
 
-        if (this.state.team) {
-            // check team
-            manager = this.state.team.managers.filter((manager) => {
-                return this.state.loggedUser.id === manager.id;
-            });
+        const answers = yield AnswersService.getAllAnswers({
+            template,
+            reportId: this.params.reportId,
+            loggedUser: this.state.loggedUser,
+            team: this.state.team,
+            query: this.state.query
+        });
 
-            // check confirmed users
-            if (this.state.team.confirmedUsers.length) {
-                this.state.team.confirmedUsers.forEach((user) => {
-                    confirmedUsers.push(new ObjectId(user.id));
-                });
-            }
-        }
 
-        // Admin users and owners of the report can check all answers
-        if (this.state.loggedUser.role === 'ADMIN' || this.state.loggedUser.id === template.user) {
-            filter = {
-                $and: [
-                    { report: new ObjectId(this.params.reportId) },
-                ]
-            };
-        }
-        // managers can check all answers from the default template from his and his team's members
-        else if (manager && template.public) {
-            filter = {
-                $and: [
-                    { report: new ObjectId(this.params.reportId) },
-                    {
-                        $or: [
-                            { user:  new ObjectId(this.state.loggedUser.id) },
-                            { $and: [{ user: { $in: confirmedUsers } }, { areaOfInterest: { $in: this.state.team.areas }}]
-                            }
-                        ]
-                    }
-                ]
-            };
-        }
-        // the rest of users can check all answers belonging to them
-        else {
-            filter = {
-                $and: [
-                    { report: new ObjectId(this.params.reportId) },
-                    { user: new ObjectId(this.state.loggedUser.id) }
-                ]
-            };
-        }
-        if (this.state.query) {
-            Object.keys(this.state.query).forEach((key) => {
-                filter.$and.push({ [key]: this.state.query[key] });
-            });
-        }
-        const answers = yield AnswersModel.find(filter);
         if (!answers) {
             this.throw(404, 'Answers not found with these permissions');
             return;
@@ -244,26 +198,8 @@ function * queryToState(next) {
     yield next;
 }
 
-function * getTeam(user) {
-    let team = {};
-    try {
-        team = yield ctRegisterMicroservice.requestToMicroservice({
-            uri: `/v1/teams/user/${user}`,
-            method: 'GET',
-            json: true
-        });
-
-    } catch(e) {
-        logger.info('Failed to fetch team');
-    }
-    if (!team.data) {
-        logger.info('User does not belong to a team.');
-    }
-    return team;
-}
-
 function * reportPermissions(next) {
-    const team = yield getTeam(this.state.loggedUser.id);
+    const team = yield TeamService.getTeam(this.state.loggedUser.id);
     let filters = {};
     if (team.data && team.data.attributes) {
         this.state.team = team.data.attributes;

@@ -5,6 +5,8 @@ const ReportsSerializer = require('serializers/reportsSerializer');
 const ReportsModel = require('models/reportsModel');
 const ReportsValidator = require('validators/reportsValidator');
 const AnswersModel = require('models/answersModel');
+const AnswersService = require('models/answersService');
+const TeamService = require('services/teamService');
 const passThrough = require('stream').PassThrough;
 const json2csv = require('json2csv');
 const ObjectId = require('mongoose').Types.ObjectId;
@@ -362,17 +364,15 @@ class ReportsRouter {
         }) + '\n';
         this.body.write(questionLabelsData);
 
-        const filter = {
-            $and: [
-                { report: new ObjectId(this.params.id) }
-            ]
-        };
+        const team = yield TeamService.getTeam(this.state.loggedUser.id);
 
-        if (this.state.loggedUser.role !== 'ADMIN' && report.user.toString() !== this.state.loggedUser.id) {
-            filter.$and.push({ user: new ObjectId(this.state.loggedUser.id) });
-        }
-
-        let answers = yield AnswersModel.find(filter);
+        const answers = yield AnswersService.getAllAnswers({
+            team,
+            reportId: this.params.id,
+            template: report,
+            query: null,
+            loggedUser: this.state.loggedUser
+        });
 
         logger.info('Obtaining data');
 
