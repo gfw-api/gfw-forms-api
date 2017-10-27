@@ -17,7 +17,7 @@ const router = new Router({
 
 class ReportsRouter {
 
-    static * getAll(){
+    static * getAll() {
         logger.info('Obtaining all reports');
         let filter = {
             $and: [

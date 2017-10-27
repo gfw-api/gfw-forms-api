@@ -19,7 +19,7 @@ class AnswersRouter {
 
         let filter = {};
         let manager = false;
-        let confirmedUsers = [{user: new ObjectId(this.state.loggedUser.id)}];
+        let confirmedUsers = [];
 
         const template = yield ReportsModel.findOne({ _id: this.params.reportId });
 
@@ -32,24 +32,36 @@ class AnswersRouter {
             // check confirmed users
             if (this.state.team.confirmedUsers.length) {
                 this.state.team.confirmedUsers.forEach((user) => {
-                    confirmedUsers.push({user: new ObjectId(user.id)});
+                    confirmedUsers.push(new ObjectId(user.id));
                 });
             }
         }
 
+        // Admin users and owners of the report can check all answers
         if (this.state.loggedUser.role === 'ADMIN' || this.state.loggedUser.id === template.user) {
             filter = {
                 $and: [
                     { report: new ObjectId(this.params.reportId) },
                 ]
             };
-        } else if (manager && template.public) {
+        }
+        // managers can check all answers from the default template from his and his team's members
+        else if (manager && template.public) {
             filter = {
                 $and: [
-                    { $or: confirmedUsers }
+                    { report: new ObjectId(this.params.reportId) },
+                    {
+                        $or: [
+                            { user:  new ObjectId(this.state.loggedUser.id) },
+                            { $and: [{ user: { $in: confirmedUsers } }, { areaOfInterest: { $in: this.state.team.areas }}]
+                            }
+                        ]
+                    }
                 ]
             };
-        } else {
+        }
+        // the rest of users can check all answers belonging to them
+        else {
             filter = {
                 $and: [
                     { report: new ObjectId(this.params.reportId) },
