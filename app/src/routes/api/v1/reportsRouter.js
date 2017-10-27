@@ -365,9 +365,13 @@ class ReportsRouter {
         this.body.write(questionLabelsData);
 
         const team = yield TeamService.getTeam(this.state.loggedUser.id);
+        let teamData = null;
+        if (team.data && team.data.attributes) {
+            teamData = team.data.attributes;
+        }
 
         const answers = yield AnswersService.getAllAnswers({
-            team,
+            team: teamData,
             reportId: this.params.id,
             template: report,
             query: null,
