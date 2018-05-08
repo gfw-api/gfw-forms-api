@@ -28,7 +28,11 @@ spec:
               - key: type
                 operator: In
                 values:
+<<<<<<< HEAD
                 - gfw
+=======
+                - gfw     
+>>>>>>> Update deployment.yaml
       containers:
       - name: {name}
         image: vizzuality/{name}
