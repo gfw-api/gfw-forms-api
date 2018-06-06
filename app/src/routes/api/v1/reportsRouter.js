@@ -326,6 +326,7 @@ class ReportsRouter {
             userId: null,
             reportName: null,
             areaOfInterest: null,
+            areaOfInterestName: null,
             clickedPositionLat: null,
             clickedPositionLon: null,
             userPositionLat: null,
@@ -337,6 +338,7 @@ class ReportsRouter {
             userId: 'User',
             reportName: 'Name',
             areaOfInterest: 'Area of Interest',
+            areaOfInterestName: 'Area of Interest name',
             clickedPositionLat: 'Position of report lat',
             clickedPositionLon: 'Position of report lon',
             userPositionLat: 'Position of user lat',
@@ -387,6 +389,7 @@ class ReportsRouter {
                   userId: answer.user || null,
                   reportName: answer.reportName,
                   areaOfInterest: answer.areaOfInterest || null,
+                  areaOfInterestName: answer.areaOfInterestName || null,
                   clickedPositionLat: answer.clickedPosition.length ? answer.clickedPosition[0].lat : null,
                   clickedPositionLon: answer.clickedPosition.length ? answer.clickedPosition[0].lon : null,
                   userPositionLat: answer.userPosition.length ? answer.userPosition[0] : null
