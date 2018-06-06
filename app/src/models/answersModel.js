@@ -14,6 +14,7 @@ var Answer = new Schema({
     username: {type: String, required: false, trim: true},
     organization: {type: String, required: false, trim: true},
     areaOfInterest: {type: ObjectId, required: false},
+    areaOfInterestName: {type: String, required: false, trim: true},
     language: {type: String, required: true, trim: true},
     userPosition: {type: Array, required: false, default: []},
     clickedPosition: {type: Array, required: false, default: []},

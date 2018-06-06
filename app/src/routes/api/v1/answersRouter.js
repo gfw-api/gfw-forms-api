@@ -81,6 +81,7 @@ class AnswersRouter {
             username: fields.username,
             organization: fields.organization,
             areaOfInterest: fields.areaOfInterest,
+            areaOfInterestName: fields.areaOfInterestName,
             language: fields.language,
             userPosition: userPosition,
             clickedPosition: JSON.parse(fields.clickedPosition),
@@ -218,7 +219,7 @@ function * reportPermissions(next) {
             ]
         };
     }
-    
+
     const report = yield ReportsModel.findOne(filters).populate('questions');
     if (!report) {
         this.throw(404, 'Report not found');
