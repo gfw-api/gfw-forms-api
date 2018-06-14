@@ -380,10 +380,11 @@ class ReportsRouter {
                     const getCurrentValue = (list, val) => (list.find((item) => (item.value === val || item.value === parseInt(val))));
                     const values = !response.value.includes(',') && !isNaN(parseInt(response.value)) ? [response.value] : response.value.split(',');
                     const questionValues = currentQuestion.values[report.defaultLanguage];
-                    responses[response.name] = values.map(value => {
+                    responses[response.name] = values.reduce((acc, value) => {
                         const val = getCurrentValue(questionValues, value);
-                        return typeof val !== 'undefined' ? val.label : value;
-                    });
+                        const accString = acc !== '' ? `${acc}, ` : acc;
+                        return typeof val !== 'undefined' ? `${accString}${val.label}` : `${accString}${value}`;
+                    }, '');
                 }
               });
               return Object.entries(responses).reduce((acc, [key, value]) => {
