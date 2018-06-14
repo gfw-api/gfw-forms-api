@@ -15,7 +15,7 @@ module.exports = function (grunt) {
                     'app/src/**/*.js'
                 ],
                 options: {
-                    jshintrc: true
+                    jshintrc: false
                 },
                 globals: {}
             },
@@ -62,7 +62,7 @@ module.exports = function (grunt) {
         },
         watch: {
             options: {
-                livereload: true
+                livereload: false
             },
             jssrc: {
                 files: [
