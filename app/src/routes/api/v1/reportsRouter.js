@@ -321,7 +321,7 @@ class ReportsRouter {
             this.throw(404, 'Report not found');
             return;
         }
-        
+
         report = report.toObject();
 
         const questionLabels = report.questions.reduce((acc, question) => ({
@@ -342,7 +342,7 @@ class ReportsRouter {
                 userPositionLon: 'Position of user lon',
                 layer: 'Alert type'
             });
-            
+
         const team = yield TeamService.getTeam(this.state.loggedUser.id);
         let teamData = null;
         if (team.data && team.data.attributes) {
@@ -374,7 +374,7 @@ class ReportsRouter {
 
               answer.responses.forEach((response) => {
                 let currentQuestion = Object.assign({}, report.questions.find((question) => (question.name && question.name === response.name)));
-                
+
                 responses[response.name] = response.value;
                 if (response.value !== null && ['checkbox', 'radio', 'select'].includes(currentQuestion.type)) {
                     const getCurrentValue = (list, val) => (list.find((item) => (item.value === val || item.value === parseInt(val))));
@@ -394,7 +394,6 @@ class ReportsRouter {
                   };
               }, {});
             });
-        logger.info(JSON.stringify(data, null, '  '));
         this.body.write(CSV.convert(data));
         this.body.end();
     }
