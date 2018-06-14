@@ -1,6 +1,9 @@
 {
   "node": true,
   "esnext": true,
+  "unstable": {
+    "objspreadrest": true
+  },
   "bitwise": true,
   "camelcase": false,
   "curly": true,
