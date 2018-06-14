@@ -14,8 +14,8 @@ const ErrorSerializer = require('serializers/errorSerializer');
 const ctRegisterMicroservice = require('ct-register-microservice-node');
 const mongoose = require('mongoose');
 const bluebird = require('bluebird');
-const mongoUri = process.env.MONGO_URI || 'mongodb://' + config.get('mongodb.host') + ':' + config.get('mongodb.port') + '/' + config.get('mongodb.database');
-mongoose.Promise = bluebird;
+const mongoUri = process.env.MONGO_URI || ('mongodb://' + config.get('mongodb.host') + ':' + config.get('mongodb.port') + '/' + config.get('mongodb.database'));
+mongoose.Promise = Promise;
 
 var koaBody = require('koa-body')({
     multipart: true,
@@ -29,11 +29,7 @@ var koaBody = require('koa-body')({
 });
 
 
-const onDbReady = function (err) {
-    if (err) {
-        logger.error(err);
-        throw new Error(err);
-    }
+const onDbReady = function () {
     // instance of koa
     var app = koa();
 
@@ -91,4 +87,9 @@ const onDbReady = function (err) {
     logger.info('Server started in port:' + port);
 };
 
-mongoose.connect(mongoUri, onDbReady);
+mongoose.connect(mongoUri)
+.then(onDbReady)
+.catch((err) => {
+    logger.error(err);
+    throw new Error(err);
+});

@@ -62,7 +62,7 @@ module.exports = function (grunt) {
         },
         watch: {
             options: {
-                livereload: true
+                livereload: false
             },
             jssrc: {
                 files: [
