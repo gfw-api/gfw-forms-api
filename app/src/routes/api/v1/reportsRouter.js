@@ -11,6 +11,7 @@ const passThrough = require('stream').PassThrough;
 const json2csv = require('json2csv');
 const ObjectId = require('mongoose').Types.ObjectId;
 const ctRegisterMicroservice = require('ct-register-microservice-node');
+const CSV = require('services/csvService');
 
 
 const router = new Router({
@@ -119,6 +120,7 @@ class ReportsRouter {
                 });
             } catch (e) {
                 const result = yield ReportsModel.remove({ _id: reportId });
+                logger.error('request to microservice failed');
                 logger.error(e);
                 this.throw(500, 'Error creating templates: patch to area failed');
                 return;
@@ -315,57 +317,32 @@ class ReportsRouter {
                 { $or: [{ public: true }, { user: new ObjectId(this.state.loggedUser.id) }] }
             ]
         });
-        report = report.toObject();
-
         if (!report) {
             this.throw(404, 'Report not found');
             return;
         }
+        
+        report = report.toObject();
 
-        const questions = {
-            userId: null,
-            reportName: null,
-            areaOfInterest: null,
-            areaOfInterestName: null,
-            clickedPositionLat: null,
-            clickedPositionLon: null,
-            userPositionLat: null,
-            userPositionLon: null,
-            alertSystem: null
-        };
-
-        const questionLabels = {
-            userId: 'User',
-            reportName: 'Name',
-            areaOfInterest: 'Area of Interest',
-            areaOfInterestName: 'Area of Interest name',
-            clickedPositionLat: 'Position of report lat',
-            clickedPositionLon: 'Position of report lon',
-            userPositionLat: 'Position of user lat',
-            userPositionLon: 'Position of user lon',
-            alertSystem: 'Alert type'
-        };
-
-        report.questions.forEach((question) => {
-            questions[question.name] = '';
-            question.childQuestions.forEach((childQuestion) => {
-                questions[childQuestion.name] = '';
+        const questionLabels = report.questions.reduce((acc, question) => ({
+                ...acc,
+                [question.name]: question.label[report.defaultLanguage],
+                ...question.childQuestions.reduce((acc2, childQuestion) => ({
+                    ...acc2,
+                    [childQuestion.name]: childQuestion.label[report.defaultLanguage]
+                }), {})
+            }), {
+                userId: 'User',
+                reportName: 'Name',
+                areaOfInterest: 'Area of Interest',
+                areaOfInterestName: 'Area of Interest name',
+                clickedPositionLat: 'Position of report lat',
+                clickedPositionLon: 'Position of report lon',
+                userPositionLat: 'Position of user lat',
+                userPositionLon: 'Position of user lon',
+                layer: 'Alert type'
             });
-        });
-
-        report.questions.forEach((question) => {
-            questionLabels[question.name] = question.label[report.defaultLanguage];
-            question.childQuestions.forEach((childQuestion) => {
-                questionLabels[childQuestion.name] = childQuestion.label[report.defaultLanguage];
-            });
-        });
-
-        const questionLabelsData = json2csv({
-            data: questionLabels,
-            hasCSVColumnTitle: false
-        }) + '\n';
-        this.body.write(questionLabelsData);
-
+            
         const team = yield TeamService.getTeam(this.state.loggedUser.id);
         let teamData = null;
         if (team.data && team.data.attributes) {
@@ -382,49 +359,43 @@ class ReportsRouter {
 
         logger.info('Obtaining data');
 
-        let data = null;
-        answers.map(answer => answer.toObject())
-            .forEach((answer) => {
-              const responses = Object.assign({}, questions, {
-                  userId: answer.user || null,
-                  reportName: answer.reportName,
-                  areaOfInterest: answer.areaOfInterest || null,
-                  areaOfInterestName: answer.areaOfInterestName || null,
-                  clickedPositionLat: answer.clickedPosition.length ? answer.clickedPosition[0].lat : null,
-                  clickedPositionLon: answer.clickedPosition.length ? answer.clickedPosition[0].lon : null,
-                  userPositionLat: answer.userPosition.length ? answer.userPosition[0] : null
-              });
+        const data = answers.map(answer => answer.toObject())
+            .map((answer) => {
+                const responses = Object.assign({}, {
+                    userId: answer.user || null,
+                    reportName: answer.reportName,
+                    areaOfInterest: answer.areaOfInterest || null,
+                    areaOfInterestName: answer.areaOfInterestName || null,
+                    clickedPositionLat: answer.clickedPosition.length ? answer.clickedPosition[0].lat : null,
+                    clickedPositionLon: answer.clickedPosition.length ? answer.clickedPosition[0].lon : null,
+                    userPositionLat: answer.userPosition.length ? answer.userPosition[0] : null,
+                    userPositionLon: answer.userPosition.length ? answer.userPosition[1] : null,
+                });
 
               answer.responses.forEach((response) => {
                 let currentQuestion = Object.assign({}, report.questions.find((question) => (question.name && question.name === response.name)));
-
-                if (response.value !== null) {
-                    if (['checkbox', 'radio', 'select'].includes(currentQuestion.type)) {
-                        const getCurrentValue = (list, val) => (list.find((item) => (item.value === val || item.value === parseInt(val))));
-                        const values = !response.value.includes(',') && !isNaN(parseInt(response.value)) ? [response.value] : response.value.split(',');
-                        const questionValues = currentQuestion.values[report.defaultLanguage];
-                        responses[response.name] = values.map(value => {
-                            const val = getCurrentValue(questionValues, value);
-                            return typeof val !== 'undefined' ? val.label : value;
-                        })
-                            .reduce((acc, next) => {
-                                return acc ? `${acc}\n${next}` : `${next}`;
-                            }, '');
-                    } else {
-                        responses[response.name] = response.value;
-                    }
-                } else {
-                    responses[response.name] = response.value;
+                
+                responses[response.name] = response.value;
+                if (response.value !== null && ['checkbox', 'radio', 'select'].includes(currentQuestion.type)) {
+                    const getCurrentValue = (list, val) => (list.find((item) => (item.value === val || item.value === parseInt(val))));
+                    const values = !response.value.includes(',') && !isNaN(parseInt(response.value)) ? [response.value] : response.value.split(',');
+                    const questionValues = currentQuestion.values[report.defaultLanguage];
+                    responses[response.name] = values.map(value => {
+                        const val = getCurrentValue(questionValues, value);
+                        return typeof val !== 'undefined' ? val.label : value;
+                    });
                 }
               });
-
-              data = json2csv({
-                data: responses,
-                hasCSVColumnTitle: false
-              }) + '\n';
-              this.body.write(data);
+              return Object.entries(responses).reduce((acc, [key, value]) => {
+                  const label = questionLabels[key] || key;
+                  return {
+                    ...acc,
+                    [label]: value
+                  };
+              }, {});
             });
-
+        logger.info(JSON.stringify(data, null, '  '));
+        this.body.write(CSV.convert(data));
         this.body.end();
     }
 }
