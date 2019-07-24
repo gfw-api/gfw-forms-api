@@ -29,10 +29,14 @@ spec:
                 operator: In
                 values:
 <<<<<<< HEAD
+<<<<<<< HEAD
                 - gfw
 =======
                 - gfw     
 >>>>>>> Update deployment.yaml
+=======
+                - gfw
+>>>>>>> Namespace microservice
       containers:
       - name: {name}
         image: vizzuality/{name}
