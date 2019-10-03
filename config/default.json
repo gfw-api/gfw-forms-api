@@ -25,41 +25,43 @@
         "template": "contact-form",
         "templateConfirm": "contact-form-confirmation",
         "topics": {
-            "report-a-bug-or-error-on-gfw": {
-                "name": "Report a bug or error on GFW",
-                "emailTo": "gfw@wri.org"
+            "report-a-bug-or-error": {
+                "name": "Report a bug or error"
             },
             "provide-feedback": {
-                "name": "Provide feedback",
-                "emailTo": "gfw@wri.org"
-            },
-            "media-request": {
-                "name": "Media request",
-                "emailTo": "gfwmedia@wri.org"
+                "name": "Provide feedback"
             },
             "data-related-inquiry": {
-                "name": "Data related inquiry",
-                "emailTo": "gfwdata@wri.org"
-            },
-            "gfw-commodities-inquiry": {
-                "name": "GFW Commodities inquiry",
-                "emailTo": "gfwcommodities@wri.org"
-            },
-            "gfw-fires-inquiry": {
-                "name": "GFW Fires inquiry",
-                "emailTo": "gfwfires@wri.org"
-            },
-            "gfw-climate-inquiry": {
-                "name": "GFW Climate inquiry",
-                "emailTo": "gfwclimate@wri.org"
-            },
-            "gfw-water-inquiry": {
-                "name": "GFW Water inquiry",
-                "emailTo": "GFWwater@wri.org"
+                "name": "Data related inquiry"
             },
             "general-inquiry": {
-                "name": "General inquiry",
-                "emailTo": "gfw@wri.org"
+                "name": "General inquiry"
+            }
+        },
+        "tools": {
+            "gfw": {
+                "name": "GFW",
+                "emailTo": "gfw2@wri.org"
+            },
+            "gfw-pro": {
+                "name": "GFW Pro",
+                "emailTo": "gfwprosupport@wri.org"
+            },
+            "fw": {
+                "name": "Forest Watcher",
+                "emailTo": "gfw2@wri.org"
+            },
+            "blog": {
+                "name": "GFW Blog",
+                "emailTo": "gfw2@wri.org"
+            },
+            "map-builder": {
+                "name": "GFW MapBuilder",
+                "emailTo": "gfw2@wri.org"
+            },
+            "not-applicable": {
+                "name": "Not applicable",
+                "emailTo": "gfw2@wri.org"
             }
         }
     },

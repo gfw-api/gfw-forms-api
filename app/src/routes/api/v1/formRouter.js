@@ -41,17 +41,22 @@ class FormRouter {
     static * addFeedback() {
         logger.info('Sending mail');
         logger.debug('Data', this.request.body);
-        const {topic} = this.request.body;
+        const { topic, tool } = this.request.body;
         const mailParams = config.get('contactEmail');
+        const topicObj = mailParams.topics[topic || 'general-inquiry'];
+        const toolObj = mailParams.tools[tool || 'not-applicable'];
         const mailData = {
           user_email: this.request.body.email,
           message: this.request.body.message,
-          topic: mailParams.topics[topic].name,
-          opt_in: this.request.body.signup
+          topic: topicObj.name,
+          tool: toolObj.name,
+          opt_in: this.request.body.signup,
+          subject: `Contact form: ${topicObj.name} for ${toolObj.name}`
         };
         logger.debug('Mail data', mailData);
 
-        let wriRecipients = mailParams.topics[topic].emailTo.split(',');
+        const emails = mailParams.tools[tool];
+        let wriRecipients = emails.emailTo.split(',');
         wriRecipients = wriRecipients.map(function(mail) {
             return {
                 address: mail
