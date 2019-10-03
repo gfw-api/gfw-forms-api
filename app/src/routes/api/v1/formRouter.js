@@ -40,7 +40,6 @@ class FormRouter {
 
     static * addFeedback() {
         logger.info('Sending mail');
-        logger.debug('Data', this.request.body);
         const { topic, tool } = this.request.body;
         const mailParams = config.get('contactEmail');
         const topicObj = mailParams.topics[topic || 'general-inquiry'];
