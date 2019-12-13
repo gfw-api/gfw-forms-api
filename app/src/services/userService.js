@@ -1,5 +1,3 @@
-'use strict';
-
 var logger = require('logger');
 var JSONAPIDeserializer = require('jsonapi-serializer').Deserializer;
 const ctRegisterMicroservice = require('ct-register-microservice-node');
