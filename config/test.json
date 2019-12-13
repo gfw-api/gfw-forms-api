@@ -4,5 +4,7 @@
     "level": "debug",
     "toFile": false,
     "dirLogFile": null
-  }
+  },
+  "legacyTemplateId": "5964eb872b0e030011f422ee",
+  "defaultTemplateId": "57bc3641fb2ee63d00de03b9"
 }
