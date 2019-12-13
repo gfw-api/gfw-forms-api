@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "NODE_PATH=app/src node app/index.js",
-    "test": "NODE_PATH=app/src grunt --gruntfile app/Gruntfile.js test"
+    "test": "NODE_PATH=app/src grunt --gruntfile app/Gruntfile.js test",
+    "coverage": "NODE_PATH=app/src grunt --gruntfile app/Gruntfile.js nyc"
   },
   "repository": {
     "type": "git",
