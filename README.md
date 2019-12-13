@@ -1,7 +1,9 @@
 # GFW Forms API
 
+[![Build Status](https://travis-ci.org/gfw-api/gfw-forms-api.svg?branch=develop)](https://travis-ci.org/gfw-api/gfw-forms-api)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/fead108699d985f0b266/test_coverage)](https://codeclimate.com/github/gfw-api/gfw-forms-api/test_coverage)
 
-This repository is the microservice that implements the forms and Questionnaire funcionalities
+This repository is the microservice that implements the forms and Questionnaire functionality
 
 1. [Getting Started](#getting-started)
 
