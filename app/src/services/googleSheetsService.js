@@ -1,5 +1,3 @@
-'use strict';
-
 var config = require('config');
 var logger = require('logger');
 var GoogleSpreadsheet = require('google-spreadsheet');

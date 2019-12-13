@@ -1,5 +1,3 @@
-'use strict';
-
 var Router = require('koa-router');
 var logger = require('logger');
 var mailService = require('services/mailService');
