@@ -1,5 +1,5 @@
-FROM mhart/alpine-node:10.4
-MAINTAINER raul.requero@vizzuality.com
+FROM mhart/alpine-node:12
+MAINTAINER info@vizzuality.com
 
 ENV NAME gfw-forms-api
 ENV USER microservice
@@ -9,11 +9,11 @@ RUN apk update && apk upgrade && \
 
 RUN addgroup $USER && adduser -s /bin/bash -D -G $USER $USER
 
-RUN npm install --unsafe-perm -g bunyan  grunt-cli
+RUN yarn global add --unsafe-perm -g bunyan  grunt-cli
 
 RUN mkdir -p /opt/$NAME
 COPY package.json /opt/$NAME/package.json
-RUN cd /opt/$NAME && npm install
+RUN cd /opt/$NAME && yarn
 
 COPY entrypoint.sh /opt/$NAME/entrypoint.sh
 COPY config /opt/$NAME/config
