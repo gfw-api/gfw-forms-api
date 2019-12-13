@@ -1,14 +1,14 @@
 {
-    "logger": {
-        "name": "gfw-forms-data",
-        "level": "debug",
-        "toFile": false,
-        "dirLogFile": null
-    },
-    "s3":{
-        "accessKeyId": null,
-        "secretAccessKey": null,
-        "bucket": null,
-        "folder": "forms"
-    }
+  "logger": {
+    "name": "gfw-forms-data",
+    "level": "debug",
+    "toFile": false,
+    "dirLogFile": null
+  },
+  "s3": {
+    "accessKeyId": null,
+    "secretAccessKey": null,
+    "bucket": null,
+    "folder": "forms"
+  }
 }

@@ -1,7 +1,5 @@
-'use strict';
 const Router = require('koa-router');
 const logger = require('logger');
-const ErrorSerializer = require('serializers/errorSerializer');
 const AnswerSerializer = require('serializers/answerSerializer');
 const AnswerModel = require('models/answerModel');
 const QuestionnaireModel = require('models/questionnaireModel');
@@ -13,7 +11,7 @@ const router = new Router({
 
 class AnswerRouter {
 
-    static * getAll() {
+    static* getAll() {
         logger.info('Obtaining all answer');
         const answers = yield AnswerModel.find({
             user: this.state.loggedUser.id,
@@ -22,7 +20,7 @@ class AnswerRouter {
         this.body = AnswerSerializer.serialize(answers);
     }
 
-    static * get() {
+    static* get() {
         logger.info(`Obtaining answers with id ${this.params.id}`);
         const answer = yield AnswerModel.find({
             user: this.state.loggedUser.id,
@@ -32,17 +30,17 @@ class AnswerRouter {
         this.body = AnswerSerializer.serialize(answer);
     }
 
-    static * save() {
+    static* save() {
         logger.info('Saving questionnaire');
         logger.debug(this.request.body);
 
-        let answer = {
+        const answer = {
             user: this.state.loggedUser.id,
             questionnaire: this.state.questionnaire._id,
             responses: []
         };
 
-        for (let i = 0, length = this.state.questionnaire.questions.length; i < length; i++) {
+        for (let i = 0, { length } = this.state.questionnaire.questions; i < length; i++) {
             const question = this.state.questionnaire.questions[i];
             let response = null;
             if (question.conditionalQuestions) {
@@ -54,7 +52,7 @@ class AnswerRouter {
                     }
                     if (response) {
                         if (question.type === 'blob') {
-                            //upload file
+                            // upload file
                             response = yield s3Service.uploadFile(response.path, response.name);
                         }
                         answer.responses.push({
@@ -71,7 +69,7 @@ class AnswerRouter {
             }
             if (response) {
                 if (question.type === 'blob') {
-                    //upload file
+                    // upload file
                     response = yield s3Service.uploadFile(response.path, response.name);
                 }
                 answer.responses.push({
@@ -87,12 +85,12 @@ class AnswerRouter {
 
     }
 
-    static * update() {
+    static update() {
         this.throw(500, 'Not implemented');
-        return;
+
     }
 
-    static * delete() {
+    static* delete() {
         logger.info(`Deleting answer with id ${this.params.id}`);
         const result = yield AnswerModel.remove({
             _id: this.params.id,
@@ -106,6 +104,7 @@ class AnswerRouter {
         this.body = '';
         this.statusCode = 204;
     }
+
 }
 
 
@@ -117,7 +116,7 @@ function* loggedUserToState(next) {
         if (this.request.body.loggedUser) {
             this.state.loggedUser = this.request.body.loggedUser;
             delete this.request.body.loggedUser;
-        } else if (this.request.body.fields && this.request.body.fields.loggedUser)  {
+        } else if (this.request.body.fields && this.request.body.fields.loggedUser) {
             this.state.loggedUser = JSON.parse(this.request.body.fields.loggedUser);
             delete this.request.body.fields.loggedUser;
         }
@@ -143,7 +142,6 @@ router.patch('/:id', loggedUserToState, checkExistQuestionnaire, AnswerRouter.up
 router.get('/', loggedUserToState, checkExistQuestionnaire, AnswerRouter.getAll);
 router.get('/:id', loggedUserToState, checkExistQuestionnaire, AnswerRouter.get);
 router.delete('/:id', loggedUserToState, checkExistQuestionnaire, AnswerRouter.delete);
-
 
 
 module.exports = router;

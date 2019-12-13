@@ -1,14 +1,14 @@
 {
-    "logger": {
-        "name": "gfw-forms-STAGING",
-        "level": "info",
-        "toFile": false,
-        "dirLogFile": null
-    },
-    "s3":{
-        "accessKeyId": null,
-        "secretAccessKey": null,
-        "bucket": null,
-        "folder": "forms-staging"
-    }
+  "logger": {
+    "name": "gfw-forms-STAGING",
+    "level": "info",
+    "toFile": false,
+    "dirLogFile": null
+  },
+  "s3": {
+    "accessKeyId": null,
+    "secretAccessKey": null,
+    "bucket": null,
+    "folder": "forms-staging"
+  }
 }

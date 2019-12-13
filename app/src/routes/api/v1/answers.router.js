@@ -1,4 +1,3 @@
-'use strict';
 const Router = require('koa-router');
 const logger = require('logger');
 const AnswersSerializer = require('serializers/answersSerializer');
@@ -7,7 +6,7 @@ const AnswersService = require('services/answersService');
 const TeamService = require('services/teamService');
 const ReportsModel = require('models/reportsModel');
 const s3Service = require('services/s3Service');
-const ObjectId = require('mongoose').Types.ObjectId;
+const { ObjectId } = require('mongoose').Types;
 
 const router = new Router({
     prefix: '/reports/:reportId/answers'
@@ -15,7 +14,7 @@ const router = new Router({
 
 class AnswersRouter {
 
-    static * getAll() {
+    static* getAll() {
         logger.info(`Obtaining answers for report ${this.params.reportId}`);
 
         const template = yield ReportsModel.findOne({ _id: this.params.reportId });
@@ -36,7 +35,7 @@ class AnswersRouter {
         this.body = AnswersSerializer.serialize(answers);
     }
 
-    static * get() {
+    static* get() {
         logger.info(`Obtaining answer ${this.params.id} for report ${this.params.reportId}`);
         let filter = {};
 
@@ -62,20 +61,20 @@ class AnswersRouter {
         this.body = AnswersSerializer.serialize(answer);
     }
 
-    static * save() {
+    static* save() {
         logger.info('Saving answer');
         logger.debug(this.request.body);
 
-        const fields = this.request.body.fields;
+        const { fields } = this.request.body;
         let userPosition = [];
 
         try {
             userPosition = fields.userPosition ? fields.userPosition.split(',') : [];
-        } catch(e) {
+        } catch (e) {
             this.throw(400, `Position values must be separated by ','`);
         }
 
-        let answer = {
+        const answer = {
             report: this.params.reportId,
             reportName: fields.reportName,
             username: fields.username,
@@ -83,7 +82,7 @@ class AnswersRouter {
             areaOfInterest: fields.areaOfInterest,
             areaOfInterestName: fields.areaOfInterestName,
             language: fields.language,
-            userPosition: userPosition,
+            userPosition,
             clickedPosition: JSON.parse(fields.clickedPosition),
             startDate: fields.startDate,
             endDate: fields.endDate,
@@ -104,7 +103,7 @@ class AnswersRouter {
             this.throw(400, `${question.label[answer.language]} (${question.name}) required`);
         };
 
-        const questions = this.state.report.questions;
+        const { questions } = this.state.report;
 
         if (!questions || (questions && !questions.length)) {
             this.throw(400, `No question associated with this report`);
@@ -116,12 +115,12 @@ class AnswersRouter {
             // handle parent questions
             const bodyAnswer = this.request.body.fields[question.name];
             const fileAnswer = this.request.body.files[question.name];
-            let response = typeof bodyAnswer !== 'undefined' ?  bodyAnswer : fileAnswer;
+            let response = typeof bodyAnswer !== 'undefined' ? bodyAnswer : fileAnswer;
             if (!response && question.required) {
                 pushError(question);
             }
             if (response && response.path && response.name && question.type === 'blob') {
-                //upload file
+                // upload file
                 response = yield s3Service.uploadFile(response.path, response.name);
             }
 
@@ -139,7 +138,7 @@ class AnswersRouter {
                         pushError(childQuestion);
                     }
                     if (childResponse && question.type === 'blob') {
-                        //upload file
+                        // upload file
                         childResponse = yield s3Service.uploadFile(response.path, response.name);
                     }
                     pushResponse(childQuestion, childResponse);
@@ -152,11 +151,11 @@ class AnswersRouter {
         this.body = AnswersSerializer.serialize(answerModel);
     }
 
-    static * update() {
+    static update() {
         this.throw(500, 'Not implemented');
     }
 
-    static * delete() {
+    static* delete() {
         logger.info(`Deleting answer with id ${this.params.id}`);
         const result = yield AnswersModel.remove({
             $and: [
@@ -171,9 +170,10 @@ class AnswersRouter {
         this.body = '';
         this.statusCode = 204;
     }
+
 }
 
-function * loggedUserToState(next) {
+function* loggedUserToState(next) {
     if (this.query && this.query.loggedUser) {
         this.state.loggedUser = JSON.parse(this.query.loggedUser);
         delete this.query.loggedUser;
@@ -181,7 +181,7 @@ function * loggedUserToState(next) {
         if (this.request.body.loggedUser) {
             this.state.loggedUser = this.request.body.loggedUser;
             delete this.request.body.loggedUser;
-        } else if (this.request.body.fields && this.request.body.fields.loggedUser)  {
+        } else if (this.request.body.fields && this.request.body.fields.loggedUser) {
             this.state.loggedUser = JSON.parse(this.request.body.fields.loggedUser);
             delete this.request.body.fields.loggedUser;
         }
@@ -192,14 +192,14 @@ function * loggedUserToState(next) {
     yield next;
 }
 
-function * queryToState(next) {
-    if (this.request.query && Object.keys(this.request.query).length > 0){
+function* queryToState(next) {
+    if (this.request.query && Object.keys(this.request.query).length > 0) {
         this.state.query = this.request.query;
     }
     yield next;
 }
 
-function * reportPermissions(next) {
+function* reportPermissions(next) {
     const team = yield TeamService.getTeam(this.state.loggedUser.id);
     let filters = {};
     if (team.data && team.data.attributes) {
@@ -208,14 +208,14 @@ function * reportPermissions(next) {
         filters = {
             $and: [
                 { _id: new ObjectId(this.params.reportId) },
-                { $or: [{public: true}, {user: new ObjectId(this.state.loggedUser.id)}, {user: manager}] }
+                { $or: [{ public: true }, { user: new ObjectId(this.state.loggedUser.id) }, { user: manager }] }
             ]
         };
     } else {
         filters = {
             $and: [
                 { _id: new ObjectId(this.params.reportId) },
-                { $or: [{public: true}, {user: new ObjectId(this.state.loggedUser.id)}] }
+                { $or: [{ public: true }, { user: new ObjectId(this.state.loggedUser.id) }] }
             ]
         };
     }
@@ -229,7 +229,7 @@ function * reportPermissions(next) {
     yield next;
 }
 
-function * mapTemplateParamToId(next) {
+function* mapTemplateParamToId(next) {
     if (this.params.reportId === process.env.LEGACY_TEMPLATE_ID || this.params.reportId === 'default') {
         this.params.reportId = process.env.DEFAULT_TEMPLATE_ID;
     }

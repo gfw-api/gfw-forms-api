@@ -1,10 +1,34 @@
-test:
-  extends:
-    file: base.yml
-    service: base
-  ports:
-    - "4400"
-  container_name: gfw-forms-test
-  environment:
-    NODE_ENV: test
-  command: test
+version: "3"
+services:
+  test:
+    build: .
+    ports:
+      - "4400"
+    container_name: gfw-forms-test
+    environment:
+      PORT: 4400
+      NODE_ENV: test
+      CT_URL: http://mymachine:9000
+      API_VERSION: v1
+      CT_REGISTER_MODE: auto
+      MONGO_PORT_27017_TCP_ADDR: mongo
+      QUEUE_NAME: mail
+      QUEUE_PROVIDER: redis
+      QUEUE_URL: redis://redis:6379
+      TARGET_SHEET_ID: TARGET_SHEET_ID
+    command: test
+    depends_on:
+      - mongo
+      - redis
+
+  redis:
+    image: redis
+    container_name: gfw-forms-api-redis
+    ports:
+      - "6379"
+
+  mongo:
+    image: mongo:3.4
+    command: --smallfiles
+    ports:
+      - "27017"
