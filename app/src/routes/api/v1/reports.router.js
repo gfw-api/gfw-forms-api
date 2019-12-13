@@ -8,6 +8,7 @@ const AnswersService = require('services/answersService');
 const TeamService = require('services/teamService');
 const passThrough = require('stream').PassThrough;
 const { ObjectId } = require('mongoose').Types;
+const config = require('config');
 const ctRegisterMicroservice = require('ct-register-microservice-node');
 const CSV = require('services/csvService');
 
@@ -23,7 +24,8 @@ class ReportsRouter {
         const filter = {
             $and: [
                 {
-                    $or: [{ $and: [{ public: true }, { status: 'published' }] },
+                    $or: [
+                        { $and: [{ public: true }, { status: 'published' }] },
                         { user: new ObjectId(this.state.loggedUser.id) }]
                 }
             ]
@@ -401,8 +403,8 @@ class ReportsRouter {
 }
 
 function* mapTemplateParamToId(next) {
-    if (this.params.id === process.env.LEGACY_TEMPLATE_ID || this.params.id === 'default') {
-        this.params.id = process.env.DEFAULT_TEMPLATE_ID;
+    if (this.params.id === config.get('legacyTemplateId') || this.params.id === 'default') {
+        this.params.id = config.get('defaultTemplateId');
     }
     yield next;
 }
