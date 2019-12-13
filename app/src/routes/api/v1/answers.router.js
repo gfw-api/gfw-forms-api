@@ -7,6 +7,7 @@ const TeamService = require('services/teamService');
 const ReportsModel = require('models/reportsModel');
 const s3Service = require('services/s3Service');
 const { ObjectId } = require('mongoose').Types;
+const config = require('config');
 
 const router = new Router({
     prefix: '/reports/:reportId/answers'
@@ -230,8 +231,8 @@ function* reportPermissions(next) {
 }
 
 function* mapTemplateParamToId(next) {
-    if (this.params.reportId === process.env.LEGACY_TEMPLATE_ID || this.params.reportId === 'default') {
-        this.params.reportId = process.env.DEFAULT_TEMPLATE_ID;
+    if (this.params.reportId === config.get('legacyTemplateId') || this.params.reportId === 'default') {
+        this.params.reportId = config.get('defaultTemplateId');
     }
     yield next;
 }

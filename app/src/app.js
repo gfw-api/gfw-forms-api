@@ -59,9 +59,21 @@ async function init() {
             app.use(function* (next) {
                 try {
                     yield next;
-                } catch (error) {
-                    logger.error(error);
-                    this.status = error.status || 500;
+                } catch (inErr) {
+                    let error = inErr;
+                    try {
+                        error = JSON.parse(inErr);
+                    } catch (e) {
+                        logger.debug('Could not parse error message - is it JSON?: ', inErr);
+                        error = inErr;
+                    }
+                    this.status = error.status || this.status || 500;
+                    if (this.status >= 500) {
+                        logger.error(error);
+                    } else {
+                        logger.info(error);
+                    }
+
                     this.body = ErrorSerializer.serializeError(this.status, error.message);
                     if (process.env.NODE_ENV === 'prod' && this.status === 500) {
                         this.body = 'Unexpected error';
