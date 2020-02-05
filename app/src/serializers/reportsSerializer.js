@@ -6,7 +6,7 @@ var reportsSerializer = null;
 function createSerializer(languages) {
     return new JSONAPISerializer('reports', {
       attributes: [
-        'name', 'languages', 'defaultLanguage', 'user', 'answersCount', 'questions', 'createdAt', 'public', 'status'
+        'name', 'languages', 'defaultLanguage', 'user', 'answersCount', 'questions', 'createdAt', 'public', 'status', 'areaIds'
       ],
       questions: {
           attributes: ['type', 'label', 'defaultValue', 'values', 'required']
