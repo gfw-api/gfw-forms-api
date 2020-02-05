@@ -24,19 +24,11 @@ spec:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:
-            - matchExpressions:
-              - key: type
-                operator: In
-                values:
-<<<<<<< HEAD
-<<<<<<< HEAD
-                - gfw
-=======
-                - gfw     
->>>>>>> Update deployment.yaml
-=======
-                - gfw
->>>>>>> Namespace microservice
+              - matchExpressions:
+                  - key: type
+                    operator: In
+                    values:
+                      - gfw
       containers:
       - name: {name}
         image: vizzuality/{name}

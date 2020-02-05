@@ -255,7 +255,7 @@ class ReportsRouter {
 
                 } catch (e) {
                     logger.error(e);
-                    this.throw(500, 'PATCHing new area faileds letes see');
+                    this.throw(500, 'PATCHing new area has failed');
                     return;
                 }
             }
@@ -277,7 +277,7 @@ class ReportsRouter {
                         });
                     } catch (e) {
                         logger.error(e);
-                        this.throw(500, 'PATCHing new area faileds letes see');
+                        this.throw(500, 'PATCHing new area has failed');
                         return;
                     }
                 }
