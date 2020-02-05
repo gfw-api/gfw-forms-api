@@ -136,7 +136,7 @@ class ReportsRouter {
                     logger.info(`PATCHing new area of interest ${request.oldAreaOfInterest}...`);
 
                     const result = yield ctRegisterMicroservice.requestToMicroservice({
-                        uri: '/area/' + AOI[i],
+                        uri: '/v1/area/' + AOI[i],
                         method: 'PATCH',
                         json: true,
                         body: {
@@ -243,7 +243,7 @@ class ReportsRouter {
                 try {
 
                     const result = yield ctRegisterMicroservice.requestToMicroservice({
-                        uri: '/area/' + areasToRemove[i],
+                        uri: '/v1/area/' + areasToRemove[i],
                         method: 'PATCH',
                         json: true,
                         body: {
@@ -267,7 +267,7 @@ class ReportsRouter {
                 for (let i = 0; i < AOI.length; i++) {
                     try {
                         const result = yield ctRegisterMicroservice.requestToMicroservice({
-                            uri: '/area/' + AOI[i],
+                            uri: '/v1/area/' + AOI[i],
                             method: 'PATCH',
                             json: true,
                             body: {
@@ -307,7 +307,7 @@ class ReportsRouter {
                 logger.info(`PATCHing area ${aoi[i]} to remove template association...`);
                 try {
                     const result = yield ctRegisterMicroservice.requestToMicroservice({
-                        uri: `/area/${aoi[i]}`,
+                        uri: `/v1/area/${aoi[i]}`,
                         method: 'PATCH',
                         json: true,
                         body: {
