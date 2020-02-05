@@ -24,11 +24,11 @@ spec:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:
-              - matchExpressions:
-                  - key: type
-                    operator: In
-                    values:
-                      - gfw
+            - matchExpressions:
+              - key: type
+                operator: In
+                values:
+                - gfw
       containers:
       - name: {name}
         image: vizzuality/{name}
