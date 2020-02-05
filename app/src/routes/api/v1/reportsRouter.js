@@ -25,8 +25,8 @@ class ReportsRouter {
         let filter = {
             $and: [
                 { $or: [{
-                    $and: [ {public: true}, {status: 'published'} ]},
-                    {user: new ObjectId(this.state.loggedUser.id)}]
+                        $and: [ {public: true}, {status: 'published'} ]},
+                        {user: new ObjectId(this.state.loggedUser.id)}]
                 }
             ]
         };
@@ -66,6 +66,26 @@ class ReportsRouter {
             this.throw(404, 'Report not found');
             return;
         }
+        // attach all areas of interest to the template response
+        let AOI = this.params.id;
+        let results = [];
+        try {
+            logger.info(`Find all AOI's ...`);
+
+            const result = yield ctRegisterMicroservice.requestToMicroservice({
+                uri: '/area/find/' + AOI,
+                method: 'GET',
+                json: true,
+                body: {
+                    userId: this.state.loggedUser.id
+                }
+            });
+             results = result.data.map(a => a.id);
+        } catch (e) {
+            logger.error(e);
+            this.throw(500, 'No areas of interest for this template ');
+            return;
+        }
 
         // get answers count for the report
         let answersFilter = {};
@@ -81,6 +101,7 @@ class ReportsRouter {
         }
         const answers = yield AnswersModel.count(answersFilter);
         report.answersCount = answers;
+        Object.assign(report, {areaIds: results });
 
         this.body = ReportsSerializer.serialize(report);
     }
@@ -108,23 +129,30 @@ class ReportsRouter {
         // Remove report if PATCH fails
         if (request.areaOfInterest) {
             const reportId = report._id.toString();
-            try {
-                const result = yield ctRegisterMicroservice.requestToMicroservice({
-                    uri: `/v1/area/${request.areaOfInterest}`,
-                    method: 'PATCH',
-                    json: true,
-                    body: {
-                        templateId: reportId,
-                        userId: this.state.loggedUser.id
-                    }
-                });
-            } catch (e) {
-                const result = yield ReportsModel.remove({ _id: reportId });
-                logger.error('request to microservice failed');
-                logger.error(e);
-                this.throw(500, 'Error creating templates: patch to area failed');
-                return;
+            let AOI = request.areaOfInterest;
+            logger.info(AOI);
+            for (let i = 0; i < AOI.length; i++) {
+                try {
+                    logger.info(`PATCHing new area of interest ${request.oldAreaOfInterest}...`);
+
+                    const result = yield ctRegisterMicroservice.requestToMicroservice({
+                        uri: '/area/' + AOI[i],
+                        method: 'PATCH',
+                        json: true,
+                        body: {
+                            templateId: {reportId},
+                            userId: this.state.loggedUser.id
+                        }
+                    });
+                } catch (e) {
+                    const result = yield ReportsModel.remove({_id: reportId});
+                    logger.error('request to microservice failed');
+                    logger.error(e);
+                    this.throw(500, 'Error creating templates: patch to area failed');
+                    return;
+                }
             }
+
         }
 
         this.body = ReportsSerializer.serialize(report);
@@ -176,6 +204,10 @@ class ReportsRouter {
             this.throw(404, 'Report not found.');
             return;
         }
+        // add questions to the model to update if they are included
+        if (request.questions) {
+            report.questions = request.questions;
+        }
 
         // props allow to change even with answers
         if (request.name) {
@@ -194,52 +226,62 @@ class ReportsRouter {
         if (this.state.loggedUser.role === 'ADMIN' && request.public) {
             report.public = request.public;
         }
-
+        // compare old area to new area to find if items exists
+        let areasToRemove = [];
+        if(request.oldAreaOfInterest) {
+            areasToRemove = request.oldAreaOfInterest.filter(elementToCompare =>
+                !request.areaOfInterest.includes(elementToCompare)
+            );
+        }
+        logger.info('removing area' + areasToRemove)
         // PATCH templateId onto area
         // Remove report if PATCH fails
-        if (request.areaOfInterest !== request.oldAreaOfInterest) {
-
+        if (areasToRemove) {
             // remove old area
-            if (request.oldAreaOfInterest) {
-                logger.info(`PATCHing old area of interest ${request.oldAreaOfInterest}...`);
+            logger.info(`PATCHing second new area of interest ${request.oldAreaOfInterest}...`);
+            for (let i = 0; i < areasToRemove.length; i++) {
                 try {
-                    const result = yield ctRegisterMicroservice.requestToMicroservice({
-                        uri: `/v1/area/${request.oldAreaOfInterest}`,
-                        method: 'PATCH',
-                        json: true,
-                        body: {
-                            templateId: null,
-                            userId: this.state.loggedUser.id
-                        }
-                    });
-                } catch (e) {
-                    logger.error(e);
-                    this.throw(500, 'PATCHing old area failed');
-                    return;
-                }
-            }
 
-            // PATCH new area
-            if (request.areaOfInterest) {
-                logger.info(`PATCHing new area of interest ${request.oldAreaOfInterest}...`);
-                try {
                     const result = yield ctRegisterMicroservice.requestToMicroservice({
-                        uri: `/v1/area/${request.areaOfInterest}`,
+                        uri: '/area/' + areasToRemove[i],
                         method: 'PATCH',
                         json: true,
                         body: {
-                            templateId: this.params.id,
+                            templateId: [this.params.id],
+                            override: true,
                             userId: this.state.loggedUser.id
                         }
                     });
+
                 } catch (e) {
                     logger.error(e);
-                    this.throw(500, 'PATCHing new area failed');
+                    this.throw(500, 'PATCHing new area faileds letes see');
                     return;
                 }
             }
         }
-
+            // PATCH new area
+            if (request.areaOfInterest) {
+                logger.info(`PATCHing second new area of interest ${request.oldAreaOfInterest}...`);
+                let AOI = request.areaOfInterest;
+                for (let i = 0; i < AOI.length; i++) {
+                    try {
+                        const result = yield ctRegisterMicroservice.requestToMicroservice({
+                            uri: '/area/' + AOI[i],
+                            method: 'PATCH',
+                            json: true,
+                            body: {
+                                templateId: [this.params.id],
+                                userId: this.state.loggedUser.id
+                            }
+                        });
+                    } catch (e) {
+                        logger.error(e);
+                        this.throw(500, 'PATCHing new area faileds letes see');
+                        return;
+                    }
+                }
+            }
         // add answers count to return and updated date
         const answers = yield AnswersModel.count({report: new ObjectId(this.params.id)});
         report.answersCount = answers;
@@ -248,7 +290,6 @@ class ReportsRouter {
         yield report.save();
         this.body = ReportsSerializer.serialize(report);
     }
-
     static * delete() {
         const role = this.state.loggedUser.role;
         const aoi = this.state.query && this.state.query.aoi !== null ? this.state.query.aoi.split(',') : null;
@@ -265,7 +306,7 @@ class ReportsRouter {
                 logger.info(`PATCHing area ${aoi[i]} to remove template association...`);
                 try {
                     const result = yield ctRegisterMicroservice.requestToMicroservice({
-                        uri: `/v1/area/${aoi[i]}`,
+                        uri: `/area/${aoi[i]}`,
                         method: 'PATCH',
                         json: true,
                         body: {
@@ -325,23 +366,23 @@ class ReportsRouter {
         report = report.toObject();
 
         const questionLabels = report.questions.reduce((acc, question) => ({
-                ...acc,
-                [question.name]: question.label[report.defaultLanguage],
-                ...question.childQuestions.reduce((acc2, childQuestion) => ({
-                    ...acc2,
-                    [childQuestion.name]: childQuestion.label[report.defaultLanguage]
-                }), {})
-            }), {
-                userId: 'User',
-                reportName: 'Name',
-                areaOfInterest: 'Area of Interest',
-                areaOfInterestName: 'Area of Interest name',
-                clickedPositionLat: 'Position of report lat',
-                clickedPositionLon: 'Position of report lon',
-                userPositionLat: 'Position of user lat',
-                userPositionLon: 'Position of user lon',
-                layer: 'Alert type'
-            });
+            ...acc,
+            [question.name]: question.label[report.defaultLanguage],
+            ...question.childQuestions.reduce((acc2, childQuestion) => ({
+                ...acc2,
+                [childQuestion.name]: childQuestion.label[report.defaultLanguage]
+            }), {})
+        }), {
+            userId: 'User',
+            reportName: 'Name',
+            areaOfInterest: 'Area of Interest',
+            areaOfInterestName: 'Area of Interest name',
+            clickedPositionLat: 'Position of report lat',
+            clickedPositionLon: 'Position of report lon',
+            userPositionLat: 'Position of user lat',
+            userPositionLon: 'Position of user lon',
+            layer: 'Alert type'
+        });
 
         const team = yield TeamService.getTeam(this.state.loggedUser.id);
         let teamData = null;
@@ -372,28 +413,28 @@ class ReportsRouter {
                     userPositionLon: answer.userPosition.length ? answer.userPosition[1] : null,
                 });
 
-              answer.responses.forEach((response) => {
-                let currentQuestion = Object.assign({}, report.questions.find((question) => (question.name && question.name === response.name)));
+                answer.responses.forEach((response) => {
+                    let currentQuestion = Object.assign({}, report.questions.find((question) => (question.name && question.name === response.name)));
 
-                responses[response.name] = response.value;
-                if (response.value !== null && ['checkbox', 'radio', 'select'].includes(currentQuestion.type)) {
-                    const getCurrentValue = (list, val) => (list.find((item) => (item.value === val || item.value === parseInt(val))));
-                    const values = !response.value.includes(',') && !isNaN(parseInt(response.value)) ? [response.value] : response.value.split(',');
-                    const questionValues = currentQuestion.values[report.defaultLanguage];
-                    responses[response.name] = values.reduce((acc, value) => {
-                        const val = getCurrentValue(questionValues, value);
-                        const accString = acc !== '' ? `${acc}, ` : acc;
-                        return typeof val !== 'undefined' ? `${accString}${val.label}` : `${accString}${value}`;
-                    }, '');
-                }
-              });
-              return Object.entries(responses).reduce((acc, [key, value]) => {
-                  const label = questionLabels[key] || key;
-                  return {
-                    ...acc,
-                    [label]: value
-                  };
-              }, {});
+                    responses[response.name] = response.value;
+                    if (response.value !== null && ['checkbox', 'radio', 'select'].includes(currentQuestion.type)) {
+                        const getCurrentValue = (list, val) => (list.find((item) => (item.value === val || item.value === parseInt(val))));
+                        const values = !response.value.includes(',') && !isNaN(parseInt(response.value)) ? [response.value] : response.value.split(',');
+                        const questionValues = currentQuestion.values[report.defaultLanguage];
+                        responses[response.name] = values.reduce((acc, value) => {
+                            const val = getCurrentValue(questionValues, value);
+                            const accString = acc !== '' ? `${acc}, ` : acc;
+                            return typeof val !== 'undefined' ? `${accString}${val.label}` : `${accString}${value}`;
+                        }, '');
+                    }
+                });
+                return Object.entries(responses).reduce((acc, [key, value]) => {
+                    const label = questionLabels[key] || key;
+                    return {
+                        ...acc,
+                        [label]: value
+                    };
+                }, {});
             });
         this.body.write(CSV.convert(data));
         this.body.end();
