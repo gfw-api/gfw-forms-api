@@ -1,27 +1,27 @@
-var logger = require('logger');
-var JSONAPIDeserializer = require('jsonapi-serializer').Deserializer;
+const logger = require('logger');
+const JSONAPIDeserializer = require('jsonapi-serializer').Deserializer;
 const ctRegisterMicroservice = require('ct-register-microservice-node');
 
-var deserializer = function(obj) {
-    return function(callback) {
-        new JSONAPIDeserializer({keyForAttribute: 'camelCase'}).deserialize(obj, callback);
+const deserializer = function (obj) {
+    return function (callback) {
+        new JSONAPIDeserializer({ keyForAttribute: 'camelCase' }).deserialize(obj, callback);
     };
 };
 
 class UserService {
 
-    * getUserLanguage(loggedUser){
+    * getUserLanguage(loggedUser) {
         if (loggedUser) {
-            logger.info('Obtaining user', '/user/' + loggedUser.id);
+            logger.info('Obtaining user', `/user/${loggedUser.id}`);
             try {
-                let result = yield ctRegisterMicroservice.requestToMicroservice({
-                    uri: '/user/' + loggedUser.id,
+                const result = yield ctRegisterMicroservice.requestToMicroservice({
+                    uri: `/user/${loggedUser.id}`,
                     method: 'GET',
                     json: true
                 });
-                let user = yield deserializer(result);
+                const user = yield deserializer(result);
                 if (user && user.language) {
-                    const language =  user.language.toLowerCase().replace(/_/g, '-');
+                    const language = user.language.toLowerCase().replace(/_/g, '-');
                     logger.info('Setting user language to send email', language);
                     return language;
                 }
@@ -34,6 +34,7 @@ class UserService {
         logger.info('User not logged, default lang en');
         return 'en';
     }
+
 }
 
 module.exports = new UserService();

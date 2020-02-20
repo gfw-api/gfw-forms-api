@@ -67,20 +67,20 @@ class ReportsRouter {
             return;
         }
         // attach all areas of interest to the template response
-        let AOI = this.params.id;
+        const AOI = this.params.id;
         let results = [];
         try {
             logger.info(`Find all AOI's ...`);
 
             const result = yield ctRegisterMicroservice.requestToMicroservice({
-                uri: '/v1/area/find/' + AOI,
+                uri: `/v1/area/find/${AOI}`,
                 method: 'GET',
                 json: true,
                 body: {
                     userId: this.state.loggedUser.id
                 }
             });
-             results = result.data.map(a => a.id);
+            results = result.data.map((a) => a.id);
         } catch (e) {
             logger.error(e);
             this.throw(500, 'No areas of interest for this template ');
@@ -101,7 +101,7 @@ class ReportsRouter {
         }
         const answers = yield AnswersModel.count(answersFilter);
         report.answersCount = answers;
-        Object.assign(report, {areaIds: results });
+        Object.assign(report, { areaIds: results });
 
         this.body = ReportsSerializer.serialize(report);
     }
@@ -129,23 +129,23 @@ class ReportsRouter {
         // Remove report if PATCH fails
         if (request.areaOfInterest) {
             const reportId = report._id.toString();
-            let AOI = request.areaOfInterest;
+            const AOI = request.areaOfInterest;
             logger.info(AOI);
             for (let i = 0; i < AOI.length; i++) {
                 try {
                     logger.info(`PATCHing new area of interest ${request.oldAreaOfInterest}...`);
 
                     const result = yield ctRegisterMicroservice.requestToMicroservice({
-                        uri: '/v1/area/' + AOI[i],
+                        uri: `/v1/area/${AOI[i]}`,
                         method: 'PATCH',
                         json: true,
                         body: {
-                            templateId: {reportId},
+                            templateId: { reportId },
                             userId: this.state.loggedUser.id
                         }
                     });
                 } catch (e) {
-                    const result = yield ReportsModel.remove({_id: reportId});
+                    const result = yield ReportsModel.remove({ _id: reportId });
                     logger.error('request to microservice failed');
                     logger.error(e);
                     this.throw(500, 'Error creating templates: patch to area failed');
@@ -228,12 +228,10 @@ class ReportsRouter {
         }
         // compare old area to new area to find if items exists
         let areasToRemove = [];
-        if(request.oldAreaOfInterest) {
-            areasToRemove = request.oldAreaOfInterest.filter(elementToCompare =>
-                !request.areaOfInterest.includes(elementToCompare)
-            );
+        if (request.oldAreaOfInterest) {
+            areasToRemove = request.oldAreaOfInterest.filter((elementToCompare) => !request.areaOfInterest.includes(elementToCompare));
         }
-        logger.info('removing area' + areasToRemove)
+        logger.info(`removing area${areasToRemove}`);
         // PATCH templateId onto area
         // Remove report if PATCH fails
         if (areasToRemove) {
@@ -243,7 +241,7 @@ class ReportsRouter {
                 try {
 
                     const result = yield ctRegisterMicroservice.requestToMicroservice({
-                        uri: '/v1/area/' + areasToRemove[i],
+                        uri: `/v1/area/${areasToRemove[i]}`,
                         method: 'PATCH',
                         json: true,
                         body: {
@@ -260,28 +258,28 @@ class ReportsRouter {
                 }
             }
         }
-            // PATCH new area
-            if (request.areaOfInterest) {
-                logger.info(`PATCHing second new area of interest ${request.oldAreaOfInterest}...`);
-                let AOI = request.areaOfInterest;
-                for (let i = 0; i < AOI.length; i++) {
-                    try {
-                        const result = yield ctRegisterMicroservice.requestToMicroservice({
-                            uri: '/v1/area/' + AOI[i],
-                            method: 'PATCH',
-                            json: true,
-                            body: {
-                                templateId: [this.params.id],
-                                userId: this.state.loggedUser.id
-                            }
-                        });
-                    } catch (e) {
-                        logger.error(e);
-                        this.throw(500, 'PATCHing new area has failed');
-                        return;
-                    }
+        // PATCH new area
+        if (request.areaOfInterest) {
+            logger.info(`PATCHing second new area of interest ${request.oldAreaOfInterest}...`);
+            const AOI = request.areaOfInterest;
+            for (let i = 0; i < AOI.length; i++) {
+                try {
+                    const result = yield ctRegisterMicroservice.requestToMicroservice({
+                        uri: `/v1/area/${AOI[i]}`,
+                        method: 'PATCH',
+                        json: true,
+                        body: {
+                            templateId: [this.params.id],
+                            userId: this.state.loggedUser.id
+                        }
+                    });
+                } catch (e) {
+                    logger.error(e);
+                    this.throw(500, 'PATCHing new area has failed');
+                    return;
                 }
             }
+        }
         // add answers count to return and updated date
         const answers = yield AnswersModel.count({ report: new ObjectId(this.params.id) });
         report.answersCount = answers;

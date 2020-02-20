@@ -1,20 +1,22 @@
-var logger = require('logger');
-var JSONAPISerializer = require('jsonapi-serializer').Serializer;
+const logger = require('logger');
+const JSONAPISerializer = require('jsonapi-serializer').Serializer;
 
 class ErrorSerializer {
 
     static serializeValidationError(data, typeParam) {
-        let keys = Object.keys(data);
-        var message = '';
-        switch(typeParam) {
-        case 'body':
-            message = 'Invalid body parameter';
-            break;
-        case 'query':
-            message = 'Invalid query parameter';
-            break;
-        default:
-            message = '';
+        const keys = Object.keys(data);
+        let message = '';
+        switch (typeParam) {
+
+            case 'body':
+                message = 'Invalid body parameter';
+                break;
+            case 'query':
+                message = 'Invalid query parameter';
+                break;
+            default:
+                message = '';
+
         }
         return {
             source: {
@@ -27,25 +29,26 @@ class ErrorSerializer {
     }
 
     static serializeValidationBodyErrors(data) {
-        var errors = [];
-        if(data) {
-            for(let i = 0, length = data.length; i < length; i++) {
+        const errors = [];
+        if (data) {
+            for (let i = 0, { length } = data; i < length; i++) {
                 errors.push(ErrorSerializer.serializeValidationError(data[i], 'body'));
             }
         }
         return {
-            errors: errors
+            errors
         };
     }
 
     static serializeError(status, message) {
         return {
             errors: [{
-                status: status,
+                status,
                 detail: message
             }]
         };
     }
+
 }
 
 module.exports = ErrorSerializer;

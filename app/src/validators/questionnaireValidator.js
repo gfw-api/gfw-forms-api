@@ -2,7 +2,8 @@ const logger = require('logger');
 const ErrorSerializer = require('serializers/errorSerializer');
 
 class QuestionnaireValidator {
-    static * create(next) {
+
+    static* create(next) {
         logger.debug('Validating body for create questionnaire');
         logger.debug(this.request.body);
         this.checkBody('name').notEmpty().len(2, 100);
@@ -16,7 +17,7 @@ class QuestionnaireValidator {
         yield next;
     }
 
-    static * update(next) {
+    static* update(next) {
         logger.debug('Validating body for update questionnaire');
         this.checkBody('name').optional().len(2, 100);
         this.checkBody('questions').optional();
@@ -28,6 +29,7 @@ class QuestionnaireValidator {
         }
         yield next;
     }
+
 }
 
 module.exports = QuestionnaireValidator;
