@@ -1,16 +1,17 @@
 const AnswersModel = require('models/answersModel');
-const ObjectId = require('mongoose').Types.ObjectId;
+const { ObjectId } = require('mongoose').Types;
 
 class AnswersService {
-    static * getAllAnswers({ reportId, template, loggedUser, team, query }) {
+
+    static* getAllAnswers({
+        reportId, template, loggedUser, team, query
+    }) {
         let filter = {};
         let manager = false;
-        let confirmedUsers = [];
+        const confirmedUsers = [];
         if (team) {
             // check team
-            manager = team.managers.filter((manager) => {
-                return loggedUser.id === manager.id;
-            });
+            manager = team.managers.filter((manager) => loggedUser.id === manager.id);
             // check confirmed users
             if (team.confirmedUsers.length) {
                 team.confirmedUsers.forEach((user) => {
@@ -58,6 +59,7 @@ class AnswersService {
         }
         return yield AnswersModel.find(filter);
     }
+
 }
 
 module.exports = AnswersService;

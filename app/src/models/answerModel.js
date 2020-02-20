@@ -1,15 +1,16 @@
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
-const ObjectId = Schema.ObjectId;
+const mongoose = require('mongoose');
 
-var Response = new Schema({
+const { Schema } = mongoose;
+const { ObjectId } = Schema;
+
+const Response = new Schema({
     questionnaire: { type: ObjectId, ref: 'Questionnaire', required: true },
-    user: {type: ObjectId, required: true},
+    user: { type: ObjectId, required: true },
     responses: [{
-        question: {type: String, required: true, trim: true},
-        value: {type: String, required: true, trim: true}
+        question: { type: String, required: true, trim: true },
+        value: { type: String, required: true, trim: true }
     }],
-    createdAt: {type: Date, required: true, default: Date.now}
+    createdAt: { type: Date, required: true, default: Date.now }
 });
 
 module.exports = mongoose.model('Response', Response);
