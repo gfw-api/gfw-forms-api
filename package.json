@@ -53,8 +53,7 @@
     "mongoose": "^4.13.13",
     "sleep": "^6.1.0",
     "uuid": "^3.0.1",
-    "vizz.async-client": "^1.0.0",
-    "vizz.microservice-client": "1.4.0"
+    "vizz.async-client": "^1.0.0"
   },
   "devDependencies": {
     "chai": "^4.2.0",
