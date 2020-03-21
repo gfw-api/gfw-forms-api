@@ -3,10 +3,10 @@ kind: Service
 metadata:
   namespace: fw
   labels:
-    name: {name}
-  name: {name}
+    name: forms
+  name: forms
 spec:
   ports:
     - port: 4400
   selector:
-    name: {name}
+    name: forms

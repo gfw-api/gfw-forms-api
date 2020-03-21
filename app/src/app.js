@@ -56,7 +56,7 @@ async function init() {
 
             require('koa-validate')(app);
             // catch errors and send in jsonapi standard. Always return vnd.api+json
-            app.use(function* (next) {
+            app.use(function* handleErrors(next) {
                 try {
                     yield next;
                 } catch (inErr) {

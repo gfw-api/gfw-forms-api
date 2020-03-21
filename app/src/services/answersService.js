@@ -1,16 +1,17 @@
 const AnswersModel = require('models/answersModel');
-const ObjectId = require('mongoose').Types.ObjectId;
+const { ObjectId } = require('mongoose').Types;
 
 class AnswersService {
-    static * getAllAnswers({ reportId, template, loggedUser, team, query }) {
+
+    static* getAllAnswers({
+        reportId, template, loggedUser, team, query
+    }) {
         let filter = {};
-        let manager = false;
-        let confirmedUsers = [];
+        let currentManager = false;
+        const confirmedUsers = [];
         if (team) {
             // check team
-            manager = team.managers.filter((manager) => {
-                return loggedUser.id === manager.id;
-            });
+            currentManager = team.managers.filter((manager) => loggedUser.id === manager.id);
             // check confirmed users
             if (team.confirmedUsers.length) {
                 team.confirmedUsers.forEach((user) => {
@@ -18,6 +19,7 @@ class AnswersService {
                 });
             }
         }
+
         // Admin users and owners of the report can check all answers
         if (loggedUser.role === 'ADMIN' || loggedUser.id === template.user) {
             filter = {
@@ -25,9 +27,8 @@ class AnswersService {
                     { report: new ObjectId(reportId) },
                 ]
             };
-        }
-        // managers can check all answers from the default template from his and his team's members
-        else if (manager && template.public) {
+        } else if (currentManager && template.public) {
+            // managers can check all answers from the default template from his and his team's members
             filter = {
                 $and: [
                     { report: new ObjectId(reportId) },
@@ -41,9 +42,8 @@ class AnswersService {
                     }
                 ]
             };
-        }
-        // the rest of users can check all answers belonging to them
-        else {
+        } else {
+            // managers can check all answers from the default template from his and his team's members
             filter = {
                 $and: [
                     { report: new ObjectId(reportId) },
@@ -58,6 +58,7 @@ class AnswersService {
         }
         return yield AnswersModel.find(filter);
     }
+
 }
 
 module.exports = AnswersService;
