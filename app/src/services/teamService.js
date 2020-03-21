@@ -4,7 +4,7 @@ const logger = require('logger');
 
 class TeamService {
 
-    static * getTeam(user) {
+    static* getTeam(user) {
         let team = {};
         try {
             team = yield ctRegisterMicroservice.requestToMicroservice({
@@ -13,7 +13,7 @@ class TeamService {
                 json: true
             });
 
-        } catch(e) {
+        } catch (e) {
             logger.info('Failed to fetch team');
         }
         if (!team.data) {
@@ -21,6 +21,7 @@ class TeamService {
         }
         return team;
     }
+
 }
 
 module.exports = TeamService;
