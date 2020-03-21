@@ -2,7 +2,8 @@ const logger = require('logger');
 const ErrorSerializer = require('serializers/errorSerializer');
 
 class ReportsValidator {
-    static * create(next) {
+
+    static* create(next) {
         const request = this.request.body;
         logger.debug('Validating body for create template');
         this.checkBody('name').notEmpty();
@@ -45,7 +46,7 @@ class ReportsValidator {
 
         // check for languages
         if (request.languages.length > 1) {
-            if (!request.defaultLanguage || request.languages.indexOf(request.defaultLanguage) === -1 ) {
+            if (!request.defaultLanguage || request.languages.indexOf(request.defaultLanguage) === -1) {
                 pushError('languages', `Languages: values do not match language options`);
             }
         }
@@ -75,7 +76,7 @@ class ReportsValidator {
         yield next;
     }
 
-    static * patch(next) {
+    static* patch(next) {
         const request = this.request.body;
         logger.debug('Validating body for create template');
         this.checkBody('name').notEmpty();
@@ -99,7 +100,7 @@ class ReportsValidator {
 
         // check for languages
         if (request.languages.length > 1) {
-            if (!request.defaultLanguage || request.languages.indexOf(request.defaultLanguage) === -1 ) {
+            if (!request.defaultLanguage || request.languages.indexOf(request.defaultLanguage) === -1) {
                 pushError('languages', `Languages: values do not match language options`);
             }
         }
@@ -116,9 +117,10 @@ class ReportsValidator {
             this.status = 400;
             return;
         }
-        
+
         yield next;
     }
+
 }
 
 module.exports = ReportsValidator;

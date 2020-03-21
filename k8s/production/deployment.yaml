@@ -3,9 +3,9 @@ kind: Deployment
 metadata:
   namespace: fw
   labels:
-    name: {name}
+    name: forms
     app: gfw
-  name: {name}
+  name: forms
 spec:
   revisionHistoryLimit: 2
   template:
@@ -13,7 +13,7 @@ spec:
       annotations:
         chaos.alpha.kubernetes.io/enabled: "true"
       labels:
-        name: {name}
+        name: forms
     spec:
       tolerations:
       - key: "type"
@@ -30,8 +30,8 @@ spec:
                 values:
                 - gfw
       containers:
-      - name: {name}
-        image: vizzuality/{name}
+      - name: forms
+        image: vizzuality/forms
         imagePullPolicy: Always
         resources:
           requests:
@@ -50,7 +50,7 @@ spec:
           - name: NODE_PATH
             value: app/src
           - name: LOCAL_URL
-            value: http://{name}.fw.svc.cluster.local:4400
+            value: http://forms.fw.svc.cluster.local:4400
           - name: QUEUE_PROVIDER
             value: redis
           - name: QUEUE_NAME
