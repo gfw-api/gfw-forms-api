@@ -14,9 +14,6 @@ const koaBody = require('koa-body');
 
 const mongooseOptions = require('../../config/mongoose');
 
-// const nock = require('nock');
-// nock.recorder.rec();
-
 const mongoUri = process.env.MONGO_URI || (`mongodb://${config.get('mongodb.host')}:${config.get('mongodb.port')}/${config.get('mongodb.database')}`);
 mongoose.Promise = Promise;
 

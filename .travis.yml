@@ -19,7 +19,10 @@ env:
     - MONGO_PORT_27017_TCP_DATABASE=gfw_subscription_db_test
     - QUEUE_URL=redis://127.0.0.1:6379
     - QUEUE_NAME=mail
-    - TARGET_SHEET_ID=TARGET_SHEET_ID
+    - WRI_MAIL_RECIPIENTS=<mails>
+    - GOOGLE_PROJECT_EMAIL=<mail>
+    - TARGET_SHEET_ID=12345
+    - TARGET_SHEET_INDEX=1
 
 before_script:
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter

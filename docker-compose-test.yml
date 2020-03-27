@@ -14,7 +14,11 @@ services:
       MONGO_PORT_27017_TCP_ADDR: mongo
       QUEUE_NAME: mail
       QUEUE_URL: redis://redis:6379
-      TARGET_SHEET_ID: TARGET_SHEET_ID
+      WRI_MAIL_RECIPIENTS: <mails>
+      GOOGLE_PROJECT_EMAIL: <mail>
+      TARGET_SHEET_ID: 12345
+      TARGET_SHEET_INDEX: 1
+
     command: test
     depends_on:
       - mongo
