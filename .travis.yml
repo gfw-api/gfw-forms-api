@@ -19,7 +19,6 @@ env:
     - MONGO_PORT_27017_TCP_DATABASE=gfw_subscription_db_test
     - QUEUE_URL=redis://127.0.0.1:6379
     - QUEUE_NAME=mail
-    - QUEUE_PROVIDER=redis
     - TARGET_SHEET_ID=TARGET_SHEET_ID
 
 before_script:

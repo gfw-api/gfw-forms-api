@@ -3,6 +3,7 @@ const logger = require('logger');
 const mailService = require('services/mailService');
 const userService = require('services/userService');
 const googleSheetsService = require('services/googleSheetsService');
+const FormValidator = require('validators/form.validator');
 const config = require('config');
 
 const router = new Router({
@@ -34,7 +35,7 @@ class FormRouter {
         this.body = '';
     }
 
-    static async addFeedback() {
+    static async contactUs() {
         logger.info('Sending mail');
         const { topic, tool } = this.request.body;
         const mailParams = config.get('contactEmail');
@@ -95,9 +96,18 @@ class FormRouter {
             this.body = { errors: [{ detail: message, code }] };
         };
 
-        if (!name) { sendValidationError('Name is required', 'NAME_REQUIRED'); return; }
-        if (!email) { sendValidationError('Email is required', 'EMAIL_REQUIRED'); return; }
-        if (!validateEmail(email)) { sendValidationError('Email is invalid', 'EMAIL_INVALID'); return; }
+        if (!name) {
+            sendValidationError('Name is required', 'NAME_REQUIRED');
+            return;
+        }
+        if (!email) {
+            sendValidationError('Email is required', 'EMAIL_REQUIRED');
+            return;
+        }
+        if (!validateEmail(email)) {
+            sendValidationError('Email is invalid', 'EMAIL_INVALID');
+            return;
+        }
 
         try {
             await googleSheetsService.requestWebinar({ name, email, request });
@@ -111,7 +121,7 @@ class FormRouter {
 }
 
 router.post('/contribution-data', FormRouter.addContribution);
-router.post('/contact-us', FormRouter.addFeedback);
+router.post('/contact-us', FormValidator.contactUs, FormRouter.contactUs);
 router.post('/request-webinar', FormRouter.requestWebinar);
 
 module.exports = router;

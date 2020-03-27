@@ -13,7 +13,6 @@ services:
       CT_REGISTER_MODE: auto
       MONGO_PORT_27017_TCP_ADDR: mongo
       QUEUE_NAME: mail
-      QUEUE_PROVIDER: redis
       QUEUE_URL: redis://redis:6379
       TARGET_SHEET_ID: TARGET_SHEET_ID
     command: test

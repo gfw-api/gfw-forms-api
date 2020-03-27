@@ -10,11 +10,17 @@ const ErrorSerializer = require('serializers/errorSerializer');
 const ctRegisterMicroservice = require('ct-register-microservice-node');
 const mongoose = require('mongoose');
 const sleep = require('sleep');
+const koaBody = require('koa-body');
+
+const mongooseOptions = require('../../config/mongoose');
+
+// const nock = require('nock');
+// nock.recorder.rec();
 
 const mongoUri = process.env.MONGO_URI || (`mongodb://${config.get('mongodb.host')}:${config.get('mongodb.port')}/${config.get('mongodb.database')}`);
 mongoose.Promise = Promise;
 
-const koaBody = require('koa-body')({
+const koaBodySettings = koaBody({
     multipart: true,
     formidable: {
         uploadDir: '/tmp',
@@ -36,7 +42,7 @@ async function init() {
                     retries--;
                     logger.error(`Failed to connect to MongoDB uri ${mongoUri}, retrying...`);
                     sleep.sleep(5);
-                    mongoose.connect(mongoUri, onDbReady);
+                    mongoose.connect(mongoUri, mongooseOptions, onDbReady);
                 } else {
                     logger.error('MongoURI', mongoUri);
                     logger.error(err);
@@ -52,7 +58,7 @@ async function init() {
             if (process.env.NODE_ENV === 'dev') {
                 app.use(koaLogger());
             }
-            app.use(koaBody);
+            app.use(koaBodySettings);
 
             require('koa-validate')(app);
             // catch errors and send in jsonapi standard. Always return vnd.api+json
@@ -118,7 +124,7 @@ async function init() {
             logger.info(`Server started in port:${port}`);
         }
 
-        mongoose.connect(mongoUri)
+        mongoose.connect(mongoUri, mongooseOptions)
             .then(onDbReady)
             .catch((err) => {
                 logger.error(err);

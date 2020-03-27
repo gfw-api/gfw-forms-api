@@ -44,8 +44,6 @@ spec:
             value: app/src
           - name: LOCAL_URL
             value: http://forms.fw.svc.cluster.local:4400
-          - name: QUEUE_PROVIDER
-            value: redis
           - name: QUEUE_NAME
             value: mail_prod
           - name: WRI_MAIL_RECIPIENTS

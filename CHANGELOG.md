@@ -1,3 +1,8 @@
+## 30/09/2020
+
+- POST `/form/contact-us` without a `tool` param now returns a 400 error.
+- Add tests for `/form/contact-us`. 
+
 # 1.1.1
 
 ## 04/09/2020
