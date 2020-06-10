@@ -4,7 +4,7 @@ const JSONAPISerializer = require('jsonapi-serializer').Serializer;
 function createSerializer(languages) {
     return new JSONAPISerializer('reports', {
         attributes: [
-            'name', 'languages', 'defaultLanguage', 'user', 'answersCount', 'questions', 'createdAt', 'public', 'status'
+            'name', 'languages', 'defaultLanguage', 'user', 'answersCount', 'questions', 'createdAt', 'public', 'status', 'areaOfInterest'
         ],
         questions: {
             attributes: ['type', 'label', 'defaultValue', 'values', 'required']

@@ -45,6 +45,7 @@ describe('Get report by id endpoint', () => {
         responseReport.attributes.should.have.property('createdAt').and.be.a('string');
         responseReport.attributes.should.have.property('public').and.equal(false);
         responseReport.attributes.should.have.property('status').and.equal('unpublished');
+        responseReport.attributes.should.have.property('areaOfInterest').and.be.an('array').and.length(2);
     });
 
     it('Getting the default report should return it (happy case)', async () => {
@@ -68,6 +69,7 @@ describe('Get report by id endpoint', () => {
         responseReport.attributes.should.have.property('createdAt').and.be.a('string');
         responseReport.attributes.should.have.property('public').and.equal(false);
         responseReport.attributes.should.have.property('status').and.equal('unpublished');
+        responseReport.attributes.should.have.property('areaOfInterest').and.be.an('array').and.length(2);
     });
 
     it('Getting the legacy report should return it (happy case)', async () => {
@@ -91,6 +93,8 @@ describe('Get report by id endpoint', () => {
         responseReport.attributes.should.have.property('createdAt').and.be.a('string');
         responseReport.attributes.should.have.property('public').and.equal(false);
         responseReport.attributes.should.have.property('status').and.equal('unpublished');
+        responseReport.attributes.should.have.property('areaOfInterest').and.be.an('array').and.length(2);
+
     });
 
     afterEach(async () => {

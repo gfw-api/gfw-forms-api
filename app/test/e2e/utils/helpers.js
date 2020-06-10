@@ -12,6 +12,7 @@ const createReport = (additionalData = {}) => {
         user: ROLES.USER.id,
         languages: ['en'],
         defaultLanguage: 'en',
+        areaOfInterest: ['5dc3d494bff9ff00164af8f0', '5dc407c9fb3b4b003fb0bb7c'],
         ...additionalData
     }).save();
 };

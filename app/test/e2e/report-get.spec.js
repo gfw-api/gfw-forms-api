@@ -68,6 +68,7 @@ describe('Get reports tests', () => {
         responseReportOne.attributes.should.have.property('createdAt').and.be.a('string');
         responseReportOne.attributes.should.have.property('public').and.equal(false);
         responseReportOne.attributes.should.have.property('status').and.equal('unpublished');
+        responseReportTwo.attributes.should.have.property('areaOfInterest').and.be.an('array').and.length(2);
 
         responseReportTwo.id.should.equal(reportTwo.id);
         responseReportTwo.attributes.name.should.equal(reportTwo.name);
@@ -78,6 +79,7 @@ describe('Get reports tests', () => {
         responseReportTwo.attributes.should.have.property('createdAt').and.be.a('string');
         responseReportTwo.attributes.should.have.property('public').and.equal(false);
         responseReportTwo.attributes.should.have.property('status').and.equal('unpublished');
+        responseReportOne.attributes.should.have.property('areaOfInterest').and.be.an('array').and.length(2);
     });
 
     it('Get all reports without filter should be successful and return a list of reports which belong to the user or are public and published (populated db)', async () => {
@@ -117,6 +119,7 @@ describe('Get reports tests', () => {
         responseReportTwo.attributes.should.have.property('createdAt').and.be.a('string');
         responseReportTwo.attributes.should.have.property('public').and.equal(true);
         responseReportTwo.attributes.should.have.property('status').and.equal('published');
+        responseReportTwo.attributes.should.have.property('areaOfInterest').and.be.an('array').and.length(2);
     });
 
     afterEach(async () => {
