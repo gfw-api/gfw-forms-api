@@ -39,6 +39,7 @@ const Report = new Schema({
     status: {
         type: String, required: true, trim: true, default: 'unpublished'
     },
+    areaOfInterest : { type: Array, required: true, default: [] },
     questions: [ReportsQuestion]
 });
 

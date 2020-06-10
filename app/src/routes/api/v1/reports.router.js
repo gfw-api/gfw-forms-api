@@ -94,6 +94,14 @@ class ReportsRouter {
             return;
         }
 
+        // If the area is received  as a string ( the old way ), convert to an array
+        let areaOfInterest = [];
+        if (typeof request.areaOfInterest === 'string'){
+            areaOfInterest = [request.areaOfInterest];
+        } else {
+            areaOfInterest = request.areaOfInterest;
+        }
+
         const report = yield new ReportsModel({
             name: request.name,
             user: this.state.loggedUser.id,
@@ -101,7 +109,8 @@ class ReportsRouter {
             defaultLanguage: request.defaultLanguage,
             questions: request.questions,
             public: request.public,
-            status: request.status
+            status: request.status,
+            areaOfInterest: areaOfInterest,
         }).save();
 
         // PATCH templateId onto area
@@ -177,6 +186,11 @@ class ReportsRouter {
             return;
         }
 
+        // add questions to the model to update if they are included
+        if (request.questions) {
+            report.questions = request.questions;
+        }
+
         // props allow to change even with answers
         if (request.name) {
             report.name = request.name;
@@ -194,37 +208,57 @@ class ReportsRouter {
         if (this.state.loggedUser.role === 'ADMIN' && request.public) {
             report.public = request.public;
         }
+        // If the area is received  as a string ( the old way ), convert to an array
+        let oldAreaOfInterest = [];
+        let areaOfInterest = [];
+        if (typeof request.oldAreaOfInterest === 'string' && typeof request.areaOfInterest === 'string'){
+            oldAreaOfInterest = [request.oldAreaOfInterest];
+            areaOfInterest = [request.areaOfInterest];
+        } else {
+            oldAreaOfInterest = request.oldAreaOfInterest;
+            areaOfInterest = request.areaOfInterest;
+        }
+        // Only get new values from both
+        const areasToSave = areaOfInterest.filter(areaValue => !oldAreaOfInterest.includes(areaValue));
 
+        // Save areas to form template
+        if (areasToSave){
+            report.areaOfInterest = areasToSave
+        }
         // PATCH templateId onto area
         // Remove report if PATCH fails
-        if (request.areaOfInterest !== request.oldAreaOfInterest) {
+        if (areasToSave) {
 
             // remove old area
             if (request.oldAreaOfInterest) {
-                logger.info(`PATCHing old area of interest ${request.oldAreaOfInterest}...`);
-                try {
-                    yield ctRegisterMicroservice.requestToMicroservice({
-                        uri: `/v1/area/${request.oldAreaOfInterest}`,
-                        method: 'PATCH',
-                        json: true,
-                        body: {
-                            templateId: null,
-                            userId: this.state.loggedUser.id
-                        }
-                    });
-                } catch (e) {
-                    logger.error(e);
-                    this.throw(500, 'PATCHing old area failed');
-                    return;
+
+                for (let i = 0; i < oldAreaOfInterest; i++) {
+
+                    logger.info(`PATCHing old area of interest ${request.oldAreaOfInterest}...`);
+                    try {
+                        const result = yield ctRegisterMicroservice.requestToMicroservice({
+                            uri: `/area/${oldAreaOfInterest[i]}`,
+                            method: 'PATCH',
+                            json: true,
+                            body: {
+                                templateId: null,
+                                userId: this.state.loggedUser.id
+                            }
+                        });
+                        logger.info(`Area ${oldAreaOfInterest[i]} patched.`);
+                    } catch (e) {
+                        logger.error(e);
+                        this.throw(500, e);
+                        return;
+                    }
                 }
             }
 
-            // PATCH new area
-            if (request.areaOfInterest) {
+                // PATCH new area - take the first value - as area only handles string
                 logger.info(`PATCHing new area of interest ${request.oldAreaOfInterest}...`);
                 try {
                     yield ctRegisterMicroservice.requestToMicroservice({
-                        uri: `/v1/area/${request.areaOfInterest}`,
+                        uri: `/v1/area/${areasToSave[0]}`,
                         method: 'PATCH',
                         json: true,
                         body: {
@@ -237,7 +271,7 @@ class ReportsRouter {
                     this.throw(500, 'PATCHing new area failed');
                     return;
                 }
-            }
+
         }
 
         // add answers count to return and updated date
