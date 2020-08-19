@@ -1,6 +1,5 @@
 const nock = require('nock');
 const chai = require('chai');
-const sinon = require('sinon');
 
 const { getTestServer } = require('./utils/test-server');
 
@@ -10,7 +9,6 @@ nock.enableNetConnect(process.env.HOST_IP);
 chai.should();
 
 let requester;
-let sinonSandbox;
 
 describe('Contribution data endpoint tests', () => {
     before(async () => {
@@ -20,8 +18,6 @@ describe('Contribution data endpoint tests', () => {
 
         requester = await getTestServer();
     });
-
-    beforeEach(() => { sinonSandbox = sinon.createSandbox(); });
 
     it('Calling the contribution data endpoint returns 200 OK (happy case)', async () => {
         const response = await requester.post(`/api/v1/form/contribution-data`).send();
@@ -33,7 +29,5 @@ describe('Contribution data endpoint tests', () => {
         if (!nock.isDone()) {
             throw new Error(`Not all nock interceptors were used: ${nock.pendingMocks()}`);
         }
-
-        sinonSandbox.restore();
     });
 });
