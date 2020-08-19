@@ -18,8 +18,8 @@
     "legacyTemplateId": null,
     "defaultTemplateId": null,
     "googleSheets":{
-      "private_key" : "",
-      "client_email": "",
+      "private_key" : "example",
+      "client_email": "test@gmail.com",
       "target_sheet_id": "",
       "target_sheet_index": null
     },
