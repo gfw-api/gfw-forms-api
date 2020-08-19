@@ -16,6 +16,13 @@
           "method": "POST",
           "path": "/api/v1/form/contact-us"
       }
+  },{
+	  "path": "/v1/form/request-webinar",
+	  "method": "POST",
+	  "redirect": {
+		  "method": "POST",
+		  "path": "/api/v1/form/request-webinar"
+	  }
   }, {
 		"path": "/v1/questionnaire",
 		"method": "GET",
