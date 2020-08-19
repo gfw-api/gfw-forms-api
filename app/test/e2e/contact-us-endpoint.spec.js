@@ -2,8 +2,8 @@ const nock = require('nock');
 const chai = require('chai');
 const sinon = require('sinon');
 
+const GoogleSheetsService = require('services/googleSheetsService');
 const { getTestServer } = require('./utils/test-server');
-const { stubGoogleSpreadsheet } = require('./utils/stubs');
 
 nock.disableNetConnect();
 nock.enableNetConnect(process.env.HOST_IP);
@@ -25,7 +25,13 @@ describe('Contact us endpoint tests', () => {
     beforeEach(() => { sinonSandbox = sinon.createSandbox(); });
 
     it('Calling the contact us endpoint returns 200 OK (happy case)', async () => {
-        stubGoogleSpreadsheet(sinonSandbox);
+        sinonSandbox.stub(GoogleSheetsService, 'authSheets')
+            .callsFake(() => new Promise((resolve) => resolve()));
+        sinonSandbox.stub(GoogleSheetsService, 'checkRows')
+            .callsFake(() => new Promise((resolve) => resolve()));
+        sinonSandbox.stub(GoogleSheetsService, 'updateSheet')
+            .callsFake(() => new Promise((resolve) => resolve()));
+
         const response = await requester.post(`/api/v1/form/contact-us`).send({ tool: 'gfw' });
         response.status.should.equal(200);
         response.body.should.equal('');
