@@ -122,6 +122,23 @@ class GoogleSheetsService {
         return today;
     }
 
+    * requestWebinar(data) {
+        try {
+            yield this.authSheets(this.creds);
+            logger.info('[GoogleSheetsService] Adding a new webinar request...');
+            return new Promise(((resolve, reject) => {
+                const SHEET_INDEX = 10;
+                this.doc.addRow(SHEET_INDEX, data, (err, rowResult) => {
+                    if (err) { return reject(err); }
+                    logger.info('[GoogleSheetsService] Added new webinar request.');
+                    resolve(rowResult);
+                });
+            }));
+        } catch (err) {
+            logger.error(err);
+        }
+    }
+
 }
 
 module.exports = new GoogleSheetsService();

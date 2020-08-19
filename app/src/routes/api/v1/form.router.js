@@ -84,10 +84,35 @@ class FormRouter {
         this.body = '';
     }
 
+    static* requestWebinar() {
+        logger.info('Requesting webinar');
+
+        const { name, email, request } = this.request.body;
+        logger.info(`Name: ${name}, Email: ${email}, Request: ${request}`);
+
+        const validateEmail = (str) => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(str);
+        const sendValidationError = (message, code, status = 400) => {
+            this.status = status;
+            this.body = { errors: [{ detail: message, code }] };
+        };
+
+        if (!name) { sendValidationError('Name is required', 'NAME_REQUIRED'); return; }
+        if (!email) { sendValidationError('Email is required', 'EMAIL_REQUIRED'); return; }
+        if (!validateEmail(email)) { sendValidationError('Email is invalid', 'EMAIL_INVALID'); return; }
+
+        try {
+            yield googleSheetsService.requestWebinar({ name, email, request });
+            this.status = 201;
+        } catch (err) {
+            logger.error(err);
+            this.status = 500;
+        }
+    }
 
 }
 
 router.post('/contribution-data', FormRouter.addContribution);
 router.post('/contact-us', FormRouter.addFeedback);
+router.post('/request-webinar', FormRouter.requestWebinar);
 
 module.exports = router;
