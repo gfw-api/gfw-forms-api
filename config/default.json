@@ -10,6 +10,7 @@
         "name": "GFW Forms"
     },
     "wriMail": {
+        "recipients": "",
         "template": "data-contribution"
     },
     "userMail": {
