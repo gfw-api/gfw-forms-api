@@ -60,7 +60,7 @@ describe('Request webinar endpoint tests', () => {
             email: 'example@gmail.com',
             request: 'Webinar request test',
         });
-        response.status.should.equal(201);
+        response.status.should.equal(204);
     });
 
     it('If an error is thrown while adding the webinar request to the sheet, 500 is returned (error case)', async () => {
