@@ -21,8 +21,7 @@
     "googleSheets":{
       "private_key" : "example",
       "client_email": "test@gmail.com",
-      "target_sheet_id": "",
-      "target_sheet_index": null
+      "target_sheet_id": ""
     },
     "contactEmail": {
         "template": "contact-form",
