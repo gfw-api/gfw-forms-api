@@ -1,7 +1,10 @@
-/* eslint-disable consistent-return,require-yield */
+/* eslint-disable consistent-return,class-methods-use-this */
 const config = require('config');
 const logger = require('logger');
 const { GoogleSpreadsheet } = require('google-spreadsheet');
+
+const CONTACT_US_SHEET_INDEX = 1;
+const REQUEST_WEBINAR_SHEET_TITLE = 'Webinar Requests';
 
 class GoogleSheetsService {
 
@@ -10,102 +13,62 @@ class GoogleSheetsService {
         this.doc = new GoogleSpreadsheet(this.creds.target_sheet_id);
     }
 
-    * authSheets() {
-        return new Promise(((resolve, reject) => {
-            const creds = {
-                private_key: this.creds.private_key.replace(/\\n/g, '\n'),
-                client_email: this.creds.client_email
-            };
-            this.doc.useServiceAccountAuth(creds, (err, result) => {
-                if (err) {
-                    return reject(err);
-                }
-                resolve(result);
-            });
-        }));
+    async authSheets() {
+        return this.doc.useServiceAccountAuth({
+            private_key: this.creds.private_key.replace(/\\n/g, '\n'),
+            client_email: this.creds.client_email,
+        });
     }
 
-    * updateSheet(user) {
+    async updateSheet(user) {
         try {
-            yield this.authSheets(this.creds);
-            const result = yield this.checkRows();
-            for (let i = 0; i < result.length; i++) {
-                // eslint-disable-next-line no-underscore-dangle
-                if (result[i]._value === user.email) {
+            await this.authSheets();
+
+            // Load cells
+            await this.doc.loadInfo();
+            const sheet = await this.doc.sheetsByIndex[CONTACT_US_SHEET_INDEX];
+            await sheet.loadCells();
+
+            for (let i = 0; i < sheet.rowCount; i++) {
+                const cell = await sheet.getCell(i, 5);
+                if (cell.value === user.email) {
                     logger.info('User already exists. Updating....');
-                    yield this.updateCells(result[i], user);
-                    return;
+                    return this.updateCells(cell, user);
                 }
             }
+
             if (user.signup === 'true') {
                 logger.info('User does not exist. Adding....');
-                return new Promise(((resolve, reject) => {
-                    const newRow = {
-                        agreed_to_test: 'yes',
-                        'Date First Added': this.getDate(),
-                        Email: user.email,
-                        Source: 'GFW Feedback Form'
-                    };
-                    this.doc.addRow(this.creds.target_sheet_index, newRow, (err, rowResult) => {
-                        if (err) {
-                            return reject(err);
-                        }
-                        logger.info('Added row in spreadsheet');
-                        resolve(rowResult);
-                    });
-                }));
+                const newRow = {
+                    agreed_to_test: 'yes',
+                    'Date First Added': this.getDate(),
+                    Email: user.email,
+                    Source: 'GFW Feedback Form'
+                };
+
+                return sheet.addRow(newRow);
             }
         } catch (err) {
             logger.error(err);
         }
     }
 
-    * updateCells(row, user) {
+    async updateCells(row, user) {
         try {
             logger.info('Getting user....');
-            return new Promise(((resolve, reject) => {
-                this.doc.getRows(this.creds.target_sheet_index, {
-                    offset: row.row - 1,
-                    limit: 1
-                    // eslint-disable-next-line consistent-return
-                }, (err, callbackRow) => {
-                    if (err) {
-                        return reject(err);
-                    }
-                    logger.info('Found user....');
-                    callbackRow[0].source = 'GFW Feedback form';
-                    callbackRow[0].agreedtotest = user.signup === 'true' ? 'yes' : 'no';
-                    callbackRow[0].save(() => {
-                        logger.info('User updated');
-                        resolve(callbackRow);
-                    });
-                });
-            }));
+            const sheet = await this.doc.sheetsByIndex[CONTACT_US_SHEET_INDEX];
+            const rows = sheet.getRows({ offset: row.row - 1, limit: 1 });
+            logger.info('Found user....');
+            rows[0].source = 'GFW Feedback form';
+            rows[0].agreedtotest = user.signup === 'true' ? 'yes' : 'no';
+            await rows[0].save();
+            logger.info('User updated');
+            return rows;
         } catch (err) {
             logger.debug(err);
         }
     }
 
-    * checkRows() {
-        try {
-            logger.debug('checking rows....');
-            return new Promise(((resolve, reject) => {
-                this.doc.getCells(this.creds.target_sheet_index, {
-                    'min-col': 5,
-                    'max-col': 5
-                }, (err, result) => {
-                    if (err) {
-                        return reject(err);
-                    }
-                    resolve(result);
-                });
-            }));
-        } catch (err) {
-            logger.debug(err);
-        }
-    }
-
-    // eslint-disable-next-line class-methods-use-this
     getDate() {
         let today = new Date();
         let dd = today.getDate();
@@ -125,14 +88,11 @@ class GoogleSheetsService {
     async requestWebinar(data) {
         try {
             // Auth using promises
-            await this.doc.useServiceAccountAuth({
-                private_key: this.creds.private_key.replace(/\\n/g, '\n'),
-                client_email: this.creds.client_email,
-            });
+            await this.authSheets();
             logger.info('[GoogleSheetsService] Adding a new webinar request...');
 
             await this.doc.loadInfo();
-            const sheet = this.doc.sheetsByTitle['Webinar Requests'];
+            const sheet = this.doc.sheetsByTitle[REQUEST_WEBINAR_SHEET_TITLE];
             const rowResult = await sheet.addRow(data);
             logger.info('[GoogleSheetsService] Added new webinar request.');
 

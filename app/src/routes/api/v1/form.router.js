@@ -35,7 +35,7 @@ class FormRouter {
         this.body = '';
     }
 
-    static* addFeedback() {
+    static async addFeedback() {
         logger.info('Sending mail');
         const { topic, tool } = this.request.body;
         const mailParams = config.get('contactEmail');
@@ -76,7 +76,7 @@ class FormRouter {
 
         // Update Google SpreadSheet for beta users
         try {
-            yield googleSheetsService.updateSheet(this.request.body);
+            await googleSheetsService.updateSheet(this.request.body);
         } catch (err) {
             logger.error(err);
         }

@@ -27,8 +27,6 @@ describe('Contact us endpoint tests', () => {
     it('Calling the contact us endpoint returns 200 OK (happy case)', async () => {
         sinonSandbox.stub(GoogleSheetsService, 'authSheets')
             .callsFake(() => new Promise((resolve) => resolve()));
-        sinonSandbox.stub(GoogleSheetsService, 'checkRows')
-            .callsFake(() => new Promise((resolve) => resolve()));
         sinonSandbox.stub(GoogleSheetsService, 'updateSheet')
             .callsFake(() => new Promise((resolve) => resolve()));
 
