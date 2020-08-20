@@ -1,7 +1,7 @@
 /* eslint-disable consistent-return,require-yield */
 const config = require('config');
 const logger = require('logger');
-const GoogleSpreadsheet = require('google-spreadsheet');
+const { GoogleSpreadsheet } = require('google-spreadsheet');
 
 class GoogleSheetsService {
 
@@ -122,20 +122,24 @@ class GoogleSheetsService {
         return today;
     }
 
-    * requestWebinar(data) {
+    async requestWebinar(data) {
         try {
-            yield this.authSheets(this.creds);
+            // Auth using promises
+            await this.doc.useServiceAccountAuth({
+                private_key: this.creds.private_key.replace(/\\n/g, '\n'),
+                client_email: this.creds.client_email,
+            });
             logger.info('[GoogleSheetsService] Adding a new webinar request...');
-            return new Promise(((resolve, reject) => {
-                const SHEET_INDEX = 10;
-                this.doc.addRow(SHEET_INDEX, data, (err, rowResult) => {
-                    if (err) { return reject(err); }
-                    logger.info('[GoogleSheetsService] Added new webinar request.');
-                    resolve(rowResult);
-                });
-            }));
+
+            await this.doc.loadInfo();
+            const sheet = this.doc.sheetsByTitle['Webinar Requests'];
+            const rowResult = await sheet.addRow(data);
+            logger.info('[GoogleSheetsService] Added new webinar request.');
+
+            return rowResult;
         } catch (err) {
             logger.error(err);
+            throw err;
         }
     }
 

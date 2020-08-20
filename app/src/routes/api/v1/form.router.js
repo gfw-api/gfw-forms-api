@@ -84,7 +84,7 @@ class FormRouter {
         this.body = '';
     }
 
-    static* requestWebinar() {
+    static async requestWebinar() {
         logger.info('Requesting webinar');
 
         const { name, email, request } = this.request.body;
@@ -101,8 +101,8 @@ class FormRouter {
         if (!validateEmail(email)) { sendValidationError('Email is invalid', 'EMAIL_INVALID'); return; }
 
         try {
-            yield googleSheetsService.requestWebinar({ name, email, request });
-            this.status = 201;
+            await googleSheetsService.requestWebinar({ name, email, request });
+            this.status = 204;
         } catch (err) {
             logger.error(err);
             this.status = 500;
