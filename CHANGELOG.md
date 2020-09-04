@@ -1,3 +1,10 @@
+# 1.1.1
+
+## 04/09/2020
+
+- Update secrets used by the service.
+- Address security vulnerabilities on websocket-extensions and handlebars.
+
 # 1.1.0
 
 ## 20/08/2020
