@@ -95,14 +95,14 @@ spec:
             valueFrom:
                 secretKeyRef:
                   name: mssecrets
-                  key: FORMS_GOOGLE_PRIVATE_KEY
+                  key: FORMS_GOOGLE_SHEETS_PRIVATE_KEY
           - name: GOOGLE_PROJECT_EMAIL
             valueFrom:
                 secretKeyRef:
                   name: mssecrets
-                  key: FORMS_GOOGLE_PROJECT_EMAIL
+                  key: FORMS_GOOGLE_SHEETS_PROJECT_EMAIL
           - name: TARGET_SHEET_ID
-            value: 15qKDbNPgWJIgSNEbnyteS4rfWDO8KAqk_a2dllCdWe0
+            value: 1JsXX7aE_XlJm-WWhs6wM5IW0UfLi-K9OmOx0mkIb0uA
           - name: LEGACY_TEMPLATE_ID
             value: "597b0f55856351000b087c9c"
           - name: DEFAULT_TEMPLATE_ID
