@@ -1,7 +1,6 @@
 const ctRegisterMicroservice = require('ct-register-microservice-node');
 const logger = require('logger');
 
-
 class TeamService {
 
     static* getTeam(user) {

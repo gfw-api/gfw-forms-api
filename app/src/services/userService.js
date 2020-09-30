@@ -6,7 +6,6 @@ const deserializer = (obj) => (callback) => {
     new JSONAPIDeserializer({ keyForAttribute: 'camelCase' }).deserialize(obj, callback);
 };
 
-
 class UserService {
 
     // eslint-disable-next-line class-methods-use-this

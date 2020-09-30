@@ -100,7 +100,6 @@ class QuestionnaireRouter {
 
 }
 
-
 function* loggedUserToState(next) {
     if (this.query && this.query.loggedUser) {
         this.state.loggedUser = JSON.parse(this.query.loggedUser);

@@ -12,7 +12,6 @@ const config = require('config');
 const ctRegisterMicroservice = require('ct-register-microservice-node');
 const CSV = require('services/csvService');
 
-
 const router = new Router({
     prefix: '/reports'
 });

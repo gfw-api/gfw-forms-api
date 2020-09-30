@@ -107,7 +107,6 @@ class AnswerRouter {
 
 }
 
-
 function* loggedUserToState(next) {
     if (this.query && this.query.loggedUser) {
         this.state.loggedUser = JSON.parse(this.query.loggedUser);
@@ -142,6 +141,5 @@ router.patch('/:id', loggedUserToState, checkExistQuestionnaire, AnswerRouter.up
 router.get('/', loggedUserToState, checkExistQuestionnaire, AnswerRouter.getAll);
 router.get('/:id', loggedUserToState, checkExistQuestionnaire, AnswerRouter.get);
 router.delete('/:id', loggedUserToState, checkExistQuestionnaire, AnswerRouter.delete);
-
 
 module.exports = router;

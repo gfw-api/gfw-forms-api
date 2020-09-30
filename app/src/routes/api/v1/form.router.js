@@ -31,7 +31,6 @@ class FormRouter {
             address: this.request.body.data_email
         }]);
 
-
         this.body = '';
     }
 

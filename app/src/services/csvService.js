@@ -20,8 +20,8 @@ class CSVConverter {
     }
 
     static parseBody(array, str) {
-        let value; let
-            line;
+        let value;
+        let line;
 
         array.forEach((item, index) => {
             line = '';

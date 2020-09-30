@@ -3,7 +3,6 @@ const { ROLES } = require('./test.constants');
 
 const getUUID = () => Math.random().toString(36).substring(7);
 
-
 const createReport = (additionalData = {}) => {
     const uuid = getUUID();
 
@@ -15,7 +14,6 @@ const createReport = (additionalData = {}) => {
         ...additionalData
     }).save();
 };
-
 
 module.exports = {
     createReport,

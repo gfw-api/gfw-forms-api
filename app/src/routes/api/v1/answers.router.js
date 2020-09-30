@@ -28,7 +28,6 @@ class AnswersRouter {
             query: this.state.query
         });
 
-
         if (!answers) {
             this.throw(404, 'Answers not found with these permissions');
             return;
