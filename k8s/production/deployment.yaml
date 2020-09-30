@@ -1,13 +1,22 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: fw
   labels:
-    name: forms
     app: gfw
+    name: forms
   name: forms
+  namespace: fw
 spec:
+  progressDeadlineSeconds: 2147483647
   revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      name: forms
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
   template:
     metadata:
       labels:
@@ -17,116 +26,125 @@ spec:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:
-            - matchExpressions:
-              - key: type
-                operator: In
-                values:
-                - gfw
+              - matchExpressions:
+                  - key: type
+                    operator: In
+                    values:
+                      - gfw
       containers:
-      - name: forms
-        image: vizzuality/forms
-        imagePullPolicy: Always
-        resources:
-          requests:
-            cpu: "0.25"
-            memory: "256M"
-          limits:
-            cpu: "1"
-            memory: "512M"
-        args:
-          - start
-        env:
-          - name: PORT
-            value: "4400"
-          - name: NODE_ENV
-            value: prod
-          - name: NODE_PATH
-            value: app/src
-          - name: LOCAL_URL
-            value: http://forms.fw.svc.cluster.local:4400
-          - name: QUEUE_PROVIDER
-            value: redis
-          - name: QUEUE_NAME
-            value: mail_prod
-          - name: WRI_MAIL_RECIPIENTS
-            value: mweisse@wri.org
-          - name: MONGO_URI
-            valueFrom:
+        - args:
+            - start
+          env:
+            - name: PORT
+              value: "4400"
+            - name: NODE_ENV
+              value: prod
+            - name: NODE_PATH
+              value: app/src
+            - name: LOCAL_URL
+              value: http://forms.fw.svc.cluster.local:4400
+            - name: QUEUE_PROVIDER
+              value: redis
+            - name: QUEUE_NAME
+              value: mail_prod
+            - name: WRI_MAIL_RECIPIENTS
+              value: mweisse@wri.org
+            - name: MONGO_URI
+              valueFrom:
                 secretKeyRef:
-                  name: dbsecrets
                   key: FORMS_MONGO_URI
-          - name: QUEUE_URL
-            valueFrom:
-                secretKeyRef:
                   name: dbsecrets
+            - name: QUEUE_URL
+              valueFrom:
+                secretKeyRef:
                   key: REDIS_URI
-          - name: CT_URL
-            valueFrom:
+                  name: dbsecrets
+            - name: CT_URL
+              valueFrom:
                 secretKeyRef:
-                  name: mssecrets
                   key: CT_URL
-          - name: CT_TOKEN
-            valueFrom:
-                secretKeyRef:
                   name: mssecrets
+            - name: CT_TOKEN
+              valueFrom:
+                secretKeyRef:
                   key: CT_TOKEN
-          - name: CT_REGISTER_MODE
-            valueFrom:
-                secretKeyRef:
                   name: mssecrets
+            - name: CT_REGISTER_MODE
+              valueFrom:
+                secretKeyRef:
                   key: CT_REGISTER_MODE
-          - name: API_VERSION
-            valueFrom:
-                secretKeyRef:
                   name: mssecrets
+            - name: API_VERSION
+              valueFrom:
+                secretKeyRef:
                   key: API_VERSION
-          - name: S3_ACCESS_KEY_ID
-            valueFrom:
-                secretKeyRef:
                   name: mssecrets
+            - name: S3_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
                   key: FORMS_S3_ACCESS_KEY_ID
-          - name: S3_SECRET_ACCESS_KEY
-            valueFrom:
-                secretKeyRef:
                   name: mssecrets
+            - name: S3_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
                   key: FORMS_S3_SECRET_ACCESS_KEY
-          - name: S3_BUCKET
-            value: forest-watcher-files
-          - name: GOOGLE_PRIVATE_KEY
-            valueFrom:
-                secretKeyRef:
                   name: mssecrets
+            - name: S3_BUCKET
+              value: forest-watcher-files
+            - name: GOOGLE_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
                   key: FORMS_GOOGLE_SHEETS_PRIVATE_KEY
-          - name: GOOGLE_PROJECT_EMAIL
-            valueFrom:
-                secretKeyRef:
                   name: mssecrets
+            - name: GOOGLE_PROJECT_EMAIL
+              valueFrom:
+                secretKeyRef:
                   key: FORMS_GOOGLE_SHEETS_PROJECT_EMAIL
-          - name: TARGET_SHEET_ID
-            value: 1zqiimFua1Lnm9KM4ki_njCaMuRhaPBif30zbvxIZWa4
-          - name: LEGACY_TEMPLATE_ID
-            value: "597b0f55856351000b087c9c"
-          - name: DEFAULT_TEMPLATE_ID
-            value: "59b6a26b138f260012e9fdeb"
-
-        ports:
-          - containerPort: 4400
-        readinessProbe:
-          httpGet:
-            scheme: HTTP
-            path: /healthcheck
-            port: 4400
-          initialDelaySeconds: 30
-          timeoutSeconds: 5
-          periodSeconds: 15
-        livenessProbe:
-          httpGet:
-            scheme: HTTP
-            path: /healthcheck
-            port: 4400
-          failureThreshold: 3
-          initialDelaySeconds: 30
-          timeoutSeconds: 5
-          periodSeconds: 15
-
+                  name: mssecrets
+            - name: TARGET_SHEET_ID
+              value: 1zqiimFua1Lnm9KM4ki_njCaMuRhaPBif30zbvxIZWa4
+            - name: LEGACY_TEMPLATE_ID
+              value: 597b0f55856351000b087c9c
+            - name: DEFAULT_TEMPLATE_ID
+              value: 59b6a26b138f260012e9fdeb
+          image: vizzuality/forms
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /healthcheck
+              port: 4400
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            successThreshold: 1
+            timeoutSeconds: 5
+          name: forms
+          ports:
+            - containerPort: 4400
+              protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /healthcheck
+              port: 4400
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            successThreshold: 1
+            timeoutSeconds: 5
+          resources:
+            limits:
+              cpu: "1"
+              memory: 512M
+            requests:
+              cpu: 250m
+              memory: 256M
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
       restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: { }
+      terminationGracePeriodSeconds: 30
+status: { }
