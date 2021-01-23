@@ -1,4 +1,4 @@
-const ctRegisterMicroservice = require('ct-register-microservice-node');
+const { RWAPIMicroservice } = require('rw-api-microservice-node');
 const logger = require('logger');
 
 class TeamService {
@@ -6,7 +6,7 @@ class TeamService {
     static* getTeam(user) {
         let team = {};
         try {
-            team = yield ctRegisterMicroservice.requestToMicroservice({
+            team = yield RWAPIMicroservice.requestToMicroservice({
                 uri: `/v1/teams/user/${user}`,
                 method: 'GET',
                 json: true

@@ -4,7 +4,7 @@ const Report = require('models/reportsModel');
 const chai = require('chai');
 const { ROLES } = require('./utils/test.constants');
 const { getTestServer } = require('./utils/test-server');
-const { createReport } = require('./utils/helpers');
+const { createReport, mockGetUserFromToken } = require('./utils/helpers');
 
 nock.disableNetConnect();
 nock.enableNetConnect(process.env.HOST_IP);
@@ -25,11 +25,12 @@ describe('Get report by id endpoint', () => {
     });
 
     it('Getting report by id should return the report (happy case)', async () => {
+        mockGetUserFromToken(ROLES.USER);
         const createdReport = await createReport();
 
         const response = await requester
             .get(`/api/v1/reports/${createdReport._id}`)
-            .query({ loggedUser: JSON.stringify(ROLES.USER) })
+            .set('Authorization', `Bearer abcd`)
             .send();
 
         response.status.should.equal(200);
@@ -48,11 +49,12 @@ describe('Get report by id endpoint', () => {
     });
 
     it('Getting the default report should return it (happy case)', async () => {
+        mockGetUserFromToken(ROLES.USER);
         const createdReport = await createReport({ _id: config.get('defaultTemplateId') });
 
         const response = await requester
             .get(`/api/v1/reports/default`)
-            .query({ loggedUser: JSON.stringify(ROLES.USER) })
+            .set('Authorization', `Bearer abcd`)
             .send();
 
         response.status.should.equal(200);
@@ -71,11 +73,12 @@ describe('Get report by id endpoint', () => {
     });
 
     it('Getting the legacy report should return it (happy case)', async () => {
+        mockGetUserFromToken(ROLES.USER);
         const createdReport = await createReport({ _id: config.get('defaultTemplateId') });
 
         const response = await requester
             .get(`/api/v1/reports/${config.get('legacyTemplateId')}`)
-            .query({ loggedUser: JSON.stringify(ROLES.USER) })
+            .set('Authorization', `Bearer abcd`)
             .send();
 
         response.status.should.equal(200);
