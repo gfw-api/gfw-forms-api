@@ -9,7 +9,7 @@ const TeamService = require('services/teamService');
 const passThrough = require('stream').PassThrough;
 const { ObjectId } = require('mongoose').Types;
 const config = require('config');
-const ctRegisterMicroservice = require('ct-register-microservice-node');
+const { RWAPIMicroservice } = require('rw-api-microservice-node');
 const CSV = require('services/csvService');
 
 const router = new Router({
@@ -108,7 +108,7 @@ class ReportsRouter {
         if (request.areaOfInterest) {
             const reportId = report._id.toString();
             try {
-                yield ctRegisterMicroservice.requestToMicroservice({
+                yield RWAPIMicroservice.requestToMicroservice({
                     uri: `/v1/area/${request.areaOfInterest}`,
                     method: 'PATCH',
                     json: true,
@@ -202,7 +202,7 @@ class ReportsRouter {
             if (request.oldAreaOfInterest) {
                 logger.info(`PATCHing old area of interest ${request.oldAreaOfInterest}...`);
                 try {
-                    yield ctRegisterMicroservice.requestToMicroservice({
+                    yield RWAPIMicroservice.requestToMicroservice({
                         uri: `/v1/area/${request.oldAreaOfInterest}`,
                         method: 'PATCH',
                         json: true,
@@ -222,7 +222,7 @@ class ReportsRouter {
             if (request.areaOfInterest) {
                 logger.info(`PATCHing new area of interest ${request.oldAreaOfInterest}...`);
                 try {
-                    yield ctRegisterMicroservice.requestToMicroservice({
+                    yield RWAPIMicroservice.requestToMicroservice({
                         uri: `/v1/area/${request.areaOfInterest}`,
                         method: 'PATCH',
                         json: true,
@@ -263,7 +263,7 @@ class ReportsRouter {
             for (let i = 0; i < aoi.length; i++) {
                 logger.info(`PATCHing area ${aoi[i]} to remove template association...`);
                 try {
-                    yield ctRegisterMicroservice.requestToMicroservice({
+                    yield RWAPIMicroservice.requestToMicroservice({
                         uri: `/v1/area/${aoi[i]}`,
                         method: 'PATCH',
                         json: true,

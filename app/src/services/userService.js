@@ -1,6 +1,6 @@
 const logger = require('logger');
 const JSONAPIDeserializer = require('jsonapi-serializer').Deserializer;
-const ctRegisterMicroservice = require('ct-register-microservice-node');
+const { RWAPIMicroservice } = require('rw-api-microservice-node');
 
 const deserializer = (obj) => (callback) => {
     new JSONAPIDeserializer({ keyForAttribute: 'camelCase' }).deserialize(obj, callback);
@@ -13,7 +13,7 @@ class UserService {
         if (loggedUser) {
             logger.info('Obtaining user', `/user/${loggedUser.id}`);
             try {
-                const result = yield ctRegisterMicroservice.requestToMicroservice({
+                const result = yield RWAPIMicroservice.requestToMicroservice({
                     uri: `/user/${loggedUser.id}`,
                     method: 'GET',
                     json: true

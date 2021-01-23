@@ -2,7 +2,7 @@ const nock = require('nock');
 const chai = require('chai');
 const Report = require('models/reportsModel');
 const mongoose = require('mongoose');
-const { createReport } = require('./utils/helpers');
+const { createReport, mockGetUserFromToken } = require('./utils/helpers');
 const { ROLES } = require('./utils/test.constants');
 const { getTestServer } = require('./utils/test-server');
 
@@ -35,9 +35,10 @@ describe('Get reports tests', () => {
     });
 
     it('Get all reports as an authenticated user should return an empty list', async () => {
+        mockGetUserFromToken(ROLES.USER);
         const response = await requester
             .get(`/api/v1/reports`)
-            .query({ loggedUser: JSON.stringify(ROLES.USER) })
+            .set('Authorization', `Bearer abcd`)
             .send();
 
         response.status.should.equal(200);
@@ -45,12 +46,13 @@ describe('Get reports tests', () => {
     });
 
     it('Get all reports should be successful and return a list of reports (populated db)', async () => {
+        mockGetUserFromToken(ROLES.USER);
         const reportOne = await createReport({ user: ROLES.USER.id });
         const reportTwo = await createReport({ user: ROLES.USER.id });
 
         const response = await requester
             .get(`/api/v1/reports`)
-            .query({ loggedUser: JSON.stringify(ROLES.USER) })
+            .set('Authorization', `Bearer abcd`)
             .send();
 
         response.status.should.equal(200);
@@ -81,6 +83,7 @@ describe('Get reports tests', () => {
     });
 
     it('Get all reports without filter should be successful and return a list of reports which belong to the user or are public and published (populated db)', async () => {
+        mockGetUserFromToken(ROLES.USER);
 
         const reportOne = await createReport({ user: ROLES.USER.id });
         const reportTwo = await createReport({ user: mongoose.Types.ObjectId(), public: true, status: 'published' });
@@ -89,7 +92,7 @@ describe('Get reports tests', () => {
 
         const response = await requester
             .get(`/api/v1/reports`)
-            .query({ loggedUser: JSON.stringify(ROLES.USER) })
+            .set('Authorization', `Bearer abcd`)
             .send();
 
         response.status.should.equal(200);

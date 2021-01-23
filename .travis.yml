@@ -15,12 +15,15 @@ env:
     - CT_URL=http://127.0.0.1:9000
     - API_VERSION=v1
     - CT_REGISTER_MODE=auto
+    - LOCAL_URL=http://127.0.0.1:4400
+    - CT_TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Im1pY3Jvc2VydmljZSIsImNyZWF0ZWRBdCI6IjIwMTYtMDktMTQifQ.IRCIRm1nfIQTfda_Wb6Pg-341zhV8soAgzw7dd5HxxQ
     - MONGO_PORT_27017_TCP_ADDR=127.0.0.1
     - MONGO_PORT_27017_TCP_DATABASE=gfw_subscription_db_test
     - QUEUE_URL=redis://127.0.0.1:6379
     - QUEUE_NAME=mail
     - QUEUE_PROVIDER=redis
     - TARGET_SHEET_ID=TARGET_SHEET_ID
+    - FASTLY_ENABLED=false
 
 before_script:
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
