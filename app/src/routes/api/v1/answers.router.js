@@ -186,7 +186,7 @@ function* loggedUserToState(next) {
             delete this.request.body.fields.loggedUser;
         }
     } else {
-        this.throw(401, 'Not logged');
+        this.throw(401, 'Unauthorized');
         return;
     }
     yield next;

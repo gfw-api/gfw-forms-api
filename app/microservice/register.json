@@ -32,7 +32,6 @@
     {
       "path": "/v1/questionnaire",
       "method": "GET",
-      "authenticated": true,
       "redirect": {
         "method": "GET",
         "path": "/api/v1/questionnaire"
@@ -41,7 +40,6 @@
     {
       "path": "/v1/questionnaire/:id",
       "method": "GET",
-      "authenticated": true,
       "redirect": {
         "method": "GET",
         "path": "/api/v1/questionnaire/:id"
@@ -50,7 +48,6 @@
     {
       "path": "/v1/questionnaire",
       "method": "POST",
-      "authenticated": true,
       "redirect": {
         "method": "POST",
         "path": "/api/v1/questionnaire"
@@ -59,7 +56,6 @@
     {
       "path": "/v1/questionnaire/:id",
       "method": "PATCH",
-      "authenticated": true,
       "redirect": {
         "method": "PATCH",
         "path": "/api/v1/questionnaire/:id"
@@ -68,7 +64,6 @@
     {
       "path": "/v1/questionnaire/:id",
       "method": "DELETE",
-      "authenticated": true,
       "redirect": {
         "method": "DELETE",
         "path": "/api/v1/questionnaire/:id"
@@ -77,7 +72,6 @@
     {
       "path": "/v1/questionnaire/:questionnaireId/answer",
       "method": "GET",
-      "authenticated": true,
       "redirect": {
         "method": "GET",
         "path": "/api/v1/questionnaire/:questionnaireId/answer"
@@ -86,7 +80,6 @@
     {
       "path": "/v1/questionnaire/:questionnaireId/answer/:id",
       "method": "GET",
-      "authenticated": true,
       "redirect": {
         "method": "GET",
         "path": "/api/v1/questionnaire/:questionnaireId/answer/:id"
@@ -95,7 +88,6 @@
     {
       "path": "/v1/questionnaire/:questionnaireId/answer",
       "method": "POST",
-      "authenticated": true,
       "redirect": {
         "method": "POST",
         "path": "/api/v1/questionnaire/:questionnaireId/answer"
@@ -104,7 +96,6 @@
     {
       "path": "/v1/questionnaire/:questionnaireId/answer/:id",
       "method": "PATCH",
-      "authenticated": true,
       "redirect": {
         "method": "PATCH",
         "path": "/api/v1/questionnaire/:questionnaireId/answer/:id"
@@ -113,7 +104,6 @@
     {
       "path": "/v1/questionnaire/:questionnaireId/answer/:id",
       "method": "DELETE",
-      "authenticated": true,
       "redirect": {
         "method": "DELETE",
         "path": "/api/v1/questionnaire/:questionnaireId/answer/:id"
@@ -122,7 +112,6 @@
     {
       "path": "/v1/questionnaire/:id/download-answers",
       "method": "GET",
-      "authenticated": true,
       "binary": true,
       "redirect": {
         "method": "GET",
@@ -132,7 +121,6 @@
     {
       "path": "/v1/reports",
       "method": "GET",
-      "authenticated": true,
       "binary": true,
       "redirect": {
         "method": "GET",
@@ -142,7 +130,6 @@
     {
       "path": "/v1/reports",
       "method": "POST",
-      "authenticated": true,
       "binary": true,
       "redirect": {
         "method": "POST",
@@ -152,7 +139,6 @@
     {
       "path": "/v1/reports/:reportId",
       "method": "GET",
-      "authenticated": true,
       "binary": true,
       "redirect": {
         "method": "GET",
@@ -162,7 +148,6 @@
     {
       "path": "/v1/reports/:reportId",
       "method": "POST",
-      "authenticated": true,
       "binary": true,
       "redirect": {
         "method": "POST",
@@ -172,7 +157,6 @@
     {
       "path": "/v1/reports/:reportId",
       "method": "PUT",
-      "authenticated": true,
       "binary": true,
       "redirect": {
         "method": "PUT",
@@ -182,7 +166,6 @@
     {
       "path": "/v1/reports/:reportId",
       "method": "PATCH",
-      "authenticated": true,
       "binary": true,
       "redirect": {
         "method": "PATCH",
@@ -192,7 +175,6 @@
     {
       "path": "/v1/reports/:reportId",
       "method": "DELETE",
-      "authenticated": true,
       "binary": true,
       "redirect": {
         "method": "DELETE",
@@ -202,7 +184,6 @@
     {
       "path": "/v1/reports/:reportId/answers",
       "method": "GET",
-      "authenticated": true,
       "binary": true,
       "redirect": {
         "method": "GET",
@@ -212,7 +193,6 @@
     {
       "path": "/v1/reports/:reportId/answers",
       "method": "POST",
-      "authenticated": true,
       "binary": true,
       "redirect": {
         "method": "POST",
@@ -222,7 +202,6 @@
     {
       "path": "/v1/reports/:reportId/answers/:id",
       "method": "GET",
-      "authenticated": true,
       "binary": true,
       "redirect": {
         "method": "GET",
@@ -232,7 +211,6 @@
     {
       "path": "/v1/reports/:reportId/answers/:id",
       "method": "POST",
-      "authenticated": true,
       "binary": true,
       "redirect": {
         "method": "POST",
@@ -242,7 +220,6 @@
     {
       "path": "/v1/reports/:reportId/answers/:id",
       "method": "PATCH",
-      "authenticated": true,
       "binary": true,
       "redirect": {
         "method": "PATCH",
@@ -252,7 +229,6 @@
     {
       "path": "/v1/reports/:reportId/answers/:id",
       "method": "DELETE",
-      "authenticated": true,
       "binary": true,
       "redirect": {
         "method": "DELETE",
@@ -262,7 +238,6 @@
     {
       "path": "/v1/reports/:reportId/download-answers",
       "method": "GET",
-      "authenticated": true,
       "binary": true,
       "redirect": {
         "method": "GET",

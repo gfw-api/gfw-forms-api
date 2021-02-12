@@ -108,7 +108,7 @@ function* loggedUserToState(next) {
         this.state.loggedUser = this.request.body.loggedUser;
         delete this.request.body.loggedUser;
     } else {
-        this.throw(401, 'Not logged');
+        this.throw(401, 'Unauthorized');
         return;
     }
     yield next;
