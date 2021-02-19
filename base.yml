@@ -1,17 +1,16 @@
 base:
   build: .
   ports:
-    - "4400:4400"
+    - "4401:4401"
   environment:
-    PORT: 4400
+    PORT: 4401
     NODE_PATH: app/src
   container_name: gfw-forms-api
 mongo:
   image: mongo
   container_name: gfw-forms-mongo
-  command: --smallfiles
   ports:
-    - "27017"
+    - "27024:27017"
   volumes:
-    - $HOME/docker/data/gfw-forms-api:/data/db
+    - $HOME/docker/data/gfw-forms-api/mongodb:/data/db
   restart: always

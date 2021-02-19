@@ -1,33 +1,41 @@
-develop:
-  extends:
-    file: base.yml
-    service: base
-  ports:
-    - "35736:35729"
-  container_name: gfw-forms-develop
-  environment:
-    CT_REGISTER_MODE: auto
-    NODE_ENV: dev
-    QUEUE_URL: redis://mymachine:6379
-    QUEUE_PROVIDER: redis
-    QUEUE_NAME: mail
-    CT_URL: http://mymachine:9000
-    LOCAL_URL: http://mymachine:4400
-    WRI_MAIL_RECIPIENTS: <mails>
-    CT_TOKEN: token
-    GOOGLE_PRIVATE_KEY: <key>
-    GOOGLE_PROJECT_EMAIL: <mail>
-    TARGET_SHEET_ID: <sheet>
-    S3_ACCESS_KEY_ID: <key>
-    S3_SECRET_ACCESS_KEY: <key>
-    S3_BUCKET: <key>
-    FASTLY_ENABLED: "false"
-  command: develop
-  volumes:
-    - ./app:/opt/gfw-forms-api/app
-  links:
-    - mongo
-mongo:
-  extends:
-    file: base.yml
-    service: mongo
+version: "3"
+services:
+  develop:
+    build: .
+    ports:
+      - "4401:4401"
+    container_name: gfw-forms-develop
+    environment:
+      PORT: 4401
+      NODE_PATH: app/src
+      CT_REGISTER_MODE: auto
+      NODE_ENV: dev
+      QUEUE_URL: redis://mymachine:6379
+      QUEUE_PROVIDER: redis
+      QUEUE_NAME: mail
+      MONGO_PORT_27017_TCP_ADDR: mongo
+      REDIS_PORT_6379_TCP_ADDR: redis
+      CT_URL: http://mymachine:9000
+      LOCAL_URL: http://mymachine:4401
+      WRI_MAIL_RECIPIENTS: <mails>
+      CT_TOKEN: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Im1pY3Jvc2VydmljZSIsImNyZWF0ZWRBdCI6IjIwMTYtMDktMTQifQ.IRCIRm1nfIQTfda_Wb6Pg-341zhV8soAgzw7dd5HxxQ
+      GOOGLE_PRIVATE_KEY: <key>
+      GOOGLE_PROJECT_EMAIL: <mail>
+      TARGET_SHEET_ID: <sheet>
+      S3_ACCESS_KEY_ID: <key>
+      S3_SECRET_ACCESS_KEY: <key>
+      S3_BUCKET: <key>
+      FASTLY_ENABLED: "false"
+    command: develop
+    volumes:
+      - ./app:/opt/gfw-forms-api/app
+    depends_on:
+      - mongo
+  mongo:
+    image: mongo:3.4
+    container_name: gfw-forms-mongo
+    ports:
+      - "27024:27017"
+    volumes:
+      - $HOME/docker/data/gfw-forms-api/mongodb:/data/db
+    restart: always
