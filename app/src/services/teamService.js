@@ -7,7 +7,7 @@ class TeamService {
         let team = {};
         try {
             team = yield RWAPIMicroservice.requestToMicroservice({
-                uri: `/v1/teams/user/${user}`,
+                uri: `/teams/user/${user}`,
                 method: 'GET',
                 json: true
             });
