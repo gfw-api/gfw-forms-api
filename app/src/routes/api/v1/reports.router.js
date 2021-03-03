@@ -109,7 +109,7 @@ class ReportsRouter {
             const reportId = report._id.toString();
             try {
                 yield RWAPIMicroservice.requestToMicroservice({
-                    uri: `/v1/area/${request.areaOfInterest}`,
+                    uri: `/area/${request.areaOfInterest}`,
                     method: 'PATCH',
                     json: true,
                     body: {
@@ -203,7 +203,7 @@ class ReportsRouter {
                 logger.info(`PATCHing old area of interest ${request.oldAreaOfInterest}...`);
                 try {
                     yield RWAPIMicroservice.requestToMicroservice({
-                        uri: `/v1/area/${request.oldAreaOfInterest}`,
+                        uri: `/area/${request.oldAreaOfInterest}`,
                         method: 'PATCH',
                         json: true,
                         body: {
@@ -223,7 +223,7 @@ class ReportsRouter {
                 logger.info(`PATCHing new area of interest ${request.oldAreaOfInterest}...`);
                 try {
                     yield RWAPIMicroservice.requestToMicroservice({
-                        uri: `/v1/area/${request.areaOfInterest}`,
+                        uri: `/area/${request.areaOfInterest}`,
                         method: 'PATCH',
                         json: true,
                         body: {
@@ -264,7 +264,7 @@ class ReportsRouter {
                 logger.info(`PATCHing area ${aoi[i]} to remove template association...`);
                 try {
                     yield RWAPIMicroservice.requestToMicroservice({
-                        uri: `/v1/area/${aoi[i]}`,
+                        uri: `/area/${aoi[i]}`,
                         method: 'PATCH',
                         json: true,
                         body: {
