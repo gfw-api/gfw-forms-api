@@ -1,7 +1,6 @@
 language: node_js
 services:
   - mongodb
-  - redis
 node_js:
   - "12"
 cache:
@@ -19,9 +18,6 @@ env:
     - CT_TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Im1pY3Jvc2VydmljZSIsImNyZWF0ZWRBdCI6IjIwMTYtMDktMTQifQ.IRCIRm1nfIQTfda_Wb6Pg-341zhV8soAgzw7dd5HxxQ
     - MONGO_PORT_27017_TCP_ADDR=127.0.0.1
     - MONGO_PORT_27017_TCP_DATABASE=gfw_subscription_db_test
-    - QUEUE_URL=redis://127.0.0.1:6379
-    - QUEUE_NAME=mail
-    - QUEUE_PROVIDER=redis
     - TARGET_SHEET_ID=TARGET_SHEET_ID
     - FASTLY_ENABLED=false
 

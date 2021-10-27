@@ -1,3 +1,7 @@
+## 27/10/2021
+
+- Remove `/forms` (moved to GFW Contact microservice).
+
 ## 31/05/2021
 
 - Update `rw-api-microservice-node` to add CORS support.

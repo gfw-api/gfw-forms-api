@@ -42,21 +42,10 @@ spec:
               value: app/src
             - name: LOCAL_URL
               value: http://forms.fw.svc.cluster.local:4400
-            - name: QUEUE_PROVIDER
-              value: redis
-            - name: QUEUE_NAME
-              value: mail_staging
-            - name: WRI_MAIL_RECIPIENTS
-              value: raul.requero@vizzuality.com,sergio.gordillo@vizzuality.com
             - name: MONGO_URI
               valueFrom:
                 secretKeyRef:
                   key: FORMS_MONGO_URI
-                  name: dbsecrets
-            - name: QUEUE_URL
-              valueFrom:
-                secretKeyRef:
-                  key: REDIS_URI
                   name: dbsecrets
             - name: CT_URL
               valueFrom:
@@ -90,16 +79,6 @@ spec:
                   name: mssecrets
             - name: S3_BUCKET
               value: forest-watcher-files
-            - name: GOOGLE_PRIVATE_KEY
-              valueFrom:
-                secretKeyRef:
-                  key: FORMS_GOOGLE_SHEETS_PRIVATE_KEY
-                  name: mssecrets
-            - name: GOOGLE_PROJECT_EMAIL
-              valueFrom:
-                secretKeyRef:
-                  key: FORMS_GOOGLE_SHEETS_PROJECT_EMAIL
-                  name: mssecrets
             - name: TARGET_SHEET_ID
               value: 1JsXX7aE_XlJm-WWhs6wM5IW0UfLi-K9OmOx0mkIb0uA
             - name: LEGACY_TEMPLATE_ID

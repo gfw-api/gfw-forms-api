@@ -12,9 +12,6 @@ services:
       API_VERSION: v1
       CT_REGISTER_MODE: auto
       MONGO_PORT_27017_TCP_ADDR: mongo
-      QUEUE_NAME: mail
-      QUEUE_PROVIDER: redis
-      QUEUE_URL: redis://redis:6379
       TARGET_SHEET_ID: TARGET_SHEET_ID
       LOCAL_URL: http://gfw-forms:4400
       CT_TOKEN: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Im1pY3Jvc2VydmljZSIsImNyZWF0ZWRBdCI6IjIwMTYtMDktMTQifQ.IRCIRm1nfIQTfda_Wb6Pg-341zhV8soAgzw7dd5HxxQ
@@ -22,13 +19,6 @@ services:
     command: test
     depends_on:
       - mongo
-      - redis
-
-  redis:
-    image: redis
-    container_name: gfw-forms-api-redis
-    ports:
-      - "6379"
 
   mongo:
     image: mongo:3.4

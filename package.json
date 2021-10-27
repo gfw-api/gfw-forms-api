@@ -40,8 +40,6 @@
     "co": "4.6.0",
     "co-request": "1.0.0",
     "config": "1.19.0",
-    "rw-api-microservice-node": "^3.4.1",
-    "google-spreadsheet": "^3.0.13",
     "json2csv": "^3.7.3",
     "jsonapi-serializer": "2.1.1",
     "koa": "1.1.2",
@@ -54,10 +52,9 @@
     "koa-simple-healthcheck": "^0.0.1",
     "koa-validate": "^1.0.7",
     "mongoose": "^4.13.13",
-    "sinon": "^9.0.3",
+    "rw-api-microservice-node": "^3.4.1",
     "sleep": "^6.1.0",
-    "uuid": "^3.0.1",
-    "vizz.async-client": "^1.0.0"
+    "uuid": "^3.0.1"
   },
   "devDependencies": {
     "chai": "^4.2.0",
@@ -84,7 +81,8 @@
     "load-grunt-tasks": "^5.1.0",
     "mocha": "^8.1.3",
     "nock": "^13.0.4",
-    "nyc": "^15.1.0"
+    "nyc": "^15.1.0",
+    "sinon": "^9.0.3"
   },
   "husky": {
     "hooks": {
