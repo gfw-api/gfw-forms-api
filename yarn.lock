@@ -690,16 +690,6 @@ axe-core@^3.5.4:
   resolved "https://registry.yarnpkg.com/axe-core/-/axe-core-3.5.5.tgz#84315073b53fa3c0c51676c588d59da09a192227"
   integrity sha512-5P0QZ6J5xGikH780pghEdbEKijCTrruK9KxtPZCFWUpef0f6GipO+xEZ5GKCb020mmqgbiNO6TcA55CriL784Q==
 
-axios-time@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/axios-time/-/axios-time-1.0.0.tgz#0dd482c7537ef662f29a50cb6fa5375cc60a2b57"
-  integrity sha512-5xY1ScOeZZgZ44TIffioYlknROdsI107kJtC1Pc/wrDEvYg7w+VfkRI49pxXDgPP/W+aQPKAs8anjvpiyEvfOQ==
-
-axios-timing@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/axios-timing/-/axios-timing-1.0.2.tgz#51b0bac436d191ecd909bf0e4b1b18fc75cbe68c"
-  integrity sha512-LdEXn1jVFgDRDslQYN4BWUG5CybvvaO+5annP59kj/UaoW/fai3bjVo20azc9gRqevGWyZCG6yyaL6fsbkEKfw==
-
 axios@0.21.1, axios@^0.21.1:
   version "0.21.1"
   resolved "https://registry.yarnpkg.com/axios/-/axios-0.21.1.tgz#22563481962f4d6bde9a76d516ef0e5d3c09b2b8"
@@ -2287,9 +2277,9 @@ fn.name@1.x.x:
   integrity sha512-GRnmB5gPyJpAhTQdSZTSp9uaPSvl09KoYcMQtsB9rQoOmzs9dH6ffeccH+Z+cv6P68Hu5bC6JjRh4Ah/mHSNRw==
 
 follow-redirects@^1.10.0:
-  version "1.13.1"
-  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.13.1.tgz#5f69b813376cee4fd0474a3aba835df04ab763b7"
-  integrity sha512-SSG5xmZh1mkPGyKzjZP8zLjltIfpW32Y5QpdNJyjcfGxK3qo3NDDkZOZSFiGn1A6SclQxY9GzEwAHQ3dmYRWpg==
+  version "1.14.7"
+  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.14.7.tgz#2004c02eb9436eee9a21446a6477debf17e81685"
+  integrity sha512-+hbxoLbFMbRKDwohX8GkTataGqO6Jb7jGwpAlwgy2bIz25XtRm7KEzJM76R1WiNT5SwZkX4Y75SwBolkpmE7iQ==
 
 for-in@^1.0.1, for-in@^1.0.2:
   version "1.0.2"
